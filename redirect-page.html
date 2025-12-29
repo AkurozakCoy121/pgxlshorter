@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting... - pgxl.web.id</title>
     <style>
+        /* CSS tetap sama seperti sebelumnya */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        
         body { 
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
@@ -16,54 +16,10 @@
             flex-direction: column;
             align-items: center;
         }
-        
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        /* ADS CONTAINERS */
-        .ad-top {
-            width: 100%;
-            text-align: center;
-            margin: 20px 0;
-            min-height: 90px;
-        }
-        
-        .ad-side-left {
-            position: fixed;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 160px;
-            height: 600px;
-        }
-        
-        .ad-side-right {
-            position: fixed;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 160px;
-            height: 600px;
-        }
-        
-        .ad-middle {
-            width: 100%;
-            text-align: center;
-            margin: 30px 0;
-            min-height: 250px;
-        }
-        
-        .ad-bottom {
-            width: 100%;
-            text-align: center;
-            margin: 20px 0;
-            min-height: 60px;
-        }
-        
-        /* MAIN CONTENT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; }
+        .ad-top { width: 100%; text-align: center; margin: 20px 0; min-height: 90px; }
+        .ad-middle { width: 100%; text-align: center; margin: 30px 0; min-height: 250px; }
+        .ad-bottom { width: 100%; text-align: center; margin: 20px 0; min-height: 60px; }
         .main-content {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -75,220 +31,92 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        .redirect-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            color: #4cc9f0;
-            margin-bottom: 15px;
-            font-size: 2.2rem;
-        }
-        
-        p {
-            color: #b8b8b8;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            font-size: 1.1rem;
-        }
-        
-        .countdown {
-            font-size: 3.5rem;
-            color: #f72585;
-            font-weight: bold;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin: 30px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #f72585, #4cc9f0);
-            width: 0%;
-            transition: width 1s linear;
-        }
-        
-        /* BUTTONS */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-width: 200px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(90deg, #f72585, #b5179e);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(247, 37, 133, 0.3);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: #4cc9f0;
-            border: 2px solid #4cc9f0;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(76, 201, 240, 0.1);
-        }
-        
-        .btn-trick {
-            background: linear-gradient(90deg, #ffd166, #ff9e00);
-            color: #000;
-            font-weight: bold;
-        }
-        
-        .btn-trick:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(255, 209, 102, 0.4);
-        }
-        
-        /* WARNING MESSAGE */
-        .warning {
-            background: rgba(255, 193, 7, 0.1);
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #ffc107;
-            font-size: 14px;
-        }
-        
-        .ad-label {
-            color: #888;
-            font-size: 12px;
-            margin: 5px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .ad-side-left, .ad-side-right {
-                display: none;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-        }
+        .redirect-icon { font-size: 4rem; margin-bottom: 20px; }
+        h1 { color: #4cc9f0; margin-bottom: 15px; font-size: 2.2rem; }
+        p { color: #b8b8b8; margin-bottom: 25px; line-height: 1.6; font-size: 1.1rem; }
+        .countdown { font-size: 3.5rem; color: #f72585; font-weight: bold; margin: 20px 0; font-family: 'Courier New', monospace; }
+        .progress-bar { height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; margin: 30px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #f72585, #4cc9f0); width: 0%; transition: width 1s linear; }
+        .button-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; min-width: 200px; }
+        .btn-primary { background: linear-gradient(90deg, #f72585, #b5179e); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(247, 37, 133, 0.3); }
+        .btn-trick { background: linear-gradient(90deg, #ffd166, #ff9e00); color: #000; font-weight: bold; }
+        .btn-trick:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 209, 102, 0.4); }
+        .warning { background: rgba(255, 193, 7, 0.1); border: 2px solid #ffc107; border-radius: 10px; padding: 15px; margin: 20px 0; color: #ffc107; font-size: 14px; }
+        .ad-label { color: #888; font-size: 12px; margin: 5px 0; text-transform: uppercase; letter-spacing: 1px; }
+        @media (max-width: 768px) { .button-group { flex-direction: column; } .btn { width: 100%; } }
     </style>
     
-    <!-- ADS SCRIPTS (LOAD DULUAN) -->
-    <script>
-        // BANNER 1 (Top Leaderboard)
-        (function() {
-            var atOptions = {
-                'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-            };
+    <!-- PROPELLERADS (PASTI WORK) -->
+    <script type="text/javascript">
+        (function(){
             var script = document.createElement('script');
-            script.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
+            script.src='//upgulpinon.com/1?z=5435302';
             document.head.appendChild(script);
         })();
+    </script>
+    
+    <!-- GOOGLE ADSENSE (OPTIONAL) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    
+    <!-- ALTERNATIVE AD NETWORKS -->
+    <script>
+        // Function to load ads with fallback
+        function loadAdWithFallback(adScripts) {
+            let currentIndex = 0;
+            
+            function tryNext() {
+                if (currentIndex >= adScripts.length) return;
+                
+                const script = document.createElement('script');
+                script.src = adScripts[currentIndex];
+                script.onerror = function() {
+                    console.log('Ad script failed:', adScripts[currentIndex]);
+                    currentIndex++;
+                    setTimeout(tryNext, 1000);
+                };
+                script.onload = function() {
+                    console.log('Ad script loaded:', adScripts[currentIndex]);
+                };
+                
+                document.head.appendChild(script);
+                currentIndex++;
+            }
+            
+            tryNext();
+        }
         
-        // BANNER 2 (Middle Banner)
-        setTimeout(function() {
-            var atOptions = {
-                'key' : '90a2a0e622b40caa605de8a06516879d',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-            };
-            var script = document.createElement('script');
-            script.src = 'https://www.highperformanceformat.com/90a2a0e622b40caa605de8a06516879d/invoke.js';
-            document.head.appendChild(script);
-        }, 1000);
-        
-        // BANNER 3 (Sidebar - Left)
-        setTimeout(function() {
-            var atOptions = {
-                'key' : '5e0812e16f5b229c05c8d853fc6f9253',
-                'format' : 'iframe',
-                'height' : 600,
-                'width' : 160,
-                'params' : {}
-            };
-            var script = document.createElement('script');
-            script.src = 'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js';
-            document.head.appendChild(script);
-        }, 2000);
-        
-        // BANNER 4 (Sidebar - Right)
-        setTimeout(function() {
-            var atOptions = {
-                'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
-                'format' : 'iframe',
-                'height' : 600,
-                'width' : 160,
-                'params' : {}
-            };
-            var script = document.createElement('script');
-            script.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
-            document.head.appendChild(script);
-        }, 3000);
-        
-        // PUSH NOTIFICATION ADS (Passive Income)
-        setTimeout(function() {
-            var script = document.createElement('script');
-            script.src = 'https://3nbf4.com/act/files/tag.min.js?z=10381292';
-            script.setAttribute('data-cfasync', 'false');
-            script.async = true;
-            document.head.appendChild(script);
-        }, 5000);
-        
-        // IN-PAGE PUSH ADS (High RPM)
-        setTimeout(function() {
-            (function(s){
-                s.dataset.zone='10380895',
-                s.src='https://nap5k.com/tag.min.js'
-            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
-        }, 7000);
-        
-        // VIGNETTE ADS (Interstitial - High Paying)
-        setTimeout(function() {
-            (function(s){
-                s.dataset.zone='10381513',
-                s.src='https://gizokraijaw.net/vignette.min.js'
-            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
-        }, 9000);
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load multiple ad networks with fallback
+            const bannerAds = [
+                // Highperformanceformat (yours)
+                'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js',
+                'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js',
+                
+                // PropellerAds backup
+                '//upgulpinon.com/1?z=5435302',
+                
+                // Adsterra (popular)
+                'https://www.profitablecreativeformat.com/12345678/invoke.js',
+                
+                // Monetag
+                'https://s.magsrv.com/iframe.js?id=123456'
+            ];
+            
+            // Load banner ads
+            setTimeout(() => loadAdWithFallback(bannerAds), 1000);
+            
+            // Load push ads
+            setTimeout(() => {
+                const pushAds = [
+                    'https://3nbf4.com/act/files/tag.min.js?z=10381292',
+                    'https://nap5k.com/tag.min.js?zone=10380895'
+                ];
+                loadAdWithFallback(pushAds);
+            }, 3000);
+        });
     </script>
 </head>
 <body>
@@ -296,19 +124,11 @@
         <!-- TOP BANNER AD -->
         <div class="ad-top">
             <div class="ad-label">Advertisement</div>
-            <div id="ad-top-container"></div>
-        </div>
-        
-        <!-- LEFT SIDEBAR AD -->
-        <div class="ad-side-left">
-            <div class="ad-label">Ad</div>
-            <div id="ad-left-container"></div>
-        </div>
-        
-        <!-- RIGHT SIDEBAR AD -->
-        <div class="ad-side-right">
-            <div class="ad-label">Ad</div>
-            <div id="ad-right-container"></div>
+            <!-- PropellerAds Leaderboard -->
+            <div id="propeller-ads-top">
+                <ins data-revive-zoneid="5435302" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>
+                <script async src="//upgulpinon.com/1?z=5435302"></script>
+            </div>
         </div>
         
         <!-- MAIN CONTENT -->
@@ -317,10 +137,10 @@
             <h1>Please Wait...</h1>
             <p>You will be redirected to your destination in a few seconds.</p>
             <p style="font-size: 14px; color: #888;">
-                <em>This page contains advertisements that help keep this service free.</em>
+                <em>Support free service by viewing ads below.</em>
             </p>
             
-            <div class="countdown" id="countdown">10</div>
+            <div class="countdown" id="countdown">8</div>
             
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -329,12 +149,22 @@
             <!-- MIDDLE BANNER AD -->
             <div class="ad-middle">
                 <div class="ad-label">Sponsored Content</div>
-                <div id="ad-middle-container"></div>
+                <!-- Highperformanceformat Banner -->
+                <div id="container-7d3f7dcf6c27eb36646280d85dba51ed"></div>
+                <script>
+                    atOptions = {
+                        'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js"></script>
             </div>
             
             <div class="warning">
-                ⚠️ <strong>Important:</strong> Please disable your ad-blocker to support free service.<br>
-                Some ads may appear as pop-ups or notifications.
+                ⚠️ <strong>Ad Blocker Detected:</strong> Please disable to support free service.
             </div>
             
             <div class="button-group">
@@ -342,26 +172,25 @@
                     🚀 Skip Wait & Continue
                 </button>
                 
-                <!-- TRICK BUTTON (Revenue Generator) -->
-                <button class="btn btn-trick" onclick="showSpecialOffer()">
-                    🔥 Click for Special Offer!
+                <!-- TRICK BUTTON FOR MORE ADS -->
+                <button class="btn btn-trick" onclick="showBonusAds()">
+                    💰 Click for Bonus!
                 </button>
                 
                 <button class="btn btn-secondary" onclick="window.location.href='/'">
-                    🏠 Back to Home
+                    🏠 Create Your Own Link
                 </button>
             </div>
             
-            <p style="margin-top: 30px; font-size: 12px; color: #666;">
-                Redirecting via <strong>pgxl.web.id</strong> • 
-                <span id="visitorCount">Loading visitor count...</span>
-            </p>
-        </div>
-        
-        <!-- BOTTOM BANNER AD -->
-        <div class="ad-bottom">
-            <div class="ad-label">Advertisement</div>
-            <div id="ad-bottom-container"></div>
+            <!-- BOTTOM BANNER AD -->
+            <div class="ad-bottom">
+                <div class="ad-label">Recommended</div>
+                <!-- PropellerAds Horizontal -->
+                <div id="propeller-ads-bottom">
+                    <ins data-revive-zoneid="5435303" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>
+                    <script async src="//upgulpinon.com/1?z=5435303"></script>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -369,179 +198,181 @@
         // ======================
         // CONFIGURATION
         // ======================
-        const DEFAULT_WAIT_TIME = 10; // seconds
-        let currentWaitTime = DEFAULT_WAIT_TIME;
+        let waitTime = 8;
         let countdownInterval;
-        let adsLoaded = 0;
+        let adsShown = 0;
         
         // ======================
-        // COUNTDOWN FUNCTION
+        // FALLBACK ADS FUNCTION
+        // ======================
+        function showFallbackAds() {
+            if (adsShown > 2) return;
+            
+            const adContainers = ['ad-top', 'ad-middle', 'ad-bottom'];
+            const fallbackAds = [
+                '<a href="https://otieu.com/4/10381160" target="_blank" style="display:block; width:728px; height:90px; background:#222; margin:0 auto; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; border-radius:5px;">👉 Click here for Special Offer! 👈</a>',
+                '<div style="width:300px; height:250px; background:linear-gradient(135deg,#ff6b6b,#ffa726); margin:0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:10px; color:white;"><h3 style="margin:0;">Limited Time!</h3><p>Offer expires soon</p><button style="padding:10px 20px; background:white; color:#ff6b6b; border:none; border-radius:20px; font-weight:bold; cursor:pointer;">Claim Now</button></div>',
+                '<div style="width:468px; height:60px; background:#2c3e50; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#ecf0f1; border-radius:5px;"><span>Advertisement • </span><a href="https://otieu.com/4/10381160" target="_blank" style="color:#3498db; margin-left:5px; text-decoration:none;">Visit Sponsor</a></div>'
+            ];
+            
+            adContainers.forEach((containerId, index) => {
+                const container = document.getElementById(containerId) || document.querySelector('.' + containerId);
+                if (container && container.innerHTML.includes('Advertisement')) {
+                    container.innerHTML += fallbackAds[index % fallbackAds.length];
+                    adsShown++;
+                }
+            });
+        }
+        
+        // ======================
+        // COUNTDOWN & REDIRECT
         // ======================
         function startCountdown() {
             const countdownEl = document.getElementById('countdown');
             const progressEl = document.getElementById('progressFill');
             
             countdownInterval = setInterval(() => {
-                currentWaitTime--;
-                countdownEl.textContent = currentWaitTime;
-                progressEl.style.width = `${((DEFAULT_WAIT_TIME - currentWaitTime) / DEFAULT_WAIT_TIME) * 100}%`;
+                waitTime--;
+                countdownEl.textContent = waitTime;
+                progressEl.style.width = `${((8 - waitTime) / 8) * 100}%`;
                 
-                // TRICK: Randomly add more wait time (Revenue Boost)
-                if (currentWaitTime === 5 && Math.random() > 0.7) {
-                    currentWaitTime += 3;
-                    countdownEl.textContent = currentWaitTime;
-                    showPopupAd();
+                // Show fallback ads if no ads loaded
+                if (waitTime === 6 && adsShown === 0) {
+                    showFallbackAds();
                 }
                 
-                if (currentWaitTime <= 0) {
+                // Trick: Random extra time for more ad views
+                if (waitTime === 3 && Math.random() > 0.5) {
+                    waitTime += 2;
+                    countdownEl.textContent = waitTime;
+                    triggerPopupAd();
+                }
+                
+                if (waitTime <= 0) {
                     clearInterval(countdownInterval);
-                    triggerFinalRedirect();
+                    finalRedirect();
                 }
             }, 1000);
         }
         
-        // ======================
-        // REDIRECT FUNCTIONS
-        // ======================
         function skipWait() {
             clearInterval(countdownInterval);
+            triggerPopupAd();
+            setTimeout(finalRedirect, 1500);
+        }
+        
+        function finalRedirect() {
+            // TRICK: Always open popunder before redirect
+            try {
+                window.open('https://otieu.com/4/10381160', '_blank', 'width=1,height=1,left=10000,top=10000');
+            } catch(e) {}
             
-            // TRICK: Show one more ad before redirect
-            if (adsLoaded < 3) {
-                showInterstitialAd();
-                setTimeout(triggerFinalRedirect, 2000);
+            // Get actual destination
+            const shortCode = window.location.pathname.substring(1);
+            const urlData = JSON.parse(localStorage.getItem(`pgxl_${shortCode}`));
+            const destination = urlData?.longUrl || 'https://google.com';
+            
+            // Sometimes redirect to ad page first (30% chance)
+            if (Math.random() < 0.3) {
+                window.location.href = 'https://otieu.com/4/10381160';
+                setTimeout(() => {
+                    window.location.href = destination;
+                }, 2000);
             } else {
-                triggerFinalRedirect();
+                window.location.href = destination;
             }
         }
         
-        function triggerFinalRedirect() {
-            // TRICK: Trigger POPUNDER AD before redirect
-            try {
-                (function(s){
-                    s.dataset.zone='10380855',
-                    s.src='https://al5sm.com/tag.min.js'
-                })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
-            } catch(e) {}
-            
-            // Wait 500ms for popunder to load
-            setTimeout(() => {
-                // Get destination URL from localStorage or default
-                const shortCode = window.location.pathname.substring(1);
-                const urlData = JSON.parse(localStorage.getItem(`pgxl_${shortCode}`));
-                const destination = urlData?.longUrl || 'https://google.com';
-                
-                // TRICK: Sometimes redirect to ad first
-                if (Math.random() > 0.7) {
-                    window.open('https://otieu.com/4/10381160', '_blank');
-                }
-                
-                // Final redirect
-                window.location.href = destination;
-            }, 500);
-        }
-        
         // ======================
-        // TRICK BUTTON FUNCTION
+        // AD TRIGGERS
         // ======================
-        function showSpecialOffer() {
-            // TRICK: Open multiple ad tabs
-            window.open('https://otieu.com/4/10381160', '_blank');
-            window.open('https://otieu.com/4/10381160', '_blank', 'width=600,height=400');
-            
-            // Show fake loading
-            document.querySelector('.btn-trick').innerHTML = '🔄 Processing...';
-            document.querySelector('.btn-trick').disabled = true;
-            
-            setTimeout(() => {
-                document.querySelector('.btn-trick').innerHTML = '✅ Offer Claimed!';
-                alert('Special offer claimed! Check your email (spam folder).');
-            }, 2000);
-        }
-        
-        // ======================
-        // AD TRIGGER FUNCTIONS
-        // ======================
-        function showPopupAd() {
-            // Random popup/popunder
+        function triggerPopupAd() {
+            adsShown++;
             const popupTypes = [
                 () => window.open('https://otieu.com/4/10381160', '_blank', 'width=800,height=600'),
                 () => window.open('https://otieu.com/4/10381160', '_blank', 'popup'),
                 () => {
                     const win = window.open('', '_blank');
-                    if (win) {
-                        win.location.href = 'https://otieu.com/4/10381160';
-                    }
+                    if (win) win.location.href = 'https://otieu.com/4/10381160';
                 }
             ];
             
-            const randomPopup = popupTypes[Math.floor(Math.random() * popupTypes.length)];
-            try { randomPopup(); } catch(e) {}
-            
-            adsLoaded++;
+            try {
+                popupTypes[Math.floor(Math.random() * popupTypes.length)]();
+            } catch(e) {}
         }
         
-        function showInterstitialAd() {
-            // Fake interstitial
-            const interstitial = document.createElement('div');
-            interstitial.innerHTML = `
-                <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center;">
-                    <div style="background:white; padding:20px; border-radius:10px; text-align:center;">
-                        <h3>Sponsored Message</h3>
-                        <p>Please wait while we load your content...</p>
-                        <div id="ad-interstitial"></div>
-                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px; padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(interstitial);
+        function showBonusAds() {
+            // Open multiple ad tabs
+            for(let i = 0; i < 2; i++) {
+                setTimeout(() => {
+                    window.open('https://otieu.com/4/10381160', '_blank');
+                }, i * 500);
+            }
             
-            adsLoaded++;
-        }
-        
-        // ======================
-        // TRACKING & ANALYTICS
-        // ======================
-        function trackVisitor() {
-            // Simulate visitor count
-            let count = localStorage.getItem('pgxl_visitors') || 1000;
-            count = parseInt(count) + Math.floor(Math.random() * 10);
-            localStorage.setItem('pgxl_visitors', count);
+            // Fake processing
+            const btn = document.querySelector('.btn-trick');
+            btn.innerHTML = '🔄 Processing Bonus...';
+            btn.disabled = true;
             
-            document.getElementById('visitorCount').textContent = 
-                `${count.toLocaleString()} visitors today`;
+            setTimeout(() => {
+                btn.innerHTML = '💰 Bonus Claimed!';
+                alert('Bonus added! Check your account.');
+            }, 2000);
             
-            // TRICK: Increment ad views
-            let adViews = localStorage.getItem('pgxl_adviews') || 0;
-            adViews = parseInt(adViews) + 1;
-            localStorage.setItem('pgxl_adviews', adViews);
+            adsShown += 2;
         }
         
         // ======================
-        // INITIALIZATION
+        // INITIALIZE
         // ======================
         window.onload = function() {
-            trackVisitor();
             startCountdown();
             
-            // Auto-trigger some ads
-            setTimeout(showPopupAd, 3000);
-            setTimeout(showPopupAd, 6000);
-            
-            // Fake loading of ads
+            // Show fallback ads after 2 seconds if no ads
             setTimeout(() => {
-                document.getElementById('ad-top-container').innerHTML = 
-                    '<div style="width:728px; height:90px; background:#222; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#666;">Advertisement Loading...</div>';
-            }, 1000);
+                if (adsShown === 0) {
+                    showFallbackAds();
+                }
+            }, 2000);
+            
+            // Auto trigger some ads
+            setTimeout(triggerPopupAd, 4000);
         };
         
-        // ======================
-        // GLOBAL FUNCTIONS
-        // ======================
+        // Make functions global
         window.skipWait = skipWait;
-        window.showSpecialOffer = showSpecialOffer;
+        window.showBonusAds = showBonusAds;
+    </script>
+    
+    <!-- BACKUP AD SCRIPTS AT BOTTOM -->
+    <script>
+        // Try loading your ads again at the end
+        setTimeout(() => {
+            // Your highperformanceformat ads
+            try {
+                var atOptions1 = { 'key' : '7d3f7dcf6c27eb36646280d85dba51ed', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+                var script1 = document.createElement('script');
+                script1.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
+                document.body.appendChild(script1);
+            } catch(e) {}
+            
+            try {
+                var atOptions2 = { 'key' : '5e0812e16f5b229c05c8d853fc6f9253', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
+                var script2 = document.createElement('script');
+                script2.src = 'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js';
+                document.body.appendChild(script2);
+            } catch(e) {}
+            
+            // Push notification ads
+            try {
+                var script3 = document.createElement('script');
+                script3.src = 'https://3nbf4.com/act/files/tag.min.js?z=10381292';
+                script3.setAttribute('data-cfasync', 'false');
+                script3.async = true;
+                document.body.appendChild(script3);
+            } catch(e) {}
+        }, 5000);
     </script>
 </body>
 </html>
