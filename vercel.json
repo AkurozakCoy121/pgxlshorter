@@ -1,15 +1,28 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/:shortCode", "destination": "/api/redirect.js?short=:shortCode" }
+    { "source": "/api/shorten", "destination": "/api/shorten.js" },
+    { "source": "/api/history", "destination": "/api/history.js" },
+    { 
+      "source": "/:shortCode([a-zA-Z0-9]{1,20})", 
+      "destination": "/api/redirect.js?short=:shortCode" 
+    }
   ],
-  "headers": [
+  "redirects": [
     {
-      "source": "/:path*",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
+      "source": "http://pgxl.web.id/:path*",
+      "destination": "https://pgxl.web.id/:path*",
+      "permanent": true
+    },
+    {
+      "source": "http://www.pgxl.web.id/:path*",
+      "destination": "https://pgxl.web.id/:path*",
+      "permanent": true
+    },
+    {
+      "source": "https://www.pgxl.web.id/:path*",
+      "destination": "https://pgxl.web.id/:path*",
+      "permanent": true
     }
   ]
 }
