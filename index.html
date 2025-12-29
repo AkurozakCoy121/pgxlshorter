@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGXL - Player Generated Xtreme Leagues</title>
+    
+    <!-- Content Security Policy - ALLOW ALL FOR NOW -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; font-src *; frame-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';">
+    
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    
     <!-- Font & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --dark-bg: #0f172a;
@@ -204,6 +210,11 @@
             color: var(--primary);
         }
 
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         /* Modal & Forms */
         .modal {
             display: none;
@@ -218,6 +229,10 @@
             justify-content: center;
         }
 
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
             background: var(--dark-card);
             border-radius: var(--radius);
@@ -225,6 +240,12 @@
             width: 90%;
             max-width: 500px;
             border: 1px solid var(--dark-border);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         body[data-theme="light"] .modal-content {
@@ -250,6 +271,7 @@
             background: var(--dark-bg);
             color: var(--dark-text);
             font-family: 'Inter', sans-serif;
+            font-size: 16px;
         }
 
         body[data-theme="light"] .form-control {
@@ -258,9 +280,20 @@
             color: var(--light-text);
         }
 
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
         /* Dashboard */
         .dashboard {
             display: none;
+            padding: 40px 0;
+        }
+
+        .dashboard.active {
+            display: block;
         }
 
         .poll-grid {
@@ -275,11 +308,32 @@
             border-radius: var(--radius);
             padding: 20px;
             border: 1px solid var(--dark-border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .poll-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
         }
 
         body[data-theme="light"] .poll-card {
             background: var(--light-card);
             border-color: var(--light-border);
+        }
+
+        .poll-card h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .poll-card p {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* Poll Customization */
@@ -292,9 +346,13 @@
             border: 1px solid var(--dark-border);
         }
 
+        .customization-panel.active {
+            display: block;
+        }
+
         .layout-options {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin: 20px 0;
         }
@@ -306,10 +364,23 @@
             border-radius: 8px;
             cursor: pointer;
             background: var(--dark-bg);
+            transition: all 0.3s;
         }
 
-        .layout-option:hover, .layout-option.active {
+        .layout-option:hover {
             border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .layout-option.active {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .layout-option i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary);
         }
 
         /* Utility */
@@ -323,6 +394,55 @@
 
         .mt-4 { margin-top: 20px; }
         .mb-4 { margin-bottom: 20px; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--dark-border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .poll-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .layout-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -354,39 +474,54 @@
             <button class="btn btn-primary" id="heroCreateBtn">
                 <i class="fas fa-rocket"></i> Buat Polling Pertamamu
             </button>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h3><i class="fas fa-bolt"></i> Cepat & Real-time</h3>
+                    <p>Hasil polling update langsung, tanpa refresh halaman.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-palette"></i> UI Kustom</h3>
+                    <p>4 layout berbeda, tema dark/light, sesuaikan dengan style mu.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-share-alt"></i> Mudah Dibagikan</h3>
+                    <p>Generate link unik, share ke Discord, Twitter, atau komunitas gaming mu.</p>
+                </div>
+            </div>
         </section>
 
         <!-- Dashboard (After Login) -->
         <section id="dashboardSection" class="dashboard">
-            <h2>Dashboard Polling Saya</h2>
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard Polling Saya</h2>
             <p>Kelola semua pollingmu di satu tempat</p>
             
             <div class="poll-grid" id="pollGrid">
-                <!-- Polling akan muncul di sini secara realtime -->
-                <div class="poll-card">
-                    <h4>Belum ada polling</h4>
-                    <p>Klik "Buat Polling" untuk memulai</p>
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Memuat polling...</p>
                 </div>
             </div>
 
             <!-- Customization Panel -->
             <div id="customizationPanel" class="customization-panel">
                 <h3><i class="fas fa-palette"></i> Kustomisasi UI Polling</h3>
+                <p>Pilih layout favoritmu:</p>
                 <div class="layout-options">
                     <div class="layout-option active" data-layout="default">
-                        <i class="fas fa-th-large fa-2x"></i>
+                        <i class="fas fa-th-large"></i>
                         <p>Grid Default</p>
                     </div>
                     <div class="layout-option" data-layout="cards">
-                        <i class="fas fa-th fa-2x"></i>
+                        <i class="fas fa-th"></i>
                         <p>Kartu Modern</p>
                     </div>
                     <div class="layout-option" data-layout="list">
-                        <i class="fas fa-list fa-2x"></i>
+                        <i class="fas fa-list"></i>
                         <p>Daftar Ringkas</p>
                     </div>
                     <div class="layout-option" data-layout="minimal">
-                        <i class="fas fa-align-left fa-2x"></i>
+                        <i class="fas fa-align-left"></i>
                         <p>Minimalis</p>
                     </div>
                 </div>
@@ -405,6 +540,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label>Deskripsi (Opsional)</label>
+                    <textarea class="form-control" id="pollDescription" placeholder="Jelaskan tentang polling ini..." rows="2"></textarea>
+                </div>
+                
+                <div class="form-group">
                     <label>Pilihan (Maks 4)</label>
                     <div id="optionsContainer">
                         <input type="text" class="form-control mb-4" placeholder="Pilihan 1" required>
@@ -413,6 +553,7 @@
                     <button type="button" class="btn btn-outline" id="addOptionBtn">
                         <i class="fas fa-plus"></i> Tambah Pilihan
                     </button>
+                    <small class="text-muted" style="display: block; margin-top: 5px; opacity: 0.7;">Minimal 2, maksimal 4 pilihan</small>
                 </div>
 
                 <div class="form-group">
@@ -427,6 +568,9 @@
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-magic"></i> Generate Polling
+                    </button>
+                    <button type="button" class="btn btn-outline mt-4" id="cancelPollBtn">
+                        Batal
                     </button>
                 </div>
             </form>
@@ -453,6 +597,9 @@
                     <button type="button" class="btn btn-outline mt-4" id="switchAuthBtn">
                         Belum punya akun? Daftar
                     </button>
+                    <button type="button" class="btn btn-outline mt-4" id="cancelAuthBtn">
+                        Batal
+                    </button>
                 </div>
             </form>
         </div>
@@ -464,316 +611,488 @@
             <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> Polling Berhasil Dibuat!</h3>
             <p>Link polling-mu:</p>
             <div class="form-group">
-                <input type="text" class="form-control" id="generatedLink" readonly>
+                <input type="text" class="form-control" id="generatedLink" readonly style="font-family: monospace;">
             </div>
-            <p class="mb-4">Share link ini ke komunitasmu!</p>
-            <button class="btn btn-primary" id="copyLinkBtn">
-                <i class="fas fa-copy"></i> Salin Link
-            </button>
-            <button class="btn btn-outline" id="closeSuccessBtn">
-                Tutup
-            </button>
+            <p class="mb-4"><i class="fas fa-share-alt"></i> Share link ini ke komunitasmu!</p>
+            <div class="text-center">
+                <button class="btn btn-primary" id="copyLinkBtn">
+                    <i class="fas fa-copy"></i> Salin Link
+                </button>
+                <button class="btn btn-outline" id="closeSuccessBtn">
+                    <i class="fas fa-times"></i> Tutup
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase Config Script -->
     <script>
-        // Firebase config akan dimuat dari file eksternal
-        let firebaseConfig = {};
+        // ==================== FIREBASE INITIALIZATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
+            authDomain: "pgxl-4567a.firebaseapp.com",
+            projectId: "pgxl-4567a",
+            storageBucket: "pgxl-4567a.firebasestorage.app",
+            messagingSenderId: "545920930826",
+            appId: "1:545920930826:web:18458fd3382a83f17abbf3",
+            measurementId: "G-1Y4E635M4R"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // ==================== APP STATE ====================
+        let currentUser = null;
+        let isLoginMode = true;
+        let userPolls = [];
+
+        // ==================== DOM ELEMENTS ====================
+        const themeToggle = document.getElementById('themeToggle');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const createPollBtn = document.getElementById('createPollBtn');
+        const heroCreateBtn = document.getElementById('heroCreateBtn');
         
-        // Muat config dari file JSON
-        fetch('firebase-config.json')
-            .then(response => response.json())
-            .then(config => {
-                firebaseConfig = config;
-                initializeApp();
-            })
-            .catch(error => {
-                console.error('Gagal memuat firebase-config.json:', error);
-                // Fallback config
-                firebaseConfig = {
-                    apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
-                    authDomain: "pgxl-4567a.firebaseapp.com",
-                    projectId: "pgxl-4567a",
-                    storageBucket: "pgxl-4567a.firebasestorage.app",
-                    messagingSenderId: "545920930826",
-                    appId: "1:545920930826:web:18458fd3382a83f17abbf3",
-                    measurementId: "G-1Y4E635M4R"
-                };
-                initializeApp();
-            });
+        const authModal = document.getElementById('authModal');
+        const createPollModal = document.getElementById('createPollModal');
+        const successModal = document.getElementById('successModal');
+        
+        const homeSection = document.getElementById('homeSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const pollGrid = document.getElementById('pollGrid');
+        const customizationPanel = document.getElementById('customizationPanel');
+        
+        const authForm = document.getElementById('authForm');
+        const pollForm = document.getElementById('pollForm');
+        const addOptionBtn = document.getElementById('addOptionBtn');
+        const optionsContainer = document.getElementById('optionsContainer');
+        
+        const authTitle = document.getElementById('authTitle');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const switchAuthBtn = document.getElementById('switchAuthBtn');
+        const cancelAuthBtn = document.getElementById('cancelAuthBtn');
+        const cancelPollBtn = document.getElementById('cancelPollBtn');
+        
+        const generatedLink = document.getElementById('generatedLink');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
 
-        function initializeApp() {
-            // Inisialisasi Firebase
-            firebase.initializeApp(firebaseConfig);
-            const auth = firebase.auth();
-            const db = firebase.firestore();
-            const analytics = firebase.analytics();
-
-            // State aplikasi
-            let currentUser = null;
-            let isLoginMode = true;
-            let pollCount = 0;
-
-            // DOM Elements
-            const themeToggle = document.getElementById('themeToggle');
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const createPollBtn = document.getElementById('createPollBtn');
-            const heroCreateBtn = document.getElementById('heroCreateBtn');
-            const authModal = document.getElementById('authModal');
-            const createPollModal = document.getElementById('createPollModal');
-            const successModal = document.getElementById('successModal');
-            const homeSection = document.getElementById('homeSection');
-            const dashboardSection = document.getElementById('dashboardSection');
-            const pollGrid = document.getElementById('pollGrid');
-            const customizationPanel = document.getElementById('customizationPanel');
-            const authForm = document.getElementById('authForm');
-            const pollForm = document.getElementById('pollForm');
-            const addOptionBtn = document.getElementById('addOptionBtn');
-            const optionsContainer = document.getElementById('optionsContainer');
-            const authTitle = document.getElementById('authTitle');
-            const authSubmitBtn = document.getElementById('authSubmitBtn');
-            const switchAuthBtn = document.getElementById('switchAuthBtn');
-            const generatedLink = document.getElementById('generatedLink');
-            const copyLinkBtn = document.getElementById('copyLinkBtn');
-            const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-
-            // Theme Toggle
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = document.body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.body.setAttribute('data-theme', newTheme);
-                localStorage.setItem('pgxl-theme', newTheme);
-            });
-
-            // Load saved theme
-            const savedTheme = localStorage.getItem('pgxl-theme') || 'dark';
-            document.body.setAttribute('data-theme', savedTheme);
-
-            // Auth State Listener
-            auth.onAuthStateChanged(user => {
-                currentUser = user;
-                if (user) {
-                    // User logged in
-                    loginBtn.classList.add('hidden');
-                    logoutBtn.classList.remove('hidden');
-                    createPollBtn.classList.remove('hidden');
-                    homeSection.classList.add('hidden');
-                    dashboardSection.classList.remove('hidden');
-                    customizationPanel.classList.remove('hidden');
-                    loadUserPolls(user.uid);
-                    analytics.logEvent('login');
-                } else {
-                    // User logged out
-                    loginBtn.classList.remove('hidden');
-                    logoutBtn.classList.add('hidden');
-                    createPollBtn.classList.add('hidden');
-                    homeSection.classList.remove('hidden');
-                    dashboardSection.classList.add('hidden');
-                    customizationPanel.classList.add('hidden');
-                }
-            });
-
-            // Button Events
-            loginBtn.addEventListener('click', () => showModal(authModal));
-            logoutBtn.addEventListener('click', () => auth.signOut());
-            heroCreateBtn.addEventListener('click', () => {
-                if (currentUser) {
-                    showModal(createPollModal);
-                } else {
-                    showModal(authModal);
-                }
-            });
-            createPollBtn.addEventListener('click', () => showModal(createPollModal));
-
-            // Modal Close on Background Click
-            [authModal, createPollModal, successModal].forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) hideModal(modal);
-                });
-            });
-
-            // Auth Form
-            switchAuthBtn.addEventListener('click', () => {
-                isLoginMode = !isLoginMode;
-                authTitle.innerHTML = isLoginMode ? 
-                    '<i class="fas fa-user"></i> Masuk ke PGXL' : 
-                    '<i class="fas fa-user-plus"></i> Daftar Akun Baru';
-                authSubmitBtn.textContent = isLoginMode ? 'Masuk' : 'Daftar';
-                switchAuthBtn.innerHTML = isLoginMode ? 
-                    'Belum punya akun? Daftar' : 
-                    'Sudah punya akun? Masuk';
-            });
-
-            authForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('authEmail').value;
-                const password = document.getElementById('authPassword').value;
-                
-                try {
-                    if (isLoginMode) {
-                        await auth.signInWithEmailAndPassword(email, password);
-                    } else {
-                        await auth.createUserWithEmailAndPassword(email, password);
-                    }
-                    hideModal(authModal);
-                    authForm.reset();
-                } catch (error) {
-                    alert(`Error: ${error.message}`);
-                }
-            });
-
-            // Poll Form
-            addOptionBtn.addEventListener('click', () => {
-                if (optionsContainer.children.length >= 4) {
-                    alert('Maksimal 4 pilihan!');
-                    return;
-                }
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control mb-4';
-                input.placeholder = `Pilihan ${optionsContainer.children.length + 1}`;
-                input.required = true;
-                optionsContainer.appendChild(input);
-            });
-
-            pollForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (!currentUser) {
-                    alert('Silakan login dulu!');
-                    return;
-                }
-
-                const title = document.getElementById('pollTitle').value;
-                const options = Array.from(optionsContainer.children)
-                    .map(input => input.value.trim())
-                    .filter(val => val !== '');
-                const type = document.getElementById('pollType').value;
-
-                if (options.length < 2) {
-                    alert('Minimal 2 pilihan!');
-                    return;
-                }
-
-                // Generate unique poll ID
-                const pollId = 'poll_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                const shareableLink = `https://${window.location.hostname}/poll/${pollId}`;
-
-                // Save to Firestore
-                try {
-                    await db.collection('polls').doc(pollId).set({
-                        title,
-                        options: options.map(opt => ({ text: opt, votes: 0 })),
-                        type,
-                        creatorId: currentUser.uid,
-                        creatorEmail: currentUser.email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        totalVotes: 0,
-                        shareableLink
-                    });
-
-                    // Update UI
-                    generatedLink.value = shareableLink;
-                    hideModal(createPollModal);
-                    showModal(successModal);
-                    pollForm.reset();
-                    
-                    // Reset options to 2
-                    while (optionsContainer.children.length > 2) {
-                        optionsContainer.removeChild(optionsContainer.lastChild);
-                    }
-                    
-                    // Reload polls
-                    loadUserPolls(currentUser.uid);
-                    
-                    analytics.logEvent('create_poll', { poll_type: type });
-                } catch (error) {
-                    alert(`Error: ${error.message}`);
-                }
-            });
-
-            // Success Modal
-            copyLinkBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(generatedLink.value)
-                    .then(() => alert('Link berhasil disalin!'))
-                    .catch(() => alert('Gagal menyalin link'));
-            });
-
-            closeSuccessBtn.addEventListener('click', () => hideModal(successModal));
-
-            // Layout Customization
-            document.querySelectorAll('.layout-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.layout-option').forEach(opt => {
-                        opt.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    const layout = this.getAttribute('data-layout');
-                    pollGrid.className = `poll-grid layout-${layout}`;
-                    localStorage.setItem('pgxl-layout', layout);
-                });
-            });
-
-            // Load saved layout
-            const savedLayout = localStorage.getItem('pgxl-layout') || 'default';
-            document.querySelector(`.layout-option[data-layout="${savedLayout}"]`).click();
-
-            // Helper Functions
-            function showModal(modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-
-            function hideModal(modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-
-            async function loadUserPolls(userId) {
-                try {
-                    const snapshot = await db.collection('polls')
-                        .where('creatorId', '==', userId)
-                        .orderBy('createdAt', 'desc')
-                        .limit(10)
-                        .get();
-                    
-                    pollGrid.innerHTML = '';
-                    
-                    if (snapshot.empty) {
-                        pollGrid.innerHTML = `
-                            <div class="poll-card text-center">
-                                <h4><i class="fas fa-inbox"></i> Belum ada polling</h4>
-                                <p>Klik "Buat Polling" untuk memulai</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    snapshot.forEach(doc => {
-                        const poll = doc.data();
-                        const pollElement = document.createElement('div');
-                        pollElement.className = 'poll-card';
-                        pollElement.innerHTML = `
-                            <h4>${poll.title}</h4>
-                            <p><i class="fas fa-link"></i> ${poll.shareableLink}</p>
-                            <p><i class="fas fa-users"></i> ${poll.totalVotes || 0} vote</p>
-                            <p><i class="fas fa-calendar"></i> ${new Date(poll.createdAt?.toDate()).toLocaleDateString('id-ID')}</p>
-                            <button class="btn btn-outline" onclick="window.open('${poll.shareableLink}', '_blank')">
-                                <i class="fas fa-external-link-alt"></i> Buka
-                            </button>
-                        `;
-                        pollGrid.appendChild(pollElement);
-                    });
-                } catch (error) {
-                    console.error('Error loading polls:', error);
-                }
-            }
-
-            // Initialize
-            console.log('PGXL Platform initialized successfully!');
+        // ==================== THEME MANAGEMENT ====================
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('pgxl-theme', newTheme);
+            analytics.logEvent('theme_change', { theme: newTheme });
         }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('pgxl-theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+
+        // ==================== AUTHENTICATION ====================
+        auth.onAuthStateChanged(handleAuthStateChange);
+
+        function handleAuthStateChange(user) {
+            currentUser = user;
+            if (user) {
+                // User logged in
+                showElement(loginBtn, false);
+                showElement(logoutBtn, true);
+                showElement(createPollBtn, true);
+                showElement(homeSection, false);
+                showElement(dashboardSection, true);
+                showElement(customizationPanel, true);
+                
+                loadUserPolls(user.uid);
+                analytics.logEvent('login', { method: 'email' });
+            } else {
+                // User logged out
+                showElement(loginBtn, true);
+                showElement(logoutBtn, false);
+                showElement(createPollBtn, false);
+                showElement(homeSection, true);
+                showElement(dashboardSection, false);
+                showElement(customizationPanel, false);
+                
+                userPolls = [];
+                pollGrid.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Memuat polling...</p></div>';
+            }
+        }
+
+        // ==================== MODAL CONTROLS ====================
+        loginBtn.addEventListener('click', () => showModal(authModal));
+        logoutBtn.addEventListener('click', () => auth.signOut().catch(handleError));
+        heroCreateBtn.addEventListener('click', handleCreatePollClick);
+        createPollBtn.addEventListener('click', () => showModal(createPollModal));
+        
+        cancelAuthBtn.addEventListener('click', () => hideModal(authModal));
+        cancelPollBtn.addEventListener('click', () => hideModal(createPollModal));
+        closeSuccessBtn.addEventListener('click', () => hideModal(successModal));
+
+        // Modal background click to close
+        [authModal, createPollModal, successModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) hideModal(modal);
+            });
+        });
+
+        function handleCreatePollClick() {
+            if (currentUser) {
+                showModal(createPollModal);
+            } else {
+                showModal(authModal);
+            }
+        }
+
+        // ==================== AUTH FORM ====================
+        switchAuthBtn.addEventListener('click', toggleAuthMode);
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            authTitle.innerHTML = isLoginMode ? 
+                '<i class="fas fa-user"></i> Masuk ke PGXL' : 
+                '<i class="fas fa-user-plus"></i> Daftar Akun Baru';
+            authSubmitBtn.textContent = isLoginMode ? 'Masuk' : 'Daftar';
+            switchAuthBtn.innerHTML = isLoginMode ? 
+                'Belum punya akun? Daftar' : 
+                'Sudah punya akun? Masuk';
+        }
+
+        authForm.addEventListener('submit', handleAuthSubmit);
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            
+            try {
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    showToast('Berhasil masuk!', 'success');
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
+                    showToast('Akun berhasil dibuat!', 'success');
+                }
+                hideModal(authModal);
+                authForm.reset();
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ==================== POLL CREATION ====================
+        addOptionBtn.addEventListener('click', addPollOption);
+
+        function addPollOption() {
+            const options = optionsContainer.querySelectorAll('input');
+            if (options.length >= 4) {
+                showToast('Maksimal 4 pilihan!', 'warning');
+                return;
+            }
+            
+            const newOption = document.createElement('input');
+            newOption.type = 'text';
+            newOption.className = 'form-control mb-4';
+            newOption.placeholder = `Pilihan ${options.length + 1}`;
+            newOption.required = true;
+            optionsContainer.appendChild(newOption);
+        }
+
+        pollForm.addEventListener('submit', handlePollSubmit);
+
+        async function handlePollSubmit(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showToast('Silakan login dulu!', 'error');
+                hideModal(createPollModal);
+                showModal(authModal);
+                return;
+            }
+
+            const title = document.getElementById('pollTitle').value.trim();
+            const description = document.getElementById('pollDescription').value.trim();
+            const options = Array.from(optionsContainer.querySelectorAll('input'))
+                .map(input => input.value.trim())
+                .filter(val => val !== '');
+            const type = document.getElementById('pollType').value;
+
+            // Validation
+            if (!title) {
+                showToast('Judul polling harus diisi!', 'error');
+                return;
+            }
+            
+            if (options.length < 2) {
+                showToast('Minimal 2 pilihan!', 'error');
+                return;
+            }
+
+            // Generate poll data
+            const pollId = 'poll_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const shareableLink = `${window.location.origin}/poll/${pollId}`;
+            
+            const pollData = {
+                title,
+                description: description || '',
+                options: options.map(opt => ({ 
+                    text: opt, 
+                    votes: 0,
+                    id: Math.random().toString(36).substr(2, 9)
+                })),
+                type,
+                creatorId: currentUser.uid,
+                creatorEmail: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                totalVotes: 0,
+                shareableLink,
+                isActive: true,
+                voters: []
+            };
+
+            try {
+                // Save to Firestore
+                await db.collection('polls').doc(pollId).set(pollData);
+                
+                // Update UI
+                generatedLink.value = shareableLink;
+                hideModal(createPollModal);
+                showModal(successModal);
+                
+                // Reset form
+                pollForm.reset();
+                resetPollOptions();
+                
+                // Reload polls
+                await loadUserPolls(currentUser.uid);
+                
+                // Log event
+                analytics.logEvent('poll_created', { 
+                    poll_type: type, 
+                    options_count: options.length 
+                });
+                
+                showToast('Polling berhasil dibuat!', 'success');
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function resetPollOptions() {
+            // Keep only first 2 options
+            const options = optionsContainer.querySelectorAll('input');
+            for (let i = 2; i < options.length; i++) {
+                options[i].remove();
+            }
+            
+            // Reset values of first 2
+            if (options[0]) options[0].value = '';
+            if (options[1]) options[1].value = '';
+        }
+
+        // ==================== POLL MANAGEMENT ====================
+        async function loadUserPolls(userId) {
+            try {
+                pollGrid.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Memuat polling...</p></div>';
+                
+                const snapshot = await db.collection('polls')
+                    .where('creatorId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+                
+                userPolls = [];
+                pollGrid.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    pollGrid.innerHTML = `
+                        <div class="poll-card text-center">
+                            <h4><i class="fas fa-inbox"></i> Belum ada polling</h4>
+                            <p>Klik "Buat Polling" untuk mulai membuat polling pertama mu</p>
+                            <button class="btn btn-primary mt-4" id="createFirstPollBtn">
+                                <i class="fas fa-plus"></i> Buat Polling Pertama
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('createFirstPollBtn')?.addEventListener('click', () => {
+                        showModal(createPollModal);
+                    });
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const poll = { id: doc.id, ...doc.data() };
+                    userPolls.push(poll);
+                    renderPollCard(poll);
+                });
+                
+            } catch (error) {
+                console.error('Error loading polls:', error);
+                pollGrid.innerHTML = `
+                    <div class="poll-card text-center">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Error</h4>
+                        <p>Gagal memuat polling. Coba refresh halaman.</p>
+                        <button class="btn btn-outline mt-4" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> Refresh
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderPollCard(poll) {
+            const pollElement = document.createElement('div');
+            pollElement.className = 'poll-card';
+            
+            const date = poll.createdAt?.toDate ? poll.createdAt.toDate() : new Date();
+            const formattedDate = date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            pollElement.innerHTML = `
+                <h4>${poll.title}</h4>
+                ${poll.description ? `<p style="font-size: 14px; margin-bottom: 10px;">${poll.description}</p>` : ''}
+                <p><i class="fas fa-link"></i> <a href="${poll.shareableLink}" target="_blank" style="color: var(--primary);">${poll.shareableLink}</a></p>
+                <p><i class="fas fa-users"></i> ${poll.totalVotes || 0} vote</p>
+                <p><i class="fas fa-calendar"></i> ${formattedDate}</p>
+                <p><i class="fas fa-poll"></i> ${getPollTypeLabel(poll.type)}</p>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-outline" onclick="window.open('${poll.shareableLink}', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> Buka
+                    </button>
+                    <button class="btn btn-outline" onclick="copyToClipboard('${poll.shareableLink}')">
+                        <i class="fas fa-copy"></i> Salin
+                    </button>
+                </div>
+            `;
+            
+            pollGrid.appendChild(pollElement);
+        }
+
+        function getPollTypeLabel(type) {
+            const types = {
+                'single': 'Pilihan Tunggal',
+                'multiple': 'Pilihan Ganda',
+                'bracket': 'Sistem Bracket'
+            };
+            return types[type] || type;
+        }
+
+        // ==================== UI CUSTOMIZATION ====================
+        document.querySelectorAll('.layout-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.layout-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                const layout = this.getAttribute('data-layout');
+                pollGrid.className = `poll-grid layout-${layout}`;
+                localStorage.setItem('pgxl-layout', layout);
+                
+                analytics.logEvent('layout_change', { layout });
+            });
+        });
+
+        // Load saved layout
+        const savedLayout = localStorage.getItem('pgxl-layout') || 'default';
+        const savedLayoutOption = document.querySelector(`.layout-option[data-layout="${savedLayout}"]`);
+        if (savedLayoutOption) {
+            savedLayoutOption.click();
+        }
+
+        // ==================== SUCCESS MODAL ====================
+        copyLinkBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(generatedLink.value);
+                showToast('Link berhasil disalin!', 'success');
+            } catch (err) {
+                showToast('Gagal menyalin link', 'error');
+            }
+        });
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showModal(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showElement(element, show) {
+            if (show) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            // Add styles
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                background: ${type === 'error' ? 'var(--danger)' : 
+                           type === 'success' ? 'var(--success)' : 
+                           type === 'warning' ? 'var(--warning)' : 'var(--primary)'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: var(--shadow);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 15px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+            `;
+            
+            // Add to page
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => showToast('Link disalin!', 'success'))
+                .catch(() => showToast('Gagal menyalin', 'error'));
+        }
+
+        function handleError(error) {
+            console.error('Error:', error);
+            showToast(`Error: ${error.message}`, 'error');
+        }
+
+        // ==================== INITIALIZATION ====================
+        console.log('PGXL Platform initialized successfully!');
+        analytics.logEvent('page_view');
     </script>
 </body>
 </html>
