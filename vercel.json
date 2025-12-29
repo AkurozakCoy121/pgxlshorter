@@ -1,23 +1,22 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "redirect-page.html",
-      "use": "@vercel/static"
+  "rewrites": [
+    // Route 1: Homepage → index.html
+    { "source": "/", "destination": "/index.html" },
+    
+    // Route 2: Short URLs → redirect-page.html  
+    // (hanya untuk kode alfanumerik 3-10 karakter)
+    { 
+      "source": "/([a-zA-Z0-9]{3,10})", 
+      "destination": "/redirect-page.html" 
     }
   ],
-  "routes": [
+  
+  "headers": [
     {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/([a-zA-Z0-9]+)",
-      "dest": "/redirect-page.html"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }
