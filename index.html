@@ -3,289 +3,1935 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGXL.WEB.ID - Download Games</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <title>PGXL.WEB.ID - Download Games Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        /* CSS STYLE DARI PROMPT */
-        body {
-            overflow-x: hidden;
-            font-size: 16px;
-            font-family: 'Montserrat', sans-serif;
-            line-height: 1.3;
-            font-weight: 400;
-            color: #fff;
-            background-color: #20222b;
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            --primary: #00f3ff;
+            --primary-dark: #00a8b5;
+            --secondary: #ff00ff;
+            --secondary-dark: #b300b3;
+            --dark-bg: #0a0e17;
+            --darker-bg: #050811;
+            --card-bg: #13182b;
+            --card-border: #1e2540;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b7d6;
+            --text-muted: #6b728c;
+            --success: #00ff9d;
+            --warning: #ffcc00;
+            --danger: #ff4757;
+            --ethno: 'Orbitron', sans-serif;
+            --montserrat: 'Montserrat', sans-serif;
+            --round-lg: 20px;
+            --round-md: 15px;
+            --round-sm: 10px;
+            --shadow-glow: 0 0 20px rgba(0, 243, 255, 0.3);
+            --shadow-secondary: 0 0 15px rgba(255, 0, 255, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        :root {
-            --bf-primary: #ffe272;
-            --ethno: "Ethnocentric", sans-serif;
-            --round: 15px;
-        }
-        html { -webkit-user-select: none; user-select: none; }
-        ::-webkit-scrollbar { width: 2px; }
-        ::-webkit-scrollbar-thumb { background-color: #fbc300; border-radius: 6px; }
-        ::-webkit-scrollbar-track { background: #2e323d; }
 
-        /* HEADER & SEARCH */
+        /* ===== BODY & TYPOGRAPHY ===== */
+        body {
+            font-family: var(--montserrat);
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            user-select: none;
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 20%);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--ethno);
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+            border-radius: var(--round-sm);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: var(--round-sm);
+            border: 2px solid var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-dark), var(--secondary-dark));
+        }
+
+        /* ===== HEADER ===== */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 30px;
-            background: #1a1c23;
+            padding: 1rem 2rem;
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
-        .search-container { position: relative; width: 40%; }
-        .search-container input {
-            width: 100%; padding: 10px; border-radius: 20px;
-            background: #2e323d; border: 1px solid #444; color: #fff;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--ethno);
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--dark-bg);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-family: var(--ethno);
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== CATEGORY BUTTON ===== */
+        .category-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--round-md);
+            color: var(--dark-bg);
+            font-family: var(--ethno);
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 243, 255, 0.5);
+        }
+
+        /* ===== SEARCH CONTAINER ===== */
+        .search-container {
+            position: relative;
+            width: 40%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            padding-left: 3rem;
+            background: rgba(30, 37, 64, 0.8);
+            border: 2px solid var(--card-border);
+            border-radius: var(--round-lg);
+            color: var(--text-primary);
+            font-family: var(--montserrat);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 1rem center;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+            background-color: rgba(30, 37, 64, 1);
+        }
+
         .search-results {
-            position: absolute; width: 100%; background: #2e323d;
-            border-radius: 10px; display: none; margin-top: 5px; max-height: 300px; overflow-y: auto;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--round-md);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            animation: slideDown 0.3s ease;
         }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .search-item {
-            display: flex; align-items: center; padding: 10px; cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: var(--transition);
         }
-        .search-item img { width: 40px; height: 40px; border-radius: 5px; margin-right: 10px; }
 
-        /* SIDEBAR ANIMATION */
+        .search-item:hover {
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--round-sm);
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--primary);
+        }
+
+        .search-item-info h4 {
+            font-family: var(--montserrat);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+        }
+
+        .search-item-info p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         .sidebar {
-            position: fixed; left: -300px; top: 0; width: 280px; height: 100%;
-            background: #1a1c23; transition: 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
-            z-index: 1100; padding: 20px; border-right: 2px solid var(--bf-primary);
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 320px;
+            height: 100%;
+            background: var(--darker-bg);
+            border-right: 3px solid var(--primary);
+            z-index: 2001;
+            padding: 2rem;
+            overflow-y: auto;
+            transition: left 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
         }
-        .sidebar.open { left: 0; }
-        .sidebar h2 { font-family: var(--ethno); color: var(--bf-primary); font-size: 18px; margin-bottom: 20px; }
-        .cat-item { padding: 12px; border-bottom: 1px solid #333; cursor: pointer; }
 
-        /* GAME CARDS - LONJONG LIST */
-        .main-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-sidebar:hover {
+            background: rgba(255, 0, 255, 0.1);
+            color: var(--secondary);
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .cat-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--card-bg);
+            border-radius: var(--round-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: var(--montserrat);
+            font-weight: 500;
+        }
+
+        .cat-item:hover {
+            border-color: var(--primary);
+            background: rgba(0, 243, 255, 0.05);
+            transform: translateX(10px);
+        }
+
+        .cat-item.active {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.2), rgba(255, 0, 255, 0.1));
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .cat-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-bg);
+            font-weight: bold;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .games-count {
+            background: var(--primary);
+            color: var(--dark-bg);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-family: var(--ethno);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* ===== GAME CARDS ===== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
         .game-card {
-            background: #2e323d; border-radius: var(--round);
-            display: flex; overflow: hidden; height: 120px;
-            transition: 0.3s; border: 1px solid transparent; cursor: pointer;
+            background: var(--card-bg);
+            border-radius: var(--round-lg);
+            overflow: hidden;
+            border: 2px solid var(--card-border);
+            transition: var(--transition);
+            cursor: pointer;
+            height: 140px;
+            display: flex;
         }
-        .game-card:hover { border-color: var(--bf-primary); transform: translateX(10px); }
-        .game-card img { width: 200px; object-fit: cover; }
-        .card-body { padding: 15px; flex: 1; }
-        .card-body h3 { margin: 0; color: var(--bf-primary); font-size: 18px; }
 
-        /* DETAIL FRAME FULL SCREEN */
+        .game-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .game-card-image {
+            width: 200px;
+            height: 100%;
+            object-fit: cover;
+            border-right: 2px solid var(--card-border);
+        }
+
+        .game-card-content {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .game-card-title {
+            font-family: var(--montserrat);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .game-card-rating {
+            background: rgba(255, 204, 0, 0.2);
+            color: var(--warning);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .game-card-publisher {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .game-card-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .game-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .game-card-category {
+            background: rgba(255, 0, 255, 0.1);
+            color: var(--secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .game-card-download {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--round-sm);
+            color: var(--dark-bg);
+            font-family: var(--montserrat);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .game-card-download:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+
+        /* ===== DETAIL FRAME ===== */
         #detail-frame {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #20222b; z-index: 2000; display: none; overflow-y: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker-bg);
+            z-index: 3000;
+            display: none;
+            overflow-y: auto;
         }
-        .banner-container { width: 100%; height: 60vh; position: relative; }
-        #banner-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s; }
-        .detail-info { padding: 30px; }
-        .rating-star { color: #fbc300; font-size: 24px; font-weight: bold; }
 
-        /* DOWNLOAD TIMER */
-        .dl-area { margin-top: 20px; }
-        .btn-dl { 
-            background: var(--bf-primary); color: #000; border: none; 
-            padding: 15px 40px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        .detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        
-        /* LEGAL OVERLAYS */
-        .legal-box { font-size: 12px; color: #888; padding: 20px; text-align: center; }
-        .modal-legal {
-            display: none; position: fixed; background: rgba(0,0,0,0.9);
-            top: 0; left: 0; width: 100%; height: 100%; z-index: 3000; padding: 50px;
+
+        .close-detail {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 3001;
         }
-        .modal-content { background: #2e323d; padding: 30px; border-radius: 15px; max-height: 80%; overflow-y: auto; }
+
+        .close-detail:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            transform: rotate(90deg);
+        }
+
+        .banner-container {
+            width: 100%;
+            height: 50vh;
+            min-height: 400px;
+            border-radius: var(--round-lg);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        #banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease;
+        }
+
+        .banner-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .banner-nav:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+        }
+
+        .banner-prev {
+            left: 2rem;
+        }
+
+        .banner-next {
+            right: 2rem;
+        }
+
+        .banner-indicators {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .banner-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .banner-indicator.active {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .detail-info {
+            background: var(--card-bg);
+            border-radius: var(--round-lg);
+            padding: 2rem;
+            border: 2px solid var(--card-border);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .detail-title-section h1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-publisher {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .detail-rating {
+            background: rgba(255, 204, 0, 0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--round-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .rating-stars {
+            color: var(--warning);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-value {
+            font-family: var(--ethno);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--warning);
+        }
+
+        .detail-content {
+            margin-bottom: 2rem;
+        }
+
+        .detail-content h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .detail-description {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .detail-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .spec-item {
+            background: rgba(0, 243, 255, 0.05);
+            padding: 1rem;
+            border-radius: var(--round-md);
+            border: 1px solid var(--card-border);
+        }
+
+        .spec-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .spec-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ===== DOWNLOAD AREA ===== */
+        .download-area {
+            background: var(--card-bg);
+            border-radius: var(--round-lg);
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 2px solid var(--card-border);
+            text-align: center;
+        }
+
+        .download-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .download-header h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .download-header p {
+            color: var(--text-muted);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: var(--round-md);
+            color: var(--dark-bg);
+            font-family: var(--ethno);
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 1rem auto;
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-download:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 0, 255, 0.4);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .timer-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 243, 255, 0.05);
+            border-radius: var(--round-md);
+            border: 2px solid var(--primary);
+            display: none;
+        }
+
+        .timer-container h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .timer-display {
+            font-family: var(--ethno);
+            font-size: 3rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary);
+            margin: 1rem 0;
+        }
+
+        .timer-message {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--darker-bg);
+            border-top: 2px solid var(--primary);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            padding: 0.5rem 1rem;
+            border-radius: var(--round-sm);
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .footer-link:hover {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ===== LEGAL MODALS ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 4000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--round-lg);
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2.5rem;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+            position: relative;
+            animation: modalAppear 0.4s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 0, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-section ul, .modal-section ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== LOGIN BUTTON ===== */
+        .google-login {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary);
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--round-md);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--montserrat);
+            font-weight: 600;
+        }
+
+        .google-login:hover {
+            background: rgba(0, 243, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .game-card {
+                height: auto;
+                flex-direction: column;
+            }
+            
+            .game-card-image {
+                width: 100%;
+                height: 150px;
+                border-right: none;
+                border-bottom: 2px solid var(--card-border);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .detail-container {
+                padding: 1rem;
+            }
+            
+            .banner-container {
+                height: 30vh;
+                min-height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .detail-rating {
+                align-self: flex-start;
+            }
+        }
+
+        /* ===== LOADING ANIMATION ===== */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--card-border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .visible {
+            display: block !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-gradient {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow {
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 243, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-
-<header>
-    <div onclick="toggleSidebar()" style="cursor:pointer; font-weight:bold; color:var(--bf-primary)">☰ CATEGORY</div>
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search game..." onkeyup="doSearch()">
-        <div id="searchResults" class="search-results"></div>
-    </div>
-    <div id="g_id_onload"
-         data-client_id="545920930826-tbk59eu6j9jh9dobt9v8km1bhcf13il6.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin" data-type="standard"></div>
-</header>
-
-<div class="sidebar" id="sidebar">
-    <h2 onclick="toggleSidebar()" style="cursor:pointer">✖ CLOSE</h2>
-    <div class="cat-item" onclick="filterCat('Action')">Action</div>
-    <div class="cat-item" onclick="filterCat('RPG')">RPG</div>
-    <div class="cat-item" onclick="filterCat('Shooter')">Shooter</div>
-    <div class="cat-item" onclick="filterCat('Adventure')">Adventure</div>
-</div>
-
-<div class="main-content" id="gameList"></div>
-
-<div id="detail-frame">
-    <div style="position:absolute; top:20px; right:30px; z-index:2100; font-size:30px; cursor:pointer" onclick="closeDetail()">✖</div>
-    <div class="banner-container">
-        <img id="banner-img" src="" alt="Banner">
-    </div>
-    <div class="detail-info">
-        <h1 id="det-title" style="font-family:var(--ethno)"></h1>
-        <div class="rating-star" id="det-rating"></div>
-        <p id="det-pub" style="color:var(--bf-primary)"></p>
-        <p id="det-desc" style="margin-top:20px; line-height:1.6"></p>
-        
-        <div class="dl-area">
-            <button class="btn-dl" id="dlBtn" onclick="startTimer()">DOWNLOAD NOW</button>
-            <h3 id="timerShow" style="display:none">Link ready in <span id="secs">5</span>s...</h3>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">PG</div>
+            <div class="logo-text">PGXL.WEB.ID</div>
         </div>
+        
+        <button class="category-btn" onclick="toggleSidebar()">
+            <span>☰</span> CATEGORIES
+        </button>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for games..." onkeyup="doSearch()">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+        
+        <div class="google-login" id="googleLogin">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Sign in with Google</span>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>GAME CATEGORIES</h2>
+            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        </div>
+        <ul class="category-list">
+            <li class="cat-item active" onclick="filterCategory('All')">
+                <div class="cat-icon">★</div>
+                <span>All Games</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Action')">
+                <div class="cat-icon">⚡</div>
+                <span>Action</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('RPG')">
+                <div class="cat-icon">🛡️</div>
+                <span>RPG</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Shooter')">
+                <div class="cat-icon">🎯</div>
+                <span>Shooter</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Adventure')">
+                <div class="cat-icon">🗺️</div>
+                <span>Adventure</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Strategy')">
+                <div class="cat-icon">♟️</div>
+                <span>Strategy</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Sports')">
+                <div class="cat-icon">⚽</div>
+                <span>Sports</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Simulation')">
+                <div class="cat-icon">🏢</div>
+                <span>Simulation</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Horror')">
+                <div class="cat-icon">👻</div>
+                <span>Horror</span>
+            </li>
+            <li class="cat-item" onclick="filterCategory('Indie')">
+                <div class="cat-icon">🎨</div>
+                <span>Indie</span>
+            </li>
+        </ul>
     </div>
-</div>
 
-<footer class="legal-box">
-    <p>© 2025 PGXL.WEB.ID | <span onclick="showLegal('tos')" style="cursor:pointer">Terms of Service</span> | <span onclick="showLegal('pp')" style="cursor:pointer">Privacy Policy</span></p>
-    <p>Contact: spctacularstudio@gmail.com</p>
-</footer>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <h1>PREMIUM GAMES COLLECTION</h1>
+            <div class="games-count" id="gamesCount">0 Games</div>
+        </div>
+        
+        <div class="games-grid" id="gameList">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
 
-<div id="legalModal" class="modal-legal">
-    <div class="modal-content">
-        <h2 id="legalTitle"></h2>
-        <div id="legalBody" style="white-space: pre-line; margin-top: 20px;"></div>
-        <button onclick="document.getElementById('legalModal').style.display='none'" class="btn-dl" style="margin-top:20px">CLOSE</button>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    fetch('firebase-config.json').then(r => r.json()).then(config => {
-        initializeApp(config);
-    });
-</script>
-
-<script>
-    let games = [];
-    let bannerInterval;
-    let currentBannerIdx = 0;
-    let activeBanners = [];
-
-    // LOAD DATA
-    fetch('games.json').then(r => r.json()).then(data => {
-        games = data;
-        renderGames(data);
-    });
-
-    function renderGames(arr) {
-        const list = document.getElementById('gameList');
-        list.innerHTML = arr.map(g => `
-            <div class="game-card" onclick="openDetail(${g.id})">
-                <img src="${g.image}">
-                <div class="card-body">
-                    <h3>${g.name}</h3>
-                    <p style="font-size:12px; color:#aaa">${g.publisher}</p>
-                    <p>${g.description.substring(0, 80)}...</p>
+    <!-- Game Detail Frame -->
+    <div id="detail-frame">
+        <button class="close-detail" onclick="closeDetail()">✕</button>
+        
+        <div class="detail-container">
+            <div class="banner-container">
+                <img id="banner-img" src="" alt="Game Banner">
+                <button class="banner-nav banner-prev" onclick="prevBanner()">❮</button>
+                <button class="banner-nav banner-next" onclick="nextBanner()">❯</button>
+                <div class="banner-indicators" id="bannerIndicators"></div>
+            </div>
+            
+            <div class="detail-info">
+                <div class="detail-header">
+                    <div class="detail-title-section">
+                        <h1 id="det-title"></h1>
+                        <p class="detail-publisher" id="det-pub"></p>
+                    </div>
+                    <div class="detail-rating">
+                        <div class="rating-stars" id="det-rating-stars"></div>
+                        <div class="rating-value" id="det-rating"></div>
+                    </div>
+                </div>
+                
+                <div class="detail-content">
+                    <h3>DESCRIPTION</h3>
+                    <p class="detail-description" id="det-desc"></p>
+                    
+                    <div class="detail-specs" id="det-specs"></div>
                 </div>
             </div>
-        `).join('');
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-    }
-
-    function doSearch() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
-        const resBox = document.getElementById('searchResults');
-        if(q.length < 2) { resBox.style.display = 'none'; return; }
-        
-        const filtered = games.filter(g => g.name.toLowerCase().includes(q));
-        resBox.innerHTML = filtered.map(g => `
-            <div class="search-item" onclick="openDetail(${g.id})">
-                <img src="${g.image}">
-                <span>${g.name}</span>
+            
+            <div class="download-area">
+                <div class="download-header">
+                    <h2>READY TO DOWNLOAD</h2>
+                    <p>Click the button below to start your download</p>
+                </div>
+                
+                <button class="btn-download pulse" id="dlBtn" onclick="startDownload()">
+                    DOWNLOAD NOW
+                </button>
+                
+                <div class="timer-container" id="timerContainer">
+                    <h3>DOWNLOAD STARTING...</h3>
+                    <div class="timer-display" id="timerDisplay">5</div>
+                    <p class="timer-message">
+                        Your download will start automatically in <span id="secs">5</span> seconds.
+                        Please wait while we verify your request.
+                    </p>
+                </div>
             </div>
-        `).join('');
-        resBox.style.display = 'block';
-    }
+        </div>
+    </div>
 
-    function openDetail(id) {
-        const g = games.find(x => x.id === id);
-        activeBanners = g.banners;
-        document.getElementById('det-title').innerText = g.name;
-        document.getElementById('det-rating').innerText = "Rating: ⭐ " + g.rating;
-        document.getElementById('det-pub').innerText = "Publisher: " + g.publisher;
-        document.getElementById('det-desc').innerText = g.description;
-        document.getElementById('detail-frame').style.display = 'block';
-        window.currentDl = g.downloadUrl;
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="logo-icon" style="width: 40px; height: 40px; font-size: 1.2rem;">PG</div>
+                <div class="logo-text">PGXL.WEB.ID</div>
+            </div>
+            
+            <div class="footer-links">
+                <a class="footer-link" onclick="showLegal('tos')">Terms of Service</a>
+                <a class="footer-link" onclick="showLegal('pp')">Privacy Policy</a>
+                <a class="footer-link" href="mailto:spctacularstudio@gmail.com">Contact</a>
+            </div>
+        </div>
+        
+        <div class="footer-contact">
+            <p>© 2025 PGXL.WEB.ID. All rights reserved. | Contact: spctacularstudio@gmail.com</p>
+            <p>All game titles and content are property of their respective owners.</p>
+        </div>
+    </footer>
 
-        // Banner Logic
-        currentBannerIdx = 0;
-        document.getElementById('banner-img').src = activeBanners[0];
-        clearInterval(bannerInterval);
-        bannerInterval = setInterval(() => {
-            currentBannerIdx = (currentBannerIdx + 1) % activeBanners.length;
-            document.getElementById('banner-img').style.opacity = 0;
+    <!-- Legal Modals -->
+    <div class="modal-overlay" id="legalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="legalTitle">Terms of Service</h2>
+                <button class="close-modal" onclick="closeLegal()">✕</button>
+            </div>
+            <div class="modal-body" id="legalBody">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase and Google Auth Scripts -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        // Load Firebase config
+        fetch('firebase-config.json')
+            .then(response => response.json())
+            .then(config => {
+                // Initialize Firebase
+                const app = initializeApp(config);
+                const analytics = getAnalytics(app);
+                const db = getFirestore(app);
+                
+                // Make db available globally
+                window.firestoreDB = db;
+                console.log('Firebase initialized successfully');
+                
+                // Load games from Firestore
+                loadGamesFromFirestore();
+            })
+            .catch(error => {
+                console.error('Error loading Firebase config:', error);
+                // Fallback to local games.json
+                loadGamesFromLocal();
+            });
+        
+        async function loadGamesFromFirestore() {
+            try {
+                const querySnapshot = await getDocs(collection(window.firestoreDB, "games"));
+                const games = [];
+                querySnapshot.forEach((doc) => {
+                    games.push({ id: doc.id, ...doc.data() });
+                });
+                window.allGames = games;
+                renderGames(games);
+            } catch (error) {
+                console.error('Error loading games from Firestore:', error);
+                loadGamesFromLocal();
+            }
+        }
+        
+        function loadGamesFromLocal() {
+            fetch('games.json')
+                .then(response => response.json())
+                .then(games => {
+                    window.allGames = games;
+                    renderGames(games);
+                })
+                .catch(error => {
+                    console.error('Error loading games:', error);
+                    document.getElementById('gameList').innerHTML = 
+                        '<div class="text-center"><h3>Error loading games. Please try again later.</h3></div>';
+                });
+        }
+    </script>
+
+    <script>
+        // Global variables
+        let allGames = [];
+        let filteredGames = [];
+        let currentCategory = 'All';
+        let currentGame = null;
+        let bannerInterval = null;
+        let currentBannerIndex = 0;
+        let activeBanners = [];
+        let downloadTimer = null;
+        
+        // Google Login
+        function handleCredentialResponse(response) {
+            console.log("Google login successful:", response);
+            alert("Welcome! You have successfully signed in with Google.");
+            document.getElementById('googleLogin').innerHTML = 
+                '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#34A853" d="M12 12h11v2H12z"/><path fill="#4285F4" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>' +
+                '<span>Signed In</span>';
+        }
+        
+        // Initialize Google Sign-In
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: "545920930826-tbk59eu6j9jh9dobt9v8km1bhcf13il6.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+            
+            document.getElementById('googleLogin').onclick = function() {
+                google.accounts.id.prompt();
+            };
+        };
+        
+        // Render games to the page
+        function renderGames(games) {
+            const gameList = document.getElementById('gameList');
+            const gamesCount = document.getElementById('gamesCount');
+            
+            if (games.length === 0) {
+                gameList.innerHTML = '<div class="text-center"><h3>No games found. Try a different category or search term.</h3></div>';
+                gamesCount.textContent = '0 Games';
+                return;
+            }
+            
+            gamesCount.textContent = `${games.length} Games`;
+            
+            gameList.innerHTML = games.map(game => `
+                <div class="game-card" onclick="openDetail(${game.id})">
+                    <img src="${game.image}" alt="${game.name}" class="game-card-image">
+                    <div class="game-card-content">
+                        <div class="game-card-header">
+                            <div>
+                                <h3 class="game-card-title">${game.name}</h3>
+                                <p class="game-card-publisher">${game.publisher}</p>
+                            </div>
+                            <div class="game-card-rating">
+                                ⭐ ${game.rating}
+                            </div>
+                        </div>
+                        <p class="game-card-desc">${game.description.substring(0, 120)}...</p>
+                        <div class="game-card-footer">
+                            <span class="game-card-category">${game.category}</span>
+                            <button class="game-card-download" onclick="event.stopPropagation(); startDownloadDirect(${game.id})">
+                                DOWNLOAD
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Filter games by category
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update active category in sidebar
+            document.querySelectorAll('.cat-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Filter games
+            if (category === 'All') {
+                filteredGames = [...allGames];
+            } else {
+                filteredGames = allGames.filter(game => game.category === category);
+            }
+            
+            renderGames(filteredGames);
+            toggleSidebar();
+        }
+        
+        // Live search functionality
+        let searchTimeout;
+        function doSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const resultsContainer = document.getElementById('searchResults');
+                
+                if (query.length < 2) {
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+                
+                const searchResults = allGames.filter(game => 
+                    game.name.toLowerCase().includes(query) ||
+                    game.publisher.toLowerCase().includes(query) ||
+                    game.category.toLowerCase().includes(query) ||
+                    game.description.toLowerCase().includes(query)
+                );
+                
+                if (searchResults.length > 0) {
+                    resultsContainer.innerHTML = searchResults.map(game => `
+                        <div class="search-item" onclick="openDetail(${game.id})">
+                            <img src="${game.image}" alt="${game.name}">
+                            <div class="search-item-info">
+                                <h4>${game.name}</h4>
+                                <p>${game.publisher} • ${game.category}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    resultsContainer.style.display = 'block';
+                } else {
+                    resultsContainer.innerHTML = '<div class="search-item">No games found</div>';
+                    resultsContainer.style.display = 'block';
+                }
+            }, 300);
+        }
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            const searchContainer = document.querySelector('.search-container');
+            if (!searchContainer.contains(event.target)) {
+                document.getElementById('searchResults').style.display = 'none';
+            }
+        });
+        
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            
+            // Prevent body scrolling when sidebar is open
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+        }
+        
+        // Open game detail
+        function openDetail(gameId) {
+            const game = allGames.find(g => g.id == gameId);
+            if (!game) return;
+            
+            currentGame = game;
+            activeBanners = game.banners || [game.image];
+            currentBannerIndex = 0;
+            
+            // Set game details
+            document.getElementById('det-title').textContent = game.name;
+            document.getElementById('det-pub').textContent = `Publisher: ${game.publisher}`;
+            document.getElementById('det-desc').textContent = game.fullDescription || game.description;
+            document.getElementById('det-rating').textContent = game.rating;
+            
+            // Set rating stars
+            const rating = parseFloat(game.rating);
+            const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+            document.getElementById('det-rating-stars').textContent = stars;
+            
+            // Set game specs
+            const specsContainer = document.getElementById('det-specs');
+            specsContainer.innerHTML = `
+                <div class="spec-item">
+                    <div class="spec-label">Category</div>
+                    <div class="spec-value">${game.category}</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Size</div>
+                    <div class="spec-value">${game.size || 'Varies'}</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Version</div>
+                    <div class="spec-value">${game.version || 'Latest'}</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Platform</div>
+                    <div class="spec-value">${game.platform || 'Windows'}</div>
+                </div>
+            `;
+            
+            // Set initial banner
+            document.getElementById('banner-img').src = activeBanners[0];
+            
+            // Create banner indicators
+            const indicatorsContainer = document.getElementById('bannerIndicators');
+            indicatorsContainer.innerHTML = activeBanners.map((_, index) => 
+                `<div class="banner-indicator ${index === 0 ? 'active' : ''}" onclick="goToBanner(${index})"></div>`
+            ).join('');
+            
+            // Show detail frame
+            document.getElementById('detail-frame').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Start banner rotation
+            startBannerRotation();
+        }
+        
+        // Banner navigation
+        function startBannerRotation() {
+            clearInterval(bannerInterval);
+            bannerInterval = setInterval(() => {
+                nextBanner();
+            }, 5000);
+        }
+        
+        function nextBanner() {
+            currentBannerIndex = (currentBannerIndex + 1) % activeBanners.length;
+            updateBanner();
+        }
+        
+        function prevBanner() {
+            currentBannerIndex = (currentBannerIndex - 1 + activeBanners.length) % activeBanners.length;
+            updateBanner();
+        }
+        
+        function goToBanner(index) {
+            currentBannerIndex = index;
+            updateBanner();
+        }
+        
+        function updateBanner() {
+            const bannerImg = document.getElementById('banner-img');
+            bannerImg.style.opacity = 0;
+            
             setTimeout(() => {
-                document.getElementById('banner-img').src = activeBanners[currentBannerIdx];
-                document.getElementById('banner-img').style.opacity = 1;
+                bannerImg.src = activeBanners[currentBannerIndex];
+                bannerImg.style.opacity = 1;
+                
+                // Update indicators
+                document.querySelectorAll('.banner-indicator').forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentBannerIndex);
+                });
+            }, 300);
+        }
+        
+        // Close detail frame
+        function closeDetail() {
+            document.getElementById('detail-frame').style.display = 'none';
+            document.body.style.overflow = '';
+            clearInterval(bannerInterval);
+            clearInterval(downloadTimer);
+            
+            // Reset download UI
+            document.getElementById('dlBtn').style.display = 'block';
+            document.getElementById('timerContainer').style.display = 'none';
+        }
+        
+        // Download functionality
+        function startDownload() {
+            if (!currentGame) return;
+            
+            // Execute reCAPTCHA
+            grecaptcha.enterprise.ready(async () => {
+                try {
+                    const token = await grecaptcha.enterprise.execute(
+                        '6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf', 
+                        { action: 'DOWNLOAD' }
+                    );
+                    
+                    // Start countdown
+                    startDownloadCountdown();
+                } catch (error) {
+                    console.error('reCAPTCHA error:', error);
+                    alert('Please complete the verification to download.');
+                }
+            });
+        }
+        
+        function startDownloadDirect(gameId) {
+            const game = allGames.find(g => g.id == gameId);
+            if (!game) return;
+            
+            // Open detail first, then start download
+            openDetail(gameId);
+            setTimeout(() => {
+                startDownload();
             }, 500);
-        }, 5000);
-    }
-
-    function closeDetail() {
-        document.getElementById('detail-frame').style.display = 'none';
-        clearInterval(bannerInterval);
-    }
-
-    function startTimer() {
-        // RECAPTCHA EXECUTE
-        grecaptcha.enterprise.ready(async () => {
-            await grecaptcha.enterprise.execute('6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf', {action: 'DOWNLOAD'});
-            let s = 5;
-            document.getElementById('dlBtn').style.display = 'none';
-            document.getElementById('timerShow').style.display = 'block';
-            const itv = setInterval(() => {
-                s--;
-                document.getElementById('secs').innerText = s;
-                if(s <= 0) {
-                    clearInterval(itv);
-                    window.location.href = window.currentDl;
+        }
+        
+        function startDownloadCountdown() {
+            const dlBtn = document.getElementById('dlBtn');
+            const timerContainer = document.getElementById('timerContainer');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const secsDisplay = document.getElementById('secs');
+            
+            // Show timer, hide button
+            dlBtn.style.display = 'none';
+            timerContainer.style.display = 'block';
+            
+            let seconds = 5;
+            
+            downloadTimer = setInterval(() => {
+                seconds--;
+                timerDisplay.textContent = seconds;
+                secsDisplay.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(downloadTimer);
+                    // Redirect to download URL
+                    if (currentGame && currentGame.downloadUrl) {
+                        window.open(currentGame.downloadUrl, '_blank');
+                    } else {
+                        alert('Download URL not available for this game.');
+                    }
+                    
+                    // Reset UI after a delay
+                    setTimeout(() => {
+                        dlBtn.style.display = 'block';
+                        timerContainer.style.display = 'none';
+                    }, 2000);
                 }
             }, 1000);
-        });
-    }
-
-    function handleCredentialResponse(response) {
-        console.log("Encoded JWT ID token: " + response.credential);
-        alert("Login Success!");
-    }
-
-    function showLegal(type) {
-        const modal = document.getElementById('legalModal');
-        const title = document.getElementById('legalTitle');
-        const body = document.getElementById('legalBody');
-        modal.style.display = 'block';
-
-        if(type === 'tos') {
-            title.innerText = "Super Detailed Terms of Service";
-            body.innerText = `1. ACCEPTANCE: By using PGXL.WEB.ID, you agree to these terms.
-            2. CONTENT: We provide game metadata and download redirects. We are not responsible for software issues.
-            3. INTELLECTUAL PROPERTY: All game titles and assets belong to their respective publishers.
-            4. USER CONDUCT: No botting or scraping allowed.
-            5. REDIRECTS: Users must wait for the 5-second verification timer.
-            6. DISCLAIMER: Service is provided "AS IS" without warranty of any kind.`;
-        } else {
-            title.innerText = "Privacy Policy";
-            body.innerText = `1. DATA COLLECTION: We use Google Auth for authentication. We do not sell your personal data.
-            2. COOKIES: We use local storage to save your preferences.
-            3. RECAPTCHA: We use Google reCAPTCHA Enterprise to prevent spam.
-            4. SECURITY: Data is handled through Firebase's secure protocols.
-            5. THIRD PARTY: We are not responsible for privacy practices of linked download sites.`;
         }
-    }
-</script>
+        
+        // Legal modals
+        function showLegal(type) {
+            const modal = document.getElementById('legalModal');
+            const title = document.getElementById('legalTitle');
+            const body = document.getElementById('legalBody');
+            
+            if (type === 'tos') {
+                title.textContent = 'TERMS OF SERVICE';
+                body.innerHTML = getTOSContent();
+            } else {
+                title.textContent = 'PRIVACY POLICY';
+                body.innerHTML = getPrivacyPolicyContent();
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLegal() {
+            document.getElementById('legalModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('legalModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeLegal();
+            }
+        });
+        
+        function getTOSContent() {
+            return `
+                <div class="modal-section">
+                    <h3>1. ACCEPTANCE OF TERMS</h3>
+                    <p>By accessing and using PGXL.WEB.ID ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these terms, please do not use this Service.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>2. DESCRIPTION OF SERVICE</h3>
+                    <p>PGXL.WEB.ID provides a platform for discovering and downloading video games. We act as an intermediary between users and game publishers, providing download links and game information.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>3. USER RESPONSIBILITIES</h3>
+                    <p>Users agree to:</p>
+                    <ul>
+                        <li>Use the Service only for lawful purposes</li>
+                        <li>Not attempt to bypass any security measures</li>
+                        <li>Not use automated systems to access the Service</li>
+                        <li>Not redistribute downloaded content without permission</li>
+                        <li>Comply with all applicable laws and regulations</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>4. INTELLECTUAL PROPERTY</h3>
+                    <p>All game titles, graphics, logos, and other content displayed on the Service are the property of their respective owners. PGXL.WEB.ID does not claim ownership of any copyrighted game content.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>5. DOWNLOAD VERIFICATION</h3>
+                    <p>To prevent abuse, all downloads require:</p>
+                    <ol>
+                        <li>Google reCAPTCHA Enterprise verification</li>
+                        <li>5-second security countdown timer</li>
+                        <li>Single-use download tokens</li>
+                    </ol>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>6. DISCLAIMER OF WARRANTIES</h3>
+                    <p>The Service is provided "as is" without warranties of any kind, either express or implied. We do not guarantee:</p>
+                    <ul>
+                        <li>Continuous, uninterrupted, or secure access to our Service</li>
+                        <li>Accuracy or completeness of any game information</li>
+                        <li>That games will be free from viruses or harmful components</li>
+                        <li>Compatibility with all systems</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>7. LIMITATION OF LIABILITY</h3>
+                    <p>PGXL.WEB.ID shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from:</p>
+                    <ul>
+                        <li>Your use or inability to use the Service</li>
+                        <li>Unauthorized access to or alteration of your transmissions</li>
+                        <li>Any content obtained from the Service</li>
+                        <li>Any third-party software or hardware issues</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>8. ACCOUNT TERMINATION</h3>
+                    <p>We reserve the right to terminate or suspend access to our Service immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>9. GOVERNING LAW</h3>
+                    <p>These Terms shall be governed by and construed in accordance with the laws of Indonesia, without regard to its conflict of law provisions.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>10. CHANGES TO TERMS</h3>
+                    <p>We reserve the right to modify these terms at any time. We will notify users of any changes by posting the new Terms of Service on this page.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>11. CONTACT INFORMATION</h3>
+                    <p>For any questions about these Terms, please contact us at:</p>
+                    <p><strong>Email:</strong> spctacularstudio@gmail.com</p>
+                    <p><strong>Effective Date:</strong> January 1, 2025</p>
+                </div>
+            `;
+        }
+        
+        function getPrivacyPolicyContent() {
+            return `
+                <div class="modal-section">
+                    <h3>1. INFORMATION COLLECTION</h3>
+                    <p>We collect the following types of information:</p>
+                    <ul>
+                        <li><strong>Google Account Information:</strong> When you sign in with Google, we receive your email address and basic profile information</li>
+                        <li><strong>Usage Data:</strong> Information about how you use our Service, including games viewed and downloaded</li>
+                        <li><strong>Technical Data:</strong> Browser type, device information, IP address, and cookies</li>
+                        <li><strong>reCAPTCHA Data:</strong> Information collected by Google reCAPTCHA Enterprise for security purposes</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>2. USE OF INFORMATION</h3>
+                    <p>We use collected information to:</p>
+                    <ul>
+                        <li>Provide and maintain our Service</li>
+                        <li>Improve user experience and personalize content</li>
+                        <li>Prevent fraud and abuse through reCAPTCHA verification</li>
+                        <li>Communicate with users about service updates</li>
+                        <li>Analyze usage patterns to improve our Service</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>3. DATA SHARING AND DISCLOSURE</h3>
+                    <p>We do not sell or rent your personal information. We may share information with:</p>
+                    <ul>
+                        <li><strong>Google:</strong> For authentication (Google Sign-In) and security (reCAPTCHA)</li>
+                        <li><strong>Firebase:</strong> For data storage and analytics</li>
+                        <li><strong>Legal Authorities:</strong> When required by law or to protect our rights</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>4. COOKIES AND TRACKING</h3>
+                    <p>We use cookies and similar tracking technologies to:</p>
+                    <ul>
+                        <li>Remember user preferences and settings</li>
+                        <li>Analyze Service usage and performance</li>
+                        <li>Provide security through reCAPTCHA</li>
+                        <li>Enable Google Sign-In functionality</li>
+                    </ul>
+                    <p>You can control cookies through your browser settings, but this may affect Service functionality.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>5. DATA SECURITY</h3>
+                    <p>We implement security measures including:</p>
+                    <ul>
+                        <li>Firebase security rules and authentication</li>
+                        <li>reCAPTCHA Enterprise for bot protection</li>
+                        <li>HTTPS encryption for all data transmission</li>
+                        <li>Regular security audits and updates</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>6. CHILDREN'S PRIVACY</h3>
+                    <p>Our Service is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>7. THIRD-PARTY LINKS</h3>
+                    <p>Our Service contains links to third-party game download sites. We are not responsible for the privacy practices or content of these external sites.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>8. DATA RETENTION</h3>
+                    <p>We retain personal information only as long as necessary to provide our Service and comply with legal obligations.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>9. USER RIGHTS</h3>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access your personal information</li>
+                        <li>Correct inaccurate information</li>
+                        <li>Request deletion of your information</li>
+                        <li>Opt-out of certain data processing</li>
+                    </ul>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>10. INTERNATIONAL DATA TRANSFERS</h3>
+                    <p>Your information may be transferred to and processed in countries other than your own, including the United States, where our service providers are located.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>11. CHANGES TO PRIVACY POLICY</h3>
+                    <p>We may update this Privacy Policy periodically. We will notify users of significant changes by posting the new policy on this page.</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>12. CONTACT US</h3>
+                    <p>If you have any questions about this Privacy Policy, please contact:</p>
+                    <p><strong>Email:</strong> spctacularstudio@gmail.com</p>
+                    <p><strong>Last Updated:</strong> January 1, 2025</p>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load games from JSON if Firebase fails
+            if (!window.allGames || window.allGames.length === 0) {
+                loadGamesFromLocal();
+            }
+            
+            // Close detail frame with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeDetail();
+                    closeLegal();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
