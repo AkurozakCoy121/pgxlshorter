@@ -3,211 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pgxl.web.id - URL Shortener</title>
+    <title>Redirecting...</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f0f0; padding: 20px; min-height: 100vh; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo h1 { color: #333; font-size: 2.5em; margin-bottom: 5px; }
-        .logo p { color: #666; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #555; font-weight: bold; }
-        input[type="url"], input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
-        input:focus { border-color: #007bff; outline: none; }
-        button { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-bottom: 20px; }
-        button:hover { background: #0056b3; }
-        .result { display: none; background: #e9f7fe; padding: 20px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #007bff; }
-        .short-url { font-size: 18px; color: #007bff; word-break: break-all; margin-bottom: 15px; }
-        .qr-code { text-align: center; margin: 20px 0; }
-        .history { margin-top: 40px; }
-        .history-item { background: #f9f9f9; padding: 12px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .history-short { color: #007bff; font-weight: bold; }
-        .copy-btn { background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-        small { color: #666; }
-        .loading { display: none; text-align: center; padding: 20px; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .redirect-container { background: white; border-radius: 15px; padding: 40px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        
+        .redirect-icon { font-size: 4rem; margin-bottom: 20px; }
+        
+        h1 { color: #333; margin-bottom: 15px; }
+        p { color: #666; margin-bottom: 25px; line-height: 1.6; }
+        
+        .countdown { font-size: 3rem; color: #667eea; font-weight: bold; margin: 20px 0; }
+        
+        .password-form, .email-form { margin: 20px 0; }
+        input[type="password"], input[type="email"], input[type="text"] { 
+            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; 
+        }
+        input:focus { border-color: #667eea; outline: none; }
+        
+        button { 
+            background: #667eea; color: white; border: none; padding: 15px 30px; 
+            border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; 
+            margin: 10px 0; transition: background 0.3s;
+        }
+        button:hover { background: #5a67d8; }
+        
+        .custom-content { text-align: left; background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        
+        .hint { color: #888; font-size: 14px; margin-top: 5px; }
+        
+        .progress-bar { height: 8px; background: #eee; border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: #667eea; width: 0%; transition: width 1s linear; }
     </style>
-    <!-- QR Code from CDNJS -->
-    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>pgxl.web.id</h1>
-            <p>Simple URL Shortener</p>
-        </div>
-        
-        <div class="input-group">
-            <label for="longUrl">Long URL</label>
-            <input type="url" id="longUrl" placeholder="https://example.com/very-long-url..." required>
-        </div>
-        
-        <div class="input-group">
-            <label for="customCode">Custom Short Code (Optional)</label>
-            <input type="text" id="customCode" placeholder="my-link">
-            <small>Leave empty for random code</small>
-        </div>
-        
-        <button onclick="shortenUrl()">Shorten URL</button>
-        
-        <div id="loading" class="loading">⏳ Processing...</div>
-        
-        <div id="result" class="result">
-            <h3>✅ Short URL Created!</h3>
-            <div class="short-url" id="shortUrl"></div>
-            <div class="qr-code">
-                <canvas id="qrCanvas"></canvas>
-                <p>Scan QR Code</p>
-            </div>
-            <button class="copy-btn" onclick="copyToClipboard()">Copy URL</button>
-            <button class="copy-btn" style="background: #6c757d;" onclick="openLink()">Open Link</button>
-        </div>
-        
-        <div class="history">
-            <h2>📜 Recent Links</h2>
-            <div class="history-list" id="historyList">
-                <p style="color:#666; text-align:center;">Loading...</p>
-            </div>
-        </div>
+    <div class="redirect-container" id="redirectContainer">
+        <!-- Content will be dynamically loaded -->
+        <div class="redirect-icon">⏳</div>
+        <h1>Loading...</h1>
+        <p>Please wait while we process your request.</p>
     </div>
 
     <script>
-        // ======================
-        // CONFIG
-        // ======================
-        const API_BASE = window.location.origin; // Pakai domain yang sama
+        // Get short code from URL
+        const pathParts = window.location.pathname.split('/');
+        const shortCode = pathParts[pathParts.length - 1] || '';
+        
+        // Simulate getting data from database
+        // In real implementation, this would be an API call
+        function getRedirectData(code) {
+            const data = localStorage.getItem(`pgxl_${code}`);
+            return data ? JSON.parse(data) : null;
+        }
+        
+        // Handle different redirect types
+        function handleRedirect(data) {
+            const container = document.getElementById('redirectContainer');
+            
+            switch(data.type) {
+                case 'direct':
+                    // Redirect immediately
+                    window.location.href = data.longUrl;
+                    break;
+                    
+                case 'wait':
+                    showWaitPage(container, data);
+                    break;
+                    
+                case 'password':
+                    showPasswordPage(container, data);
+                    break;
+                    
+                case 'html':
+                    showCustomHtml(container, data);
+                    break;
+                    
+                case 'email':
+                    showEmailGate(container, data);
+                    break;
+                    
+                default:
+                    container.innerHTML = `
+                        <h1>Invalid Link</h1>
+                        <p>This short URL is not configured properly.</p>
+                        <button onclick="window.location.href='/'">Go Home</button>
+                    `;
+            }
+        }
         
         // ======================
-        // FUNCTIONS
+        // WAIT PAGE
         // ======================
-        async function shortenUrl() {
-            const longUrl = document.getElementById('longUrl').value.trim();
-            const customCode = document.getElementById('customCode').value.trim();
+        function showWaitPage(container, data) {
+            const waitTime = data.settings.waitTime || 5;
+            let seconds = waitTime;
             
-            if (!longUrl) {
-                alert('Please enter a URL');
+            container.innerHTML = `
+                <div class="redirect-icon">⏳</div>
+                <h1>${data.settings.title || 'Please Wait'}</h1>
+                <p>${data.settings.message.replace('{seconds}', seconds) || `Redirecting in ${seconds} seconds...`}</p>
+                <div class="countdown" id="countdown">${seconds}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <button onclick="skipWait()">Skip Waiting</button>
+            `;
+            
+            // Start countdown
+            const countdownEl = document.getElementById('countdown');
+            const progressEl = document.getElementById('progressFill');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                countdownEl.textContent = seconds;
+                progressEl.style.width = `${((waitTime - seconds) / waitTime) * 100}%`;
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = data.longUrl;
+                }
+            }, 1000);
+            
+            window.skipWait = function() {
+                clearInterval(interval);
+                window.location.href = data.longUrl;
+            };
+        }
+        
+        // ======================
+        // PASSWORD PAGE
+        // ======================
+        function showPasswordPage(container, data) {
+            container.innerHTML = `
+                <div class="redirect-icon">🔒</div>
+                <h1>Password Required</h1>
+                <p>This link is protected by a password.</p>
+                ${data.settings.hint ? `<p class="hint">Hint: ${data.settings.hint}</p>` : ''}
+                <div class="password-form">
+                    <input type="password" id="passwordInput" placeholder="Enter password" autofocus>
+                    <button onclick="checkPassword()">Continue</button>
+                </div>
+                <p style="font-size: 14px; color: #888;">Press Enter after typing password</p>
+            `;
+            
+            // Enter key support
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') checkPassword();
+            });
+            
+            window.checkPassword = function() {
+                const input = document.getElementById('passwordInput').value;
+                if (input === data.settings.password) {
+                    window.location.href = data.longUrl;
+                } else {
+                    alert('Incorrect password!');
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passwordInput').focus();
+                }
+            };
+        }
+        
+        // ======================
+        // CUSTOM HTML PAGE
+        // ======================
+        function showCustomHtml(container, data) {
+            container.innerHTML = `
+                <div class="redirect-icon">🎨</div>
+                <h1>${data.settings.title || 'Welcome!'}</h1>
+                <div class="custom-content">
+                    ${data.settings.message || 'Click continue to proceed to the destination.'}
+                </div>
+                <button onclick="proceed()">Continue to Destination</button>
+                <button onclick="window.location.href='/'" style="background: #6c757d;">Cancel</button>
+            `;
+            
+            window.proceed = function() {
+                window.location.href = data.longUrl;
+            };
+        }
+        
+        // ======================
+        // EMAIL GATE
+        // ======================
+        function showEmailGate(container, data) {
+            container.innerHTML = `
+                <div class="redirect-icon">📧</div>
+                <h1>Email Required</h1>
+                <p>${data.settings.emailMessage || 'Please enter your email to continue'}</p>
+                <div class="email-form">
+                    <input type="email" id="emailInput" placeholder="your@email.com" autofocus>
+                    <button onclick="submitEmail()">Submit & Continue</button>
+                </div>
+                <p style="font-size: 14px; color: #888;">We'll only use this to notify you of updates</p>
+            `;
+            
+            window.submitEmail = function() {
+                const email = document.getElementById('emailInput').value;
+                if (email && email.includes('@')) {
+                    // Save email (in real app, send to API)
+                    console.log('Email collected:', email);
+                    alert('Thank you! Redirecting...');
+                    window.location.href = data.longUrl;
+                } else {
+                    alert('Please enter a valid email address');
+                }
+            };
+        }
+        
+        // ======================
+        // INITIALIZE
+        // ======================
+        window.onload = function() {
+            if (!shortCode) {
+                window.location.href = '/';
                 return;
             }
             
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
+            const data = getRedirectData(shortCode);
             
-            try {
-                const response = await fetch('/api/shorten', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        longUrl, 
-                        customCode: customCode || null 
-                    })
-                });
+            if (data) {
+                // Increment click count (simulated)
+                data.clicks = (data.clicks || 0) + 1;
+                localStorage.setItem(`pgxl_${shortCode}`, JSON.stringify(data));
                 
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    showResult(data.shortUrl);
-                    loadHistory();
-                } else {
-                    alert('Error: ' + (data.error || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Network error. Try again.');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+                handleRedirect(data);
+            } else {
+                document.getElementById('redirectContainer').innerHTML = `
+                    <h1>Link Not Found</h1>
+                    <p>The short URL you're looking for doesn't exist or has expired.</p>
+                    <button onclick="window.location.href='/'">Go to Homepage</button>
+                `;
             }
-        }
-        
-        function showResult(shortUrl) {
-            document.getElementById('shortUrl').textContent = shortUrl;
-            document.getElementById('result').style.display = 'block';
-            
-            // Clear previous QR
-            const canvas = document.getElementById('qrCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Generate new QR
-            QRCode.toCanvas(canvas, shortUrl, {
-                width: 200,
-                height: 200,
-                margin: 1
-            }, function(error) {
-                if (error) console.error('QR Error:', error);
-            });
-        }
-        
-        async function loadHistory() {
-            try {
-                const response = await fetch('/api/history');
-                const data = await response.json();
-                
-                const historyList = document.getElementById('historyList');
-                
-                if (!data || data.length === 0) {
-                    historyList.innerHTML = '<p style="color:#666; text-align:center;">No links yet</p>';
-                    return;
-                }
-                
-                let html = '';
-                data.forEach(item => {
-                    if (!item || !item.shortCode) return;
-                    
-                    const shortUrl = `${window.location.origin}/${item.shortCode}`;
-                    html += `
-                        <div class="history-item">
-                            <div>
-                                <div class="history-short">${item.shortCode}</div>
-                                <div style="font-size: 12px; color: #666;">
-                                    ${new Date(item.createdAt).toLocaleDateString()} • 
-                                    Clicks: ${item.clicks || 0}
-                                </div>
-                            </div>
-                            <div>
-                                <button class="copy-btn" onclick="copyUrl('${shortUrl}')">Copy</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                historyList.innerHTML = html || '<p style="color:#666; text-align:center;">No links yet</p>';
-                
-            } catch (error) {
-                console.error('Error loading history:', error);
-                document.getElementById('historyList').innerHTML = 
-                    '<p style="color:#ff4444; text-align:center;">Failed to load history</p>';
-            }
-        }
-        
-        function copyToClipboard() {
-            const url = document.getElementById('shortUrl').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('✅ Copied to clipboard!');
-            });
-        }
-        
-        function copyUrl(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                alert('✅ Copied: ' + url);
-            });
-        }
-        
-        function openLink() {
-            const url = document.getElementById('shortUrl').textContent;
-            window.open(url, '_blank');
-        }
-        
-        // Load history on page load
-        window.onload = loadHistory;
-        
-        // Make functions global
-        window.shortenUrl = shortenUrl;
-        window.copyToClipboard = copyToClipboard;
-        window.copyUrl = copyUrl;
-        window.openLink = openLink;
+        };
     </script>
 </body>
 </html>
