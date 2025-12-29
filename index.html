@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGXL - Premium Game Downloads</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&=swap" rel="stylesheet">
+    <title>PGXL.WEB.ID - Download Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        /* CSS STYLE START */
+        /* CSS STYLE DARI PROMPT */
         body {
             overflow-x: hidden;
             font-size: 16px;
@@ -19,278 +20,272 @@
             margin: 0;
             padding: 0;
         }
-
         :root {
             --bf-primary: #ffe272;
-            --bf-primary-rgb: 255, 226, 114;
             --ethno: "Ethnocentric", sans-serif;
+            --round: 15px;
         }
-
-        html { user-select: none; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        html { -webkit-user-select: none; user-select: none; }
+        ::-webkit-scrollbar { width: 2px; }
         ::-webkit-scrollbar-thumb { background-color: #fbc300; border-radius: 6px; }
         ::-webkit-scrollbar-track { background: #2e323d; }
 
-        /* Header & Search */
+        /* HEADER & SEARCH */
         header {
-            background: #1a1c23;
-            padding: 15px 5%;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 15px 30px;
+            background: #1a1c23;
             position: sticky;
             top: 0;
-            z-index: 100;
-        }
-
-        .category-btn {
-            background: var(--bf-primary);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .search-box {
-            position: relative;
-            width: 50%;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: none;
-            background: #2e323d;
-            color: #fff;
-        }
-
-        .search-suggestions {
-            position: absolute;
-            background: #2e323d;
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: -300px;
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background: #1a1c23;
-            transition: 0.4s ease-in-out;
-            z-index: 200;
-            padding: 20px;
-        }
-
-        .sidebar.active { left: 0; }
-
-        /* Game Card - Rectangle Lonjong */
-        .main-container { padding: 20px 5%; }
-        
-        .game-card {
-            background: #2e323d;
-            border-radius: 15px;
-            display: flex;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: 0.3s;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .game-card:hover { border-color: var(--bf-primary); }
-
-        .game-card img { width: 250px; height: 140px; object-fit: cover; }
-
-        .card-info { padding: 15px; flex: 1; }
-
-        /* Detail Frame */
-        #detail-frame {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #20222b;
             z-index: 1000;
-            display: none;
-            overflow-y: auto;
         }
+        .search-container { position: relative; width: 40%; }
+        .search-container input {
+            width: 100%; padding: 10px; border-radius: 20px;
+            background: #2e323d; border: 1px solid #444; color: #fff;
+        }
+        .search-results {
+            position: absolute; width: 100%; background: #2e323d;
+            border-radius: 10px; display: none; margin-top: 5px; max-height: 300px; overflow-y: auto;
+        }
+        .search-item {
+            display: flex; align-items: center; padding: 10px; cursor: pointer;
+        }
+        .search-item img { width: 40px; height: 40px; border-radius: 5px; margin-right: 10px; }
 
-        .banner-slider {
-            width: 100%;
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-            transition: 1s;
+        /* SIDEBAR ANIMATION */
+        .sidebar {
+            position: fixed; left: -300px; top: 0; width: 280px; height: 100%;
+            background: #1a1c23; transition: 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+            z-index: 1100; padding: 20px; border-right: 2px solid var(--bf-primary);
         }
+        .sidebar.open { left: 0; }
+        .sidebar h2 { font-family: var(--ethno); color: var(--bf-primary); font-size: 18px; margin-bottom: 20px; }
+        .cat-item { padding: 12px; border-bottom: 1px solid #333; cursor: pointer; }
 
-        .download-btn {
-            background: #fbc300;
-            color: #000;
-            padding: 15px 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            font-weight: bold;
+        /* GAME CARDS - LONJONG LIST */
+        .main-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .game-card {
+            background: #2e323d; border-radius: var(--round);
+            display: flex; overflow: hidden; height: 120px;
+            transition: 0.3s; border: 1px solid transparent; cursor: pointer;
         }
+        .game-card:hover { border-color: var(--bf-primary); transform: translateX(10px); }
+        .game-card img { width: 200px; object-fit: cover; }
+        .card-body { padding: 15px; flex: 1; }
+        .card-body h3 { margin: 0; color: var(--bf-primary); font-size: 18px; }
 
-        .overlay-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            font-size: 30px; cursor: pointer;
-            z-index: 1001;
+        /* DETAIL FRAME FULL SCREEN */
+        #detail-frame {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #20222b; z-index: 2000; display: none; overflow-y: auto;
         }
+        .banner-container { width: 100%; height: 60vh; position: relative; }
+        #banner-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s; }
+        .detail-info { padding: 30px; }
+        .rating-star { color: #fbc300; font-size: 24px; font-weight: bold; }
+
+        /* DOWNLOAD TIMER */
+        .dl-area { margin-top: 20px; }
+        .btn-dl { 
+            background: var(--bf-primary); color: #000; border: none; 
+            padding: 15px 40px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+        
+        /* LEGAL OVERLAYS */
+        .legal-box { font-size: 12px; color: #888; padding: 20px; text-align: center; }
+        .modal-legal {
+            display: none; position: fixed; background: rgba(0,0,0,0.9);
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 3000; padding: 50px;
+        }
+        .modal-content { background: #2e323d; padding: 30px; border-radius: 15px; max-height: 80%; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="category-btn" onclick="toggleSidebar()">CATEGORIES</div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search games..." onkeyup="handleSearch()">
-            <div id="suggestions" class="search-suggestions"></div>
-        </div>
-        <div id="google-login-btn"></div>
-    </header>
-
-    <div class="sidebar" id="sidebar">
-        <h3>Categories</h3>
-        <hr><br>
-        <p>Action</p><br>
-        <p>Adventure</p><br>
-        <p>RPG</p><br>
-        <p>Simulation</p>
+<header>
+    <div onclick="toggleSidebar()" style="cursor:pointer; font-weight:bold; color:var(--bf-primary)">☰ CATEGORY</div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search game..." onkeyup="doSearch()">
+        <div id="searchResults" class="search-results"></div>
     </div>
+    <div id="g_id_onload"
+         data-client_id="545920930826-tbk59eu6j9jh9dobt9v8km1bhcf13il6.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+</header>
 
-    <div class="main-container" id="game-list">
+<div class="sidebar" id="sidebar">
+    <h2 onclick="toggleSidebar()" style="cursor:pointer">✖ CLOSE</h2>
+    <div class="cat-item" onclick="filterCat('Action')">Action</div>
+    <div class="cat-item" onclick="filterCat('RPG')">RPG</div>
+    <div class="cat-item" onclick="filterCat('Shooter')">Shooter</div>
+    <div class="cat-item" onclick="filterCat('Adventure')">Adventure</div>
+</div>
+
+<div class="main-content" id="gameList"></div>
+
+<div id="detail-frame">
+    <div style="position:absolute; top:20px; right:30px; z-index:2100; font-size:30px; cursor:pointer" onclick="closeDetail()">✖</div>
+    <div class="banner-container">
+        <img id="banner-img" src="" alt="Banner">
+    </div>
+    <div class="detail-info">
+        <h1 id="det-title" style="font-family:var(--ethno)"></h1>
+        <div class="rating-star" id="det-rating"></div>
+        <p id="det-pub" style="color:var(--bf-primary)"></p>
+        <p id="det-desc" style="margin-top:20px; line-height:1.6"></p>
+        
+        <div class="dl-area">
+            <button class="btn-dl" id="dlBtn" onclick="startTimer()">DOWNLOAD NOW</button>
+            <h3 id="timerShow" style="display:none">Link ready in <span id="secs">5</span>s...</h3>
         </div>
+    </div>
+</div>
 
-    <div id="detail-frame">
-        <span class="overlay-close" onclick="closeDetail()">×</span>
-        <div class="banner-slider" id="bannerSlider"></div>
-        <div style="padding: 40px;">
-            <h1 id="detailTitle"></h1>
-            <p id="detailRating" style="color: #fbc300; font-size: 24px;"></p>
-            <p id="detailDesc"></p>
-            <div id="downloadArea">
-                <button class="download-btn" onclick="startDownloadTimer()">Download Game</button>
+<footer class="legal-box">
+    <p>© 2025 PGXL.WEB.ID | <span onclick="showLegal('tos')" style="cursor:pointer">Terms of Service</span> | <span onclick="showLegal('pp')" style="cursor:pointer">Privacy Policy</span></p>
+    <p>Contact: spctacularstudio@gmail.com</p>
+</footer>
+
+<div id="legalModal" class="modal-legal">
+    <div class="modal-content">
+        <h2 id="legalTitle"></h2>
+        <div id="legalBody" style="white-space: pre-line; margin-top: 20px;"></div>
+        <button onclick="document.getElementById('legalModal').style.display='none'" class="btn-dl" style="margin-top:20px">CLOSE</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    fetch('firebase-config.json').then(r => r.json()).then(config => {
+        initializeApp(config);
+    });
+</script>
+
+<script>
+    let games = [];
+    let bannerInterval;
+    let currentBannerIdx = 0;
+    let activeBanners = [];
+
+    // LOAD DATA
+    fetch('games.json').then(r => r.json()).then(data => {
+        games = data;
+        renderGames(data);
+    });
+
+    function renderGames(arr) {
+        const list = document.getElementById('gameList');
+        list.innerHTML = arr.map(g => `
+            <div class="game-card" onclick="openDetail(${g.id})">
+                <img src="${g.image}">
+                <div class="card-body">
+                    <h3>${g.name}</h3>
+                    <p style="font-size:12px; color:#aaa">${g.publisher}</p>
+                    <p>${g.description.substring(0, 80)}...</p>
+                </div>
             </div>
-            <p id="timerText"></p>
-        </div>
-    </div>
+        `).join('');
+    }
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
 
-        // Load config from firebase-config.json
-        fetch('firebase-config.json')
-            .then(res => res.json())
-            .then(config => {
-                const app = initializeApp(config);
-                const auth = getAuth(app);
-                // logic login google bisa ditaruh di sini
-            });
-    </script>
+    function doSearch() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        const resBox = document.getElementById('searchResults');
+        if(q.length < 2) { resBox.style.display = 'none'; return; }
+        
+        const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+        resBox.innerHTML = filtered.map(g => `
+            <div class="search-item" onclick="openDetail(${g.id})">
+                <img src="${g.image}">
+                <span>${g.name}</span>
+            </div>
+        `).join('');
+        resBox.style.display = 'block';
+    }
 
-    <script>
-        let gamesData = [];
-        let currentBanners = [];
-        let bannerIdx = 0;
-        let bannerInterval;
+    function openDetail(id) {
+        const g = games.find(x => x.id === id);
+        activeBanners = g.banners;
+        document.getElementById('det-title').innerText = g.name;
+        document.getElementById('det-rating').innerText = "Rating: ⭐ " + g.rating;
+        document.getElementById('det-pub').innerText = "Publisher: " + g.publisher;
+        document.getElementById('det-desc').innerText = g.description;
+        document.getElementById('detail-frame').style.display = 'block';
+        window.currentDl = g.downloadUrl;
 
-        // Fetch Games
-        fetch('games.json')
-            .then(res => res.json())
-            .then(data => {
-                gamesData = data;
-                renderGames(data);
-            });
+        // Banner Logic
+        currentBannerIdx = 0;
+        document.getElementById('banner-img').src = activeBanners[0];
+        clearInterval(bannerInterval);
+        bannerInterval = setInterval(() => {
+            currentBannerIdx = (currentBannerIdx + 1) % activeBanners.length;
+            document.getElementById('banner-img').style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('banner-img').src = activeBanners[currentBannerIdx];
+                document.getElementById('banner-img').style.opacity = 1;
+            }, 500);
+        }, 5000);
+    }
 
-        function renderGames(data) {
-            const container = document.getElementById('game-list');
-            container.innerHTML = data.map(game => `
-                <div class="game-card" onclick="openDetail(${game.id})">
-                    <img src="${game.image}" alt="${game.name}">
-                    <div class="card-info">
-                        <h2>${game.name}</h2>
-                        <p>${game.publisher}</p>
-                        <p style="font-size: 0.8em; color: #aaa;">${game.description.substring(0, 100)}...</p>
-                    </div>
-                </div>
-            `).join('');
-        }
+    function closeDetail() {
+        document.getElementById('detail-frame').style.display = 'none';
+        clearInterval(bannerInterval);
+    }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
-
-        function handleSearch() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            const sugg = document.getElementById('suggestions');
-            if(val.length < 2) { sugg.style.display = 'none'; return; }
-            
-            const filtered = gamesData.filter(g => g.name.toLowerCase().includes(val));
-            sugg.innerHTML = filtered.map(g => `
-                <div style="padding:10px; border-bottom:1px solid #444; cursor:pointer" onclick="openDetail(${g.id})">
-                    <img src="${g.image}" width="30" style="vertical-align:middle; margin-right:10px"> ${g.name}
-                </div>
-            `).join('');
-            sugg.style.display = 'block';
-        }
-
-        function openDetail(id) {
-            const game = gamesData.find(g => g.id === id);
-            const frame = document.getElementById('detail-frame');
-            currentBanners = game.banners;
-            
-            document.getElementById('detailTitle').innerText = game.name;
-            document.getElementById('detailRating').innerText = "Rating: ⭐ " + game.rating;
-            document.getElementById('detailDesc').innerText = game.description;
-            
-            // Start Banner Slider
-            bannerIdx = 0;
-            updateBanner();
-            bannerInterval = setInterval(updateBanner, 5000);
-            
-            frame.style.display = 'block';
-            window.currentDownloadUrl = game.downloadUrl;
-        }
-
-        function updateBanner() {
-            const slider = document.getElementById('bannerSlider');
-            slider.style.backgroundImage = `url(${currentBanners[bannerIdx]})`;
-            bannerIdx = (bannerIdx + 1) % currentBanners.length;
-        }
-
-        function closeDetail() {
-            document.getElementById('detail-frame').style.display = 'none';
-            clearInterval(bannerInterval);
-        }
-
-        function startDownloadTimer() {
-            let sec = 5;
-            const btnArea = document.getElementById('downloadArea');
-            const timerTxt = document.getElementById('timerText');
-            
-            btnArea.style.display = 'none';
-            const timer = setInterval(() => {
-                timerTxt.innerText = `Please wait ${sec} seconds...`;
-                sec--;
-                if(sec < 0) {
-                    clearInterval(timer);
-                    window.location.href = window.currentDownloadUrl;
+    function startTimer() {
+        // RECAPTCHA EXECUTE
+        grecaptcha.enterprise.ready(async () => {
+            await grecaptcha.enterprise.execute('6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf', {action: 'DOWNLOAD'});
+            let s = 5;
+            document.getElementById('dlBtn').style.display = 'none';
+            document.getElementById('timerShow').style.display = 'block';
+            const itv = setInterval(() => {
+                s--;
+                document.getElementById('secs').innerText = s;
+                if(s <= 0) {
+                    clearInterval(itv);
+                    window.location.href = window.currentDl;
                 }
             }, 1000);
+        });
+    }
+
+    function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+        alert("Login Success!");
+    }
+
+    function showLegal(type) {
+        const modal = document.getElementById('legalModal');
+        const title = document.getElementById('legalTitle');
+        const body = document.getElementById('legalBody');
+        modal.style.display = 'block';
+
+        if(type === 'tos') {
+            title.innerText = "Super Detailed Terms of Service";
+            body.innerText = `1. ACCEPTANCE: By using PGXL.WEB.ID, you agree to these terms.
+            2. CONTENT: We provide game metadata and download redirects. We are not responsible for software issues.
+            3. INTELLECTUAL PROPERTY: All game titles and assets belong to their respective publishers.
+            4. USER CONDUCT: No botting or scraping allowed.
+            5. REDIRECTS: Users must wait for the 5-second verification timer.
+            6. DISCLAIMER: Service is provided "AS IS" without warranty of any kind.`;
+        } else {
+            title.innerText = "Privacy Policy";
+            body.innerText = `1. DATA COLLECTION: We use Google Auth for authentication. We do not sell your personal data.
+            2. COOKIES: We use local storage to save your preferences.
+            3. RECAPTCHA: We use Google reCAPTCHA Enterprise to prevent spam.
+            4. SECURITY: Data is handled through Firebase's secure protocols.
+            5. THIRD PARTY: We are not responsible for privacy practices of linked download sites.`;
         }
-    </script>
+    }
+</script>
 </body>
 </html>
