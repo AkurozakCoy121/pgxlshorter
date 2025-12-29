@@ -1,13 +1,23 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/:shortCode", "destination": "/redirect-page.html" }
-  ],
-  "redirects": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/home",
-      "destination": "/",
-      "permanent": false
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "redirect-page.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/([a-zA-Z0-9]+)",
+      "dest": "/redirect-page.html"
     }
   ]
 }
