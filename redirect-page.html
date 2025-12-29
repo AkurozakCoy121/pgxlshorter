@@ -3,140 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting... - pgxl.web.id</title>
+    <title>Sabar... Sedang Memuat - pgxl.web.id</title>
     <style>
-        /* UI SUPER SIMPLE & RINGAN */
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #f4f4f4; 
-            color: #333; 
-            margin: 0; 
-            padding: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
-        .ad-slot { 
-            width: 100%; 
-            max-width: 728px; 
-            margin: 10px 0; 
-            background: #fff; 
-            border: 1px solid #ddd; 
-            text-align: center; 
-            min-height: 90px;
-        }
-        .main-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-            border-top: 5px solid #007bff;
-        }
-        .timer { font-size: 50px; font-weight: bold; color: #ff0055; margin: 10px 0; }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .label { font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #eef2f3; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        .ad-container { width: 100%; max-width: 728px; min-height: 90px; background: #fff; border: 1px dashed #bbb; margin: 10px 0; text-align: center; overflow: hidden; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+        .timer { font-size: 60px; font-weight: bold; color: #ff4757; margin: 20px 0; }
+        .btn { display: block; width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: #1e90ff; color: white; }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        .label { font-size: 10px; color: #aaa; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="ad-slot" style="max-width: 468px; min-height: 60px;">
-        <div class="label">Advertisement</div>
+    <div class="ad-container" style="max-width:468px; min-height:60px;">
+        <div class="label">ADVERTISEMENT</div>
         <script type="text/javascript">
-            atOptions = {
-                'key' : 'f5ff3c00cf06a9629062b58972b291fc',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-            };
+            // Variabel dibungkus fungsi supaya tidak bentrok
+            (function() {
+                atOptions = { 'key' : 'f5ff3c00cf06a9629062b58972b291fc', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
+                var s = document.createElement('script');
+                s.src = "https://www.highperformanceformat.com/f5ff3c00cf06a9629062b58972b291fc/invoke.js";
+                document.currentScript.parentElement.appendChild(s);
+            })();
         </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/f5ff3c00cf06a9629062b58972b291fc/invoke.js"></script>
     </div>
 
-    <div class="main-card">
-        <h2 style="margin:0">Harap Tunggu...</h2>
-        <p style="color:#666; font-size: 14px;">Link tujuan Anda hampir siap.</p>
-        
-        <div class="timer" id="countdown">8</div>
-
-        <button id="mainButton" class="btn" disabled onclick="finalRedirect()">
-            Sabar Ya...
+    <div class="card">
+        <h2 style="margin:0; color:#333;">Tunggu Sebentar</h2>
+        <div class="timer" id="timer">8</div>
+        <button id="btn" class="btn btn-primary" disabled onclick="redirect()">
+            Menyiapkan Link...
         </button>
-
-        <p style="font-size: 12px; margin-top: 15px; color: #888;">
-            Klik tombol di atas setelah hitungan mundur selesai.
-        </p>
     </div>
 
-    <div class="ad-slot">
-        <div class="label">Sponsored Content</div>
+    <div class="ad-container">
+        <div class="label">SPONSORED</div>
         <script type="text/javascript">
-            atOptions = {
-                'key' : '3c74180e4c677e656199fefbdd0300a0',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-            };
+            (function() {
+                atOptions = { 'key' : '3c74180e4c677e656199fefbdd0300a0', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+                var s = document.createElement('script');
+                s.src = "https://www.highperformanceformat.com/3c74180e4c677e656199fefbdd0300a0/invoke.js";
+                document.currentScript.parentElement.appendChild(s);
+            })();
         </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/3c74180e4c677e656199fefbdd0300a0/invoke.js"></script>
     </div>
 
     <script type='text/javascript' src='https://pl28358663.effectivegatecpm.com/38/4d/88/384d88eb45252a3973e476a7d69ff0a2.js'></script>
 
     <script>
         let timeLeft = 8;
-        const countdownEl = document.getElementById('countdown');
-        const mainBtn = document.getElementById('mainButton');
+        const timerDisplay = document.getElementById('timer');
+        const actionBtn = document.getElementById('btn');
 
-        // Logic Countdown
-        const timer = setInterval(() => {
+        const countdown = setInterval(() => {
             timeLeft--;
-            countdownEl.textContent = timeLeft;
-
+            timerDisplay.textContent = timeLeft;
             if (timeLeft <= 0) {
-                clearInterval(timer);
-                mainBtn.disabled = false;
-                mainBtn.textContent = "LANJUTKAN KE LINK 🚀";
-                countdownEl.style.display = 'none';
+                clearInterval(countdown);
+                actionBtn.disabled = false;
+                actionBtn.innerHTML = "Dapatkan Link 🚀";
+                timerDisplay.style.display = 'none';
             }
         }, 1000);
 
-        // Logic Redirect
-        function finalRedirect() {
-            // Get data dari localStorage sesuai path
-            const shortCode = window.location.pathname.substring(1);
-            const rawData = localStorage.getItem(`pgxl_${shortCode}`);
-            const destination = rawData ? JSON.parse(rawData).longUrl : 'https://google.com';
-
-            // Redirect
-            window.location.href = destination;
+        function redirect() {
+            const code = window.location.pathname.substring(1);
+            const data = JSON.parse(localStorage.getItem('pgxl_' + code));
+            window.location.href = data ? data.longUrl : 'https://google.com';
         }
-
-        // Trick: Klik mana saja pertama kali = buka popunder tambahan (Opsional)
-        document.body.onclick = function() {
-            if(!window.alreadyClicked) {
-                console.log("Ad Triggered");
-                window.alreadyClicked = true;
-            }
-        };
     </script>
-
 </body>
 </html>
