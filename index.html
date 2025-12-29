@@ -1,1335 +1,318 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGXL.WEB.ID - Download Games</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>PGXL - Player Generated Xtreme Leagues</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* ===== VARIABLES & RESET ===== */
         :root {
-            --primary: #ffe272;
-            --primary-dark: #d4b85e;
-            --secondary: #333333;
-            --dark-bg: #20222b;
-            --card-bg: #2a2d3a;
-            --card-border: #3a3e4d;
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --text-muted: #999999;
-            --success: #4CAF50;
-            --warning: #ff9800;
-            --danger: #f44336;
-            --ethno: 'Orbitron', sans-serif;
-            --montserrat: 'Montserrat', sans-serif;
-            --radius: 8px;
-            --radius-lg: 15px;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-text: #f1f5f9;
+            --dark-border: #334155;
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --light-text: #1e293b;
+            --light-border: #e2e8f0;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            transition: background 0.3s, color 0.3s, border 0.3s;
         }
 
-        /* ===== BODY & TYPOGRAPHY ===== */
         body {
-            font-family: var(--montserrat);
-            background-color: var(--dark-bg);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--ethno);
-            font-weight: 600;
+        body[data-theme="light"] {
+            background: var(--light-bg);
+            color: var(--light-text);
         }
 
-        h1 {
-            font-size: 2.2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        h2 {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-        }
-
-        a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: var(--primary-dark);
-        }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-
-        /* ===== HEADER ===== */
+        /* Header & Navigation */
         header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 30px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--card-border);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--dark-border);
+            backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
+        }
+
+        body[data-theme="light"] header {
+            border-color: var(--light-border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            color: var(--dark-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--ethno);
-            font-weight: 700;
-            font-size: 18px;
-            border-radius: var(--radius);
+        .logo span {
+            font-size: 32px;
         }
 
-        .logo-text {
-            font-family: var(--ethno);
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .header-controls {
+        .nav-right {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        /* ===== CATEGORY BUTTON ===== */
-        .category-btn {
-            background: var(--primary);
-            color: var(--dark-bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background-color 0.2s;
-        }
-
-        .category-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        /* ===== SEARCH CONTAINER ===== */
-        .search-container {
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 60px;
+            height: 30px;
+            background: var(--dark-card);
+            border-radius: 50px;
             position: relative;
-            width: 300px;
+            cursor: pointer;
+            border: 2px solid var(--dark-border);
         }
 
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            padding-left: 40px;
-            background: var(--dark-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-family: var(--montserrat);
-            font-size: 14px;
-            transition: border-color 0.2s;
+        body[data-theme="light"] .theme-toggle {
+            background: var(--light-card);
+            border-color: var(--light-border);
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .search-icon {
+        .theme-toggle::after {
+            content: '🌙';
             position: absolute;
-            left: 12px;
+            left: 5px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            font-size: 16px;
+            transition: all 0.3s;
         }
 
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            margin-top: 5px;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1001;
+        body[data-theme="light"] .theme-toggle::after {
+            content: '☀️';
+            left: calc(100% - 30px);
         }
 
-        .search-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--card-border);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .search-item:hover {
-            background: rgba(255, 226, 114, 0.1);
-        }
-
-        .search-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--radius);
-            margin-right: 12px;
-            object-fit: cover;
-        }
-
-        .search-item-info {
-            flex: 1;
-        }
-
-        .search-item-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .search-item-category {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* ===== USER PROFILE ===== */
-        .user-profile {
-            position: relative;
-        }
-
-        .profile-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--primary);
-            cursor: pointer;
-        }
-
-        .profile-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .login-btn {
-            background: var(--primary);
-            color: var(--dark-bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* ===== SIDEBAR (CATEGORIES) ===== */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--card-bg);
-            border-right: 1px solid var(--card-border);
-            z-index: 1100;
-            transition: left 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 20px;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-sidebar:hover {
-            background: rgba(255, 226, 114, 0.1);
-        }
-
-        .category-list {
-            list-style: none;
-            padding: 20px 0;
-        }
-
-        .cat-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 3px solid transparent;
-        }
-
-        .cat-item:hover {
-            background: rgba(255, 226, 114, 0.1);
-        }
-
-        .cat-item.active {
-            background: rgba(255, 226, 114, 0.2);
-            border-left-color: var(--primary);
-        }
-
-        .cat-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-        }
-
-        /* ===== PROFILE PANEL ===== */
-        .profile-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            height: 100%;
-            background: var(--card-bg);
-            border-left: 1px solid var(--card-border);
-            z-index: 1100;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .profile-panel.open {
-            right: 0;
-        }
-
-        .profile-header {
-            padding: 30px 20px 20px;
-            background: rgba(255, 226, 114, 0.1);
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .profile-main {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid var(--primary);
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-info h3 {
-            margin-bottom: 5px;
-            font-size: 20px;
-        }
-
-        .profile-email {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .profile-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .profile-tab {
-            flex: 1;
+        /* Main Content */
+        .hero {
+            padding: 80px 0;
             text-align: center;
-            padding: 15px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 3px solid transparent;
         }
 
-        .profile-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
         }
 
-        .profile-content {
-            padding: 20px;
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
         }
 
-        .profile-section {
-            display: none;
-        }
-
-        .profile-section.active {
-            display: block;
-        }
-
-        .stats-grid {
+        /* Cards Grid */
+        .cards-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
         }
 
-        .stat-card {
-            background: rgba(255, 226, 114, 0.05);
-            border: 1px solid var(--card-border);
+        .card {
+            background: var(--dark-card);
             border-radius: var(--radius);
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-family: var(--ethno);
-            font-size: 24px;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .xp-progress {
-            margin: 20px 0;
-        }
-
-        .xp-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .xp-bar {
-            height: 8px;
-            background: var(--secondary);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .xp-fill {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .liked-game {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .liked-game:hover {
-            border-color: var(--primary);
-        }
-
-        .liked-game img {
-            width: 60px;
-            height: 40px;
-            border-radius: var(--radius);
-            margin-right: 12px;
-            object-fit: cover;
-        }
-
-        .liked-game-info {
-            flex: 1;
-        }
-
-        .comment-item {
-            padding: 15px;
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            margin-bottom: 15px;
-        }
-
-        .comment-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .comment-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 10px;
-            overflow: hidden;
-        }
-
-        .comment-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .comment-author {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .comment-game {
-            font-size: 12px;
-            color: var(--primary);
-            margin-left: auto;
-        }
-
-        .comment-text {
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .comment-date {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 8px;
-            text-align: right;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
             padding: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
+            border: 1px solid var(--dark-border);
+            box-shadow: var(--shadow);
         }
 
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--card-border);
+        body[data-theme="light"] .card {
+            background: var(--light-card);
+            border-color: var(--light-border);
         }
 
-        .games-count {
-            background: var(--primary);
-            color: var(--dark-bg);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-family: var(--montserrat);
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 32px;
+            border-radius: var(--radius);
             font-weight: 600;
-            font-size: 14px;
-        }
-
-        /* ===== GAME CARDS (PERSIANG PANJANG LONJONG) ===== */
-        .games-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .game-card {
-            display: flex;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
+            font-size: 16px;
             cursor: pointer;
-            height: 160px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 95%;
-        }
-
-        .game-card:hover {
-            transform: translateX(5px);
-            border-color: var(--primary);
-        }
-
-        .game-image {
-            width: 220px;
-            height: 100%;
-            flex-shrink: 0;
-        }
-
-        .game-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .game-info {
-            flex: 1;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .game-header {
-            margin-bottom: 10px;
-        }
-
-        .game-title {
-            font-family: var(--ethno);
-            font-size: 18px;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .game-publisher {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .game-desc {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .game-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .game-category {
-            background: rgba(255, 226, 114, 0.1);
-            color: var(--primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .game-actions {
-            display: flex;
+            border: none;
+            transition: all 0.3s;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
         }
 
-        .like-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 20px;
-            padding: 5px;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
 
-        .like-btn.liked {
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
             color: var(--primary);
         }
 
-        .download-btn {
-            background: var(--primary);
-            color: var(--dark-bg);
-            border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .download-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        /* ===== LOAD MORE BUTTON ===== */
-        .load-more {
-            text-align: center;
-            margin: 40px 0;
-        }
-
-        .load-more-btn {
-            background: var(--card-bg);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 12px 30px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .load-more-btn:hover {
-            background: var(--primary);
-            color: var(--dark-bg);
-        }
-
-        /* ===== DETAIL FRAME ===== */
-        #detail-frame {
+        /* Modal & Forms */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--dark-bg);
-            z-index: 2000;
-            display: none;
-            overflow-y: auto;
-        }
-
-        .detail-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .close-detail {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 2001;
-            transition: all 0.2s;
-        }
-
-        .close-detail:hover {
-            background: var(--primary);
-            color: var(--dark-bg);
-        }
-
-        .banner-container {
-            width: 100%;
-            height: 400px;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        #banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .banner-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.7);
-            border: none;
-            color: var(--primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .banner-nav:hover {
-            background: var(--primary);
-            color: var(--dark-bg);
-        }
-
-        .banner-prev {
-            left: 20px;
-        }
-
-        .banner-next {
-            right: 20px;
-        }
-
-        .detail-info {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            border: 1px solid var(--card-border);
-            margin-bottom: 30px;
-        }
-
-        .detail-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .detail-title {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .detail-publisher {
-            color: var(--primary);
-            font-size: 16px;
-        }
-
-        .detail-rating {
-            text-align: center;
-        }
-
-        .rating-stars {
-            color: var(--primary);
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .rating-value {
-            font-size: 18px;
-            color: var(--primary);
-        }
-
-        .detail-description {
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-        }
-
-        .detail-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .detail-like {
-            background: none;
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .detail-like.liked {
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .share-btn {
-            background: none;
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .share-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .report-btn {
-            background: none;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .report-btn:hover {
-            background: rgba(244, 67, 54, 0.1);
-        }
-
-        /* ===== COMMENTS SECTION ===== */
-        .comments-section {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            border: 1px solid var(--card-border);
-            margin-bottom: 30px;
-        }
-
-        .comments-header {
-            margin-bottom: 20px;
-        }
-
-        .comment-form {
-            margin-bottom: 30px;
-        }
-
-        .comment-input {
-            width: 100%;
-            padding: 15px;
-            background: var(--dark-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-family: var(--montserrat);
-            font-size: 14px;
-            resize: vertical;
-            min-height: 100px;
-            margin-bottom: 15px;
-        }
-
-        .comment-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .comment-submit {
-            background: var(--primary);
-            color: var(--dark-bg);
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .comment-submit:hover:not(:disabled) {
-            background: var(--primary-dark);
-        }
-
-        .comment-submit:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* ===== DOWNLOAD AREA ===== */
-        .download-area {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            border: 1px solid var(--card-border);
-            text-align: center;
-        }
-
-        .download-header {
-            margin-bottom: 20px;
-        }
-
-        .btn-download {
-            background: var(--primary);
-            color: var(--dark-bg);
-            border: none;
-            padding: 15px 40px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
-            font-weight: 700;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-bottom: 20px;
-        }
-
-        .btn-download:hover:not(:disabled) {
-            background: var(--primary-dark);
-        }
-
-        .btn-download:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .timer-container {
-            display: none;
-            padding: 20px;
-            background: rgba(255, 226, 114, 0.1);
-            border-radius: var(--radius);
-            border: 1px solid var(--primary);
-        }
-
-        .timer-container h3 {
-            margin-bottom: 10px;
-        }
-
-        .timer-display {
-            font-family: var(--ethno);
-            font-size: 36px;
-            color: var(--primary);
-            margin: 10px 0;
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            background: var(--card-bg);
-            border-top: 1px solid var(--card-border);
-            padding: 30px;
-            margin-top: 50px;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .footer-link {
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
-        }
-
-        .footer-contact {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        /* ===== MODALS ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 3000;
-            display: none;
-            justify-content: center;
-            align-items: center;
         }
 
         .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
+            background: var(--dark-card);
+            border-radius: var(--radius);
             padding: 40px;
             width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--card-border);
+            max-width: 500px;
+            border: 1px solid var(--dark-border);
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--card-border);
+        body[data-theme="light"] .modal-content {
+            background: var(--light-card);
+            border-color: var(--light-border);
         }
 
-        .modal-header h2 {
-            margin: 0;
-            font-size: 24px;
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 24px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-modal:hover {
-            background: rgba(255, 226, 114, 0.1);
-        }
-
-        .modal-body {
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        .modal-section {
-            margin-bottom: 25px;
-        }
-
-        .modal-section h3 {
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        /* ===== ADMIN PANEL ===== */
-        .admin-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            font-family: var(--montserrat);
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 600;
-            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        body[data-theme="light"] .form-control {
+            background: white;
+            border-color: var(--light-border);
+            color: var(--light-text);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .poll-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .poll-card {
+            background: var(--dark-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--dark-border);
+        }
+
+        body[data-theme="light"] .poll-card {
+            background: var(--light-card);
+            border-color: var(--light-border);
+        }
+
+        /* Poll Customization */
+        .customization-panel {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--dark-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--dark-border);
+        }
+
+        .layout-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .layout-option {
+            padding: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            border-radius: 8px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
+            background: var(--dark-bg);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .game-card {
-                height: 140px;
-            }
-            
-            .game-image {
-                width: 180px;
-            }
-            
-            .detail-container {
-                padding: 15px;
-            }
-            
-            .banner-container {
-                height: 300px;
-            }
+        .layout-option:hover, .layout-option.active {
+            border-color: var(--primary);
         }
 
-        @media (max-width: 768px) {
-            header {
-                padding: 15px;
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .search-container {
-                width: 100%;
-                order: 3;
-            }
-            
-            .header-controls {
-                margin-left: auto;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .game-card {
-                height: 120px;
-                width: 100%;
-            }
-            
-            .game-image {
-                width: 140px;
-            }
-            
-            .game-title {
-                font-size: 16px;
-            }
-            
-            .game-desc {
-                font-size: 13px;
-                -webkit-line-clamp: 1;
-            }
-            
-            .profile-panel {
-                width: 100%;
-                right: -100%;
-            }
-            
-            .sidebar {
-                width: 100%;
-                left: -100%;
-            }
-            
-            .banner-container {
-                height: 200px;
-            }
-            
-            .detail-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .detail-actions {
-                flex-wrap: wrap;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .game-card {
-                flex-direction: column;
-                height: auto;
-            }
-            
-            .game-image {
-                width: 100%;
-                height: 150px;
-            }
-            
-            .game-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .game-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-
-        /* ===== UTILITIES ===== */
+        /* Utility */
         .hidden {
             display: none !important;
         }
@@ -1338,1248 +321,459 @@
             text-align: center;
         }
 
-        .mb-20 {
-            margin-bottom: 20px;
-        }
-
-        .mt-20 {
-            margin-top: 20px;
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--card-border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .mt-4 { margin-top: 20px; }
+        .mb-4 { margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div class="logo">
-            <div class="logo-icon">PG</div>
-            <div class="logo-text">PGXL.WEB.ID</div>
-        </div>
-        
-        <div class="header-controls">
-            <button class="category-btn" onclick="toggleSidebar()">
-                <span>☰</span> CATEGORY
-            </button>
-            
-            <div class="search-container">
-                <div class="search-icon">🔍</div>
-                <input type="text" class="search-input" id="searchInput" placeholder="Search game..." oninput="doSearch()">
-                <div id="searchResults" class="search-results"></div>
-            </div>
-            
-            <div class="user-profile">
-                <div id="loginBtn" class="login-btn" onclick="handleGoogleLogin()">
-                    <span>Sign in</span>
-                </div>
-                <div id="profileBtn" class="profile-btn hidden" onclick="toggleProfilePanel()">
-                    <img id="profilePicture" src="" alt="Profile">
-                </div>
+        <div class="container nav-container">
+            <a href="#" class="logo">PG<span>XL</span></a>
+            <div class="nav-right">
+                <div class="theme-toggle" id="themeToggle"></div>
+                <button class="btn btn-outline" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+                <button class="btn btn-primary hidden" id="createPollBtn">
+                    <i class="fas fa-plus"></i> Buat Polling
+                </button>
+                <button class="btn btn-outline hidden" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Sidebar (Categories) -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>CATEGORIES</h2>
-            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
-        </div>
-        <ul class="category-list">
-            <li class="cat-item active" onclick="filterCategory('All')">
-                <div class="cat-icon">★</div>
-                <span>All Games</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('Action')">
-                <div class="cat-icon">⚡</div>
-                <span>Action</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('RPG')">
-                <div class="cat-icon">🛡️</div>
-                <span>RPG</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('Shooter')">
-                <div class="cat-icon">🎯</div>
-                <span>Shooter</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('Adventure')">
-                <div class="cat-icon">🗺️</div>
-                <span>Adventure</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('Strategy')">
-                <div class="cat-icon">♟️</div>
-                <span>Strategy</span>
-            </li>
-            <li class="cat-item" onclick="filterCategory('Sports')">
-                <div class="cat-icon">⚽</div>
-                <span>Sports</span>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Profile Panel -->
-    <div class="profile-panel" id="profilePanel">
-        <div class="profile-header">
-            <div class="profile-main">
-                <div class="profile-avatar">
-                    <img id="panelProfilePicture" src="" alt="Profile">
-                </div>
-                <div class="profile-info">
-                    <h3 id="panelUserName">Guest</h3>
-                    <div class="profile-email" id="panelUserEmail">Not signed in</div>
-                </div>
-            </div>
-            
-            <div class="profile-tabs">
-                <button class="profile-tab active" onclick="switchProfileTab('stats')">Stats</button>
-                <button class="profile-tab" onclick="switchProfileTab('liked')">Liked</button>
-                <button class="profile-tab" onclick="switchProfileTab('activity')">Activity</button>
-            </div>
-        </div>
-        
-        <div class="profile-content">
-            <div id="statsTab" class="profile-section active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="userLevel">1</div>
-                        <div class="stat-label">Level</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="userXP">0</div>
-                        <div class="stat-label">XP</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="userDownloads">0</div>
-                        <div class="stat-label">Downloads</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="userLikes">0</div>
-                        <div class="stat-label">Likes</div>
-                    </div>
-                </div>
-                
-                <div class="xp-progress">
-                    <div class="xp-label">
-                        <span>Progress to Level <span id="nextLevel">2</span></span>
-                        <span id="xpProgressText">0/100</span>
-                    </div>
-                    <div class="xp-bar">
-                        <div class="xp-fill" id="xpFill"></div>
-                    </div>
-                </div>
-                
-                <div id="adminPanel" class="hidden">
-                    <button class="admin-btn" onclick="openAdminPanel()">
-                        <span>🔧</span> Admin Panel
-                    </button>
-                </div>
-            </div>
-            
-            <div id="likedTab" class="profile-section">
-                <div id="likedGamesList"></div>
-                <div id="noLikedGames" class="text-center">
-                    <p>No liked games yet</p>
-                </div>
-            </div>
-            
-            <div id="activityTab" class="profile-section">
-                <div id="userCommentsList"></div>
-                <div id="noComments" class="text-center">
-                    <p>No comments yet</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="content-header">
-            <h1>TOP GAMES COLLECTION</h1>
-            <div class="games-count" id="gamesCount">Loading...</div>
-        </div>
-        
-        <div class="games-container" id="gameList">
-            <div class="loading">
-                <div class="spinner"></div>
-            </div>
-        </div>
-        
-        <div class="load-more">
-            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreGames()" style="display: none;">
-                Load More Games
+    <main class="container">
+        <!-- Hero Section (Home) -->
+        <section id="homeSection" class="hero">
+            <h1>Player Generated Xtreme Leagues</h1>
+            <p>Platform polling gaming pertama yang memberi kamu kebebasan penuh untuk membuat, mengkustomisasi, dan mengelola polling dengan UI modern.</p>
+            <button class="btn btn-primary" id="heroCreateBtn">
+                <i class="fas fa-rocket"></i> Buat Polling Pertamamu
             </button>
-        </div>
+        </section>
+
+        <!-- Dashboard (After Login) -->
+        <section id="dashboardSection" class="dashboard">
+            <h2>Dashboard Polling Saya</h2>
+            <p>Kelola semua pollingmu di satu tempat</p>
+            
+            <div class="poll-grid" id="pollGrid">
+                <!-- Polling akan muncul di sini secara realtime -->
+                <div class="poll-card">
+                    <h4>Belum ada polling</h4>
+                    <p>Klik "Buat Polling" untuk memulai</p>
+                </div>
+            </div>
+
+            <!-- Customization Panel -->
+            <div id="customizationPanel" class="customization-panel">
+                <h3><i class="fas fa-palette"></i> Kustomisasi UI Polling</h3>
+                <div class="layout-options">
+                    <div class="layout-option active" data-layout="default">
+                        <i class="fas fa-th-large fa-2x"></i>
+                        <p>Grid Default</p>
+                    </div>
+                    <div class="layout-option" data-layout="cards">
+                        <i class="fas fa-th fa-2x"></i>
+                        <p>Kartu Modern</p>
+                    </div>
+                    <div class="layout-option" data-layout="list">
+                        <i class="fas fa-list fa-2x"></i>
+                        <p>Daftar Ringkas</p>
+                    </div>
+                    <div class="layout-option" data-layout="minimal">
+                        <i class="fas fa-align-left fa-2x"></i>
+                        <p>Minimalis</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Game Detail Frame -->
-    <div id="detail-frame">
-        <button class="close-detail" onclick="closeDetail()">✕</button>
-        
-        <div class="detail-container">
-            <div class="banner-container">
-                <img id="banner-img" src="" alt="Game Banner">
-                <button class="banner-nav banner-prev" onclick="prevBanner()">❮</button>
-                <button class="banner-nav banner-next" onclick="nextBanner()">❯</button>
-            </div>
-            
-            <div class="detail-info">
-                <div class="detail-header">
-                    <div>
-                        <h1 class="detail-title" id="det-title"></h1>
-                        <div class="detail-publisher" id="det-pub"></div>
-                    </div>
-                    <div class="detail-rating">
-                        <div class="rating-stars" id="det-rating-stars"></div>
-                        <div class="rating-value" id="det-rating"></div>
-                    </div>
-                </div>
-                
-                <div class="detail-description" id="det-desc"></div>
-                
-                <div class="detail-actions">
-                    <button class="detail-like" id="detailLikeBtn" onclick="toggleLike()">
-                        <span>❤️</span> <span id="likeText">Like</span>
-                    </button>
-                    <button class="share-btn" onclick="shareGame()">
-                        <span>📤</span> Share
-                    </button>
-                    <button class="report-btn" onclick="reportBrokenLink()">
-                        <span>⚠️</span> Report Broken Link
-                    </button>
-                </div>
-            </div>
-            
-            <div class="comments-section">
-                <div class="comments-header">
-                    <h2>COMMENTS</h2>
-                </div>
-                
-                <div class="comment-form" id="commentForm">
-                    <textarea class="comment-input" id="commentInput" placeholder="Write your comment here... (Login required)" disabled></textarea>
-                    <button class="comment-submit" id="commentSubmit" onclick="submitComment()" disabled>Post Comment</button>
-                </div>
-                
-                <div class="comments-list" id="commentsList">
-                    <div class="text-center">
-                        <p>Loading comments...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="download-area">
-                <div class="download-header">
-                    <h2>DOWNLOAD NOW</h2>
-                    <p>Click below to start your download</p>
-                </div>
-                
-                <button class="btn-download" id="dlBtn" onclick="startDownload()">
-                    DOWNLOAD GAME
-                </button>
-                
-                <div class="timer-container" id="timerContainer">
-                    <h3>DOWNLOAD STARTING...</h3>
-                    <div class="timer-display" id="timerDisplay">5</div>
-                    <p>Your download will start automatically in <span id="secs">5</span> seconds.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="logo">
-                <div class="logo-icon">PG</div>
-                <div class="logo-text">PGXL.WEB.ID</div>
-            </div>
-            
-            <div class="footer-links">
-                <div class="footer-link" onclick="showLegal('tos')">Terms of Service</div>
-                <div class="footer-link" onclick="showLegal('pp')">Privacy Policy</div>
-            </div>
-        </div>
-        
-        <div class="footer-contact">
-            <p>© 2025 PGXL.WEB.ID | Contact: spctacularstudio@gmail.com</p>
-            <p>All game titles and content are property of their respective owners.</p>
-        </div>
-    </footer>
-
-    <!-- Legal Modals -->
-    <div class="modal-overlay" id="legalModal">
+    <!-- Modal Create Poll -->
+    <div id="createPollModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="legalTitle">Terms of Service</h2>
-                <button class="close-modal" onclick="closeLegal()">✕</button>
-            </div>
-            <div class="modal-body" id="legalBody">
-                <!-- Content will be inserted by JavaScript -->
-            </div>
+            <h3><i class="fas fa-poll"></i> Buat Polling Baru</h3>
+            <form id="pollForm">
+                <div class="form-group">
+                    <label>Judul Polling</label>
+                    <input type="text" class="form-control" id="pollTitle" placeholder="Misal: Hero Terbaik Meta Sekarang?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pilihan (Maks 4)</label>
+                    <div id="optionsContainer">
+                        <input type="text" class="form-control mb-4" placeholder="Pilihan 1" required>
+                        <input type="text" class="form-control mb-4" placeholder="Pilihan 2" required>
+                    </div>
+                    <button type="button" class="btn btn-outline" id="addOptionBtn">
+                        <i class="fas fa-plus"></i> Tambah Pilihan
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipe Polling</label>
+                    <select class="form-control" id="pollType">
+                        <option value="single">Pilihan Tunggal</option>
+                        <option value="multiple">Pilihan Ganda</option>
+                        <option value="bracket">Sistem Bracket</option>
+                    </select>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-magic"></i> Generate Polling
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, query, where, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        // Firebase configuration (you'll need to replace this with your actual config)
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyReplaceThisWithYours",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-        
-        // Make Firebase instances available globally
-        window.firebaseAuth = auth;
-        window.firebaseDB = db;
-        window.googleProvider = provider;
-        
-        console.log('Firebase initialized');
-    </script>
+    <!-- Modal Login/Register -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <h3 id="authTitle"><i class="fas fa-user"></i> Masuk ke PGXL</h3>
+            <form id="authForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="authEmail" placeholder="email@contoh.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="authPassword" placeholder="Minimal 6 karakter" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" id="authSubmitBtn">
+                        Masuk
+                    </button>
+                    <button type="button" class="btn btn-outline mt-4" id="switchAuthBtn">
+                        Belum punya akun? Daftar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <!-- Main Application Script -->
+    <!-- Modal Poll Created -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> Polling Berhasil Dibuat!</h3>
+            <p>Link polling-mu:</p>
+            <div class="form-group">
+                <input type="text" class="form-control" id="generatedLink" readonly>
+            </div>
+            <p class="mb-4">Share link ini ke komunitasmu!</p>
+            <button class="btn btn-primary" id="copyLinkBtn">
+                <i class="fas fa-copy"></i> Salin Link
+            </button>
+            <button class="btn btn-outline" id="closeSuccessBtn">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Config Script -->
     <script>
-        // Global variables
-        let allGames = [];
-        let filteredGames = [];
-        let currentCategory = 'All';
-        let currentGame = null;
-        let currentUser = null;
-        let userData = null;
-        let bannerInterval = null;
-        let currentBannerIndex = 0;
-        let activeBanners = [];
-        let downloadTimer = null;
-        let gamesPerPage = 5;
-        let currentPage = 1;
-        let totalDisplayed = 0;
+        // Firebase config akan dimuat dari file eksternal
+        let firebaseConfig = {};
         
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load games from JSON
-            loadGamesFromLocal();
-            
-            // Set up authentication listener
-            setupAuthListener();
-            
-            // Close modals with Escape key
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    closeDetail();
-                    closeLegal();
-                    closeProfilePanel();
-                    closeSidebar();
-                }
-            });
-            
-            // Close search results when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.search-container')) {
-                    document.getElementById('searchResults').style.display = 'none';
-                }
-            });
-        });
-        
-        // Load games from local JSON file
-        async function loadGamesFromLocal() {
-            try {
-                const response = await fetch('games.json');
-                allGames = await response.json();
-                
-                // Add ID if not present
-                allGames.forEach((game, index) => {
-                    if (!game.id) game.id = index + 1;
-                });
-                
-                filteredGames = [...allGames];
-                renderGames();
-                updateGamesCount();
-                
-                // Show load more button if there are more games
-                if (allGames.length > gamesPerPage) {
-                    document.getElementById('loadMoreBtn').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error loading games:', error);
-                document.getElementById('gameList').innerHTML = 
-                    '<div class="text-center"><h3>Error loading games. Please try again later.</h3></div>';
-            }
-        }
-        
-        // Render games to the page
-        function renderGames() {
-            const gameList = document.getElementById('gameList');
-            const startIndex = 0;
-            const endIndex = currentPage * gamesPerPage;
-            const gamesToShow = filteredGames.slice(startIndex, endIndex);
-            
-            totalDisplayed = gamesToShow.length;
-            
-            if (gamesToShow.length === 0) {
-                gameList.innerHTML = '<div class="text-center"><h3>No games found.</h3></div>';
-                document.getElementById('loadMoreBtn').style.display = 'none';
-                return;
-            }
-            
-            gameList.innerHTML = gamesToShow.map(game => {
-                const isLiked = currentUser && userData && userData.likedGames && userData.likedGames.includes(game.id);
-                
-                return `
-                    <div class="game-card" onclick="openDetail(${game.id})">
-                        <div class="game-image">
-                            <img src="${game.image}" alt="${game.name}">
-                        </div>
-                        <div class="game-info">
-                            <div class="game-header">
-                                <h3 class="game-title">${game.name}</h3>
-                                <div class="game-publisher">${game.publisher}</div>
-                                <div class="game-desc">${game.description}</div>
-                            </div>
-                            <div class="game-footer">
-                                <div class="game-category">${game.category}</div>
-                                <div class="game-actions">
-                                    <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleGameLike(${game.id})">
-                                        ${isLiked ? '❤️' : '🤍'}
-                                    </button>
-                                    <button class="download-btn" onclick="event.stopPropagation(); startDownloadDirect(${game.id})">
-                                        Download
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Update load more button visibility
-            document.getElementById('loadMoreBtn').style.display = 
-                totalDisplayed < filteredGames.length ? 'block' : 'none';
-        }
-        
-        // Load more games
-        function loadMoreGames() {
-            currentPage++;
-            renderGames();
-        }
-        
-        // Update games count display
-        function updateGamesCount() {
-            const gamesCount = document.getElementById('gamesCount');
-            gamesCount.textContent = `${totalDisplayed} of ${filteredGames.length} Games`;
-        }
-        
-        // Filter games by category
-        function filterCategory(category) {
-            currentCategory = category;
-            currentPage = 1;
-            
-            // Update active category in sidebar
-            document.querySelectorAll('.cat-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // Filter games
-            if (category === 'All') {
-                filteredGames = [...allGames];
-            } else {
-                filteredGames = allGames.filter(game => game.category === category);
-            }
-            
-            renderGames();
-            updateGamesCount();
-            toggleSidebar();
-        }
-        
-        // Live search functionality
-        function doSearch() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const resultsContainer = document.getElementById('searchResults');
-            
-            if (query.length < 2) {
-                resultsContainer.style.display = 'none';
-                return;
-            }
-            
-            const searchResults = allGames.filter(game => 
-                game.name.toLowerCase().includes(query) ||
-                game.publisher.toLowerCase().includes(query) ||
-                game.category.toLowerCase().includes(query) ||
-                game.description.toLowerCase().includes(query)
-            );
-            
-            if (searchResults.length > 0) {
-                resultsContainer.innerHTML = searchResults.map(game => `
-                    <div class="search-item" onclick="openDetail(${game.id})">
-                        <img src="${game.image}" alt="${game.name}">
-                        <div class="search-item-info">
-                            <div class="search-item-name">${game.name}</div>
-                            <div class="search-item-category">${game.category} • ${game.publisher}</div>
-                        </div>
-                    </div>
-                `).join('');
-                resultsContainer.style.display = 'block';
-            } else {
-                resultsContainer.innerHTML = '<div class="search-item">No games found</div>';
-                resultsContainer.style.display = 'block';
-            }
-        }
-        
-        // Sidebar functions
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-        
-        function closeSidebar() {
-            document.getElementById('sidebar').classList.remove('open');
-        }
-        
-        // Profile panel functions
-        function toggleProfilePanel() {
-            document.getElementById('profilePanel').classList.toggle('open');
-        }
-        
-        function closeProfilePanel() {
-            document.getElementById('profilePanel').classList.remove('open');
-        }
-        
-        function switchProfileTab(tab) {
-            // Update active tab
-            document.querySelectorAll('.profile-tab').forEach(t => {
-                t.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // Show selected content
-            document.querySelectorAll('.profile-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(tab + 'Tab').classList.add('active');
-            
-            // Load data for the tab
-            if (tab === 'liked') {
-                loadLikedGames();
-            } else if (tab === 'activity') {
-                loadUserComments();
-            }
-        }
-        
-        // Open game detail
-        function openDetail(gameId) {
-            const game = allGames.find(g => g.id == gameId);
-            if (!game) return;
-            
-            currentGame = game;
-            activeBanners = game.banners || [game.image];
-            currentBannerIndex = 0;
-            
-            // Set game details
-            document.getElementById('det-title').textContent = game.name;
-            document.getElementById('det-pub').textContent = `Publisher: ${game.publisher}`;
-            document.getElementById('det-desc').textContent = game.fullDescription || game.description;
-            document.getElementById('det-rating').textContent = game.rating;
-            
-            // Set rating stars
-            const rating = parseFloat(game.rating);
-            const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
-            document.getElementById('det-rating-stars').textContent = stars;
-            
-            // Set initial banner
-            document.getElementById('banner-img').src = activeBanners[0];
-            
-            // Update like button
-            updateDetailLikeButton();
-            
-            // Enable/disable comment form
-            const commentInput = document.getElementById('commentInput');
-            const commentSubmit = document.getElementById('commentSubmit');
-            if (currentUser) {
-                commentInput.placeholder = "Write your comment here...";
-                commentInput.disabled = false;
-                commentSubmit.disabled = false;
-            } else {
-                commentInput.placeholder = "Please login to comment";
-                commentInput.disabled = true;
-                commentSubmit.disabled = true;
-            }
-            
-            // Load comments
-            loadGameComments(gameId);
-            
-            // Show detail frame
-            document.getElementById('detail-frame').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            
-            // Start banner rotation
-            startBannerRotation();
-        }
-        
-        // Banner functions
-        function startBannerRotation() {
-            clearInterval(bannerInterval);
-            bannerInterval = setInterval(() => {
-                nextBanner();
-            }, 5000);
-        }
-        
-        function nextBanner() {
-            currentBannerIndex = (currentBannerIndex + 1) % activeBanners.length;
-            updateBanner();
-        }
-        
-        function prevBanner() {
-            currentBannerIndex = (currentBannerIndex - 1 + activeBanners.length) % activeBanners.length;
-            updateBanner();
-        }
-        
-        function updateBanner() {
-            const bannerImg = document.getElementById('banner-img');
-            bannerImg.style.opacity = 0;
-            
-            setTimeout(() => {
-                bannerImg.src = activeBanners[currentBannerIndex];
-                bannerImg.style.opacity = 1;
-            }, 300);
-        }
-        
-        // Close detail frame
-        function closeDetail() {
-            document.getElementById('detail-frame').style.display = 'none';
-            document.body.style.overflow = '';
-            clearInterval(bannerInterval);
-            clearInterval(downloadTimer);
-            
-            // Reset download UI
-            document.getElementById('dlBtn').style.display = 'block';
-            document.getElementById('timerContainer').style.display = 'none';
-        }
-        
-        // Authentication functions
-        function setupAuthListener() {
-            if (!window.firebaseAuth) return;
-            
-            onAuthStateChanged(window.firebaseAuth, async (user) => {
-                if (user) {
-                    // User is signed in
-                    currentUser = user;
-                    await loadUserData(user.uid);
-                    updateUIForLoggedInUser(user);
-                } else {
-                    // User is signed out
-                    currentUser = null;
-                    userData = null;
-                    updateUIForLoggedOutUser();
-                }
-            });
-        }
-        
-        function handleGoogleLogin() {
-            if (currentUser) {
-                toggleProfilePanel();
-                return;
-            }
-            
-            if (!window.firebaseAuth || !window.googleProvider) {
-                alert('Firebase not initialized. Please check your configuration.');
-                return;
-            }
-            
-            signInWithPopup(window.firebaseAuth, window.googleProvider)
-                .then(async (result) => {
-                    const user = result.user;
-                    currentUser = user;
-                    await loadUserData(user.uid);
-                    updateUIForLoggedInUser(user);
-                })
-                .catch((error) => {
-                    console.error('Login error:', error);
-                    alert('Login failed: ' + error.message);
-                });
-        }
-        
-        async function loadUserData(userId) {
-            if (!window.firebaseDB) return;
-            
-            try {
-                const userDoc = doc(window.firebaseDB, 'users', userId);
-                const docSnap = await getDoc(userDoc);
-                
-                if (docSnap.exists()) {
-                    userData = docSnap.data();
-                } else {
-                    // Create new user data
-                    userData = {
-                        uid: userId,
-                        level: 1,
-                        xp: 0,
-                        downloads: 0,
-                        likedGames: [],
-                        comments: [],
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    await setDoc(userDoc, userData);
-                }
-                
-                updateProfilePanel();
-                updateGameCardsLikes();
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                userData = null;
-            }
-        }
-        
-        async function saveUserData() {
-            if (!currentUser || !userData || !window.firebaseDB) return;
-            
-            try {
-                const userDoc = doc(window.firebaseDB, 'users', currentUser.uid);
-                await setDoc(userDoc, userData, { merge: true });
-            } catch (error) {
-                console.error('Error saving user data:', error);
-            }
-        }
-        
-        function updateUIForLoggedInUser(user) {
-            // Update login button to profile picture
-            document.getElementById('loginBtn').classList.add('hidden');
-            document.getElementById('profileBtn').classList.remove('hidden');
-            
-            // Set profile picture
-            const profilePic = document.getElementById('profilePicture');
-            const panelPic = document.getElementById('panelProfilePicture');
-            profilePic.src = user.photoURL || 'https://via.placeholder.com/40';
-            panelPic.src = user.photoURL || 'https://via.placeholder.com/80';
-            
-            // Update like buttons on game cards
-            updateGameCardsLikes();
-        }
-        
-        function updateUIForLoggedOutUser() {
-            document.getElementById('loginBtn').classList.remove('hidden');
-            document.getElementById('profileBtn').classList.add('hidden');
-            
-            // Reset like buttons
-            document.querySelectorAll('.like-btn').forEach(btn => {
-                btn.classList.remove('liked');
-                btn.innerHTML = '🤍';
-            });
-            
-            // Close profile panel if open
-            closeProfilePanel();
-        }
-        
-        // Like functions
-        async function toggleGameLike(gameId) {
-            if (!currentUser || !userData) {
-                alert('Please login to like games');
-                return;
-            }
-            
-            const likeBtn = event.currentTarget;
-            const isLiked = likeBtn.classList.contains('liked');
-            
-            if (isLiked) {
-                // Unlike
-                likeBtn.classList.remove('liked');
-                likeBtn.innerHTML = '🤍';
-                userData.likedGames = userData.likedGames.filter(id => id !== gameId);
-            } else {
-                // Like
-                likeBtn.classList.add('liked');
-                likeBtn.innerHTML = '❤️';
-                if (!userData.likedGames.includes(gameId)) {
-                    userData.likedGames.push(gameId);
-                    
-                    // Add XP for liking
-                    userData.xp += 2;
-                    checkLevelUp();
-                }
-            }
-            
-            await saveUserData();
-            updateProfilePanel();
-            
-            // If detail is open for this game, update the detail like button
-            if (currentGame && currentGame.id === gameId) {
-                updateDetailLikeButton();
-            }
-        }
-        
-        function toggleLike() {
-            if (!currentGame) return;
-            toggleGameLike(currentGame.id);
-        }
-        
-        function updateDetailLikeButton() {
-            if (!currentGame) return;
-            
-            const detailLikeBtn = document.getElementById('detailLikeBtn');
-            const likeText = document.getElementById('likeText');
-            
-            if (currentUser && userData && userData.likedGames && userData.likedGames.includes(currentGame.id)) {
-                detailLikeBtn.classList.add('liked');
-                likeText.textContent = 'Liked';
-            } else {
-                detailLikeBtn.classList.remove('liked');
-                likeText.textContent = 'Like';
-            }
-        }
-        
-        function updateGameCardsLikes() {
-            if (!currentUser || !userData || !userData.likedGames) return;
-            
-            document.querySelectorAll('.game-card').forEach(card => {
-                const gameId = parseInt(card.onclick.toString().match(/\d+/)[0]);
-                const likeBtn = card.querySelector('.like-btn');
-                
-                if (userData.likedGames.includes(gameId)) {
-                    likeBtn.classList.add('liked');
-                    likeBtn.innerHTML = '❤️';
-                } else {
-                    likeBtn.classList.remove('liked');
-                    likeBtn.innerHTML = '🤍';
-                }
-            });
-        }
-        
-        // Comment functions
-        async function submitComment() {
-            if (!currentUser || !currentGame) return;
-            
-            const commentInput = document.getElementById('commentInput');
-            const commentText = commentInput.value.trim();
-            
-            if (!commentText) {
-                alert('Please enter a comment');
-                return;
-            }
-            
-            if (!window.firebaseDB) {
-                alert('Database not available');
-                return;
-            }
-            
-            try {
-                // Add comment to Firestore
-                const commentsRef = collection(window.firebaseDB, 'comments');
-                const newComment = {
-                    gameId: currentGame.id,
-                    userId: currentUser.uid,
-                    userName: currentUser.displayName || 'Anonymous',
-                    userPhoto: currentUser.photoURL || '',
-                    text: commentText,
-                    timestamp: new Date().toISOString(),
-                    likes: 0
+        // Muat config dari file JSON
+        fetch('firebase-config.json')
+            .then(response => response.json())
+            .then(config => {
+                firebaseConfig = config;
+                initializeApp();
+            })
+            .catch(error => {
+                console.error('Gagal memuat firebase-config.json:', error);
+                // Fallback config
+                firebaseConfig = {
+                    apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
+                    authDomain: "pgxl-4567a.firebaseapp.com",
+                    projectId: "pgxl-4567a",
+                    storageBucket: "pgxl-4567a.firebasestorage.app",
+                    messagingSenderId: "545920930826",
+                    appId: "1:545920930826:web:18458fd3382a83f17abbf3",
+                    measurementId: "G-1Y4E635M4R"
                 };
-                
-                await addDoc(commentsRef, newComment);
-                
-                // Add comment to user data
-                if (!userData.comments) userData.comments = [];
-                userData.comments.push({
-                    gameId: currentGame.id,
-                    gameName: currentGame.name,
-                    text: commentText,
-                    timestamp: newComment.timestamp
+                initializeApp();
+            });
+
+        function initializeApp() {
+            // Inisialisasi Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            const analytics = firebase.analytics();
+
+            // State aplikasi
+            let currentUser = null;
+            let isLoginMode = true;
+            let pollCount = 0;
+
+            // DOM Elements
+            const themeToggle = document.getElementById('themeToggle');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const createPollBtn = document.getElementById('createPollBtn');
+            const heroCreateBtn = document.getElementById('heroCreateBtn');
+            const authModal = document.getElementById('authModal');
+            const createPollModal = document.getElementById('createPollModal');
+            const successModal = document.getElementById('successModal');
+            const homeSection = document.getElementById('homeSection');
+            const dashboardSection = document.getElementById('dashboardSection');
+            const pollGrid = document.getElementById('pollGrid');
+            const customizationPanel = document.getElementById('customizationPanel');
+            const authForm = document.getElementById('authForm');
+            const pollForm = document.getElementById('pollForm');
+            const addOptionBtn = document.getElementById('addOptionBtn');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const authTitle = document.getElementById('authTitle');
+            const authSubmitBtn = document.getElementById('authSubmitBtn');
+            const switchAuthBtn = document.getElementById('switchAuthBtn');
+            const generatedLink = document.getElementById('generatedLink');
+            const copyLinkBtn = document.getElementById('copyLinkBtn');
+            const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+
+            // Theme Toggle
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('pgxl-theme', newTheme);
+            });
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('pgxl-theme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
+
+            // Auth State Listener
+            auth.onAuthStateChanged(user => {
+                currentUser = user;
+                if (user) {
+                    // User logged in
+                    loginBtn.classList.add('hidden');
+                    logoutBtn.classList.remove('hidden');
+                    createPollBtn.classList.remove('hidden');
+                    homeSection.classList.add('hidden');
+                    dashboardSection.classList.remove('hidden');
+                    customizationPanel.classList.remove('hidden');
+                    loadUserPolls(user.uid);
+                    analytics.logEvent('login');
+                } else {
+                    // User logged out
+                    loginBtn.classList.remove('hidden');
+                    logoutBtn.classList.add('hidden');
+                    createPollBtn.classList.add('hidden');
+                    homeSection.classList.remove('hidden');
+                    dashboardSection.classList.add('hidden');
+                    customizationPanel.classList.add('hidden');
+                }
+            });
+
+            // Button Events
+            loginBtn.addEventListener('click', () => showModal(authModal));
+            logoutBtn.addEventListener('click', () => auth.signOut());
+            heroCreateBtn.addEventListener('click', () => {
+                if (currentUser) {
+                    showModal(createPollModal);
+                } else {
+                    showModal(authModal);
+                }
+            });
+            createPollBtn.addEventListener('click', () => showModal(createPollModal));
+
+            // Modal Close on Background Click
+            [authModal, createPollModal, successModal].forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) hideModal(modal);
                 });
+            });
+
+            // Auth Form
+            switchAuthBtn.addEventListener('click', () => {
+                isLoginMode = !isLoginMode;
+                authTitle.innerHTML = isLoginMode ? 
+                    '<i class="fas fa-user"></i> Masuk ke PGXL' : 
+                    '<i class="fas fa-user-plus"></i> Daftar Akun Baru';
+                authSubmitBtn.textContent = isLoginMode ? 'Masuk' : 'Daftar';
+                switchAuthBtn.innerHTML = isLoginMode ? 
+                    'Belum punya akun? Daftar' : 
+                    'Sudah punya akun? Masuk';
+            });
+
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('authEmail').value;
+                const password = document.getElementById('authPassword').value;
                 
-                // Add XP for commenting
-                userData.xp += 5;
-                checkLevelUp();
-                
-                await saveUserData();
-                
-                // Clear input and reload comments
-                commentInput.value = '';
-                loadGameComments(currentGame.id);
-                updateProfilePanel();
-                
-                alert('Comment posted successfully! +5 XP');
-            } catch (error) {
-                console.error('Error posting comment:', error);
-                alert('Failed to post comment');
-            }
-        }
-        
-        async function loadGameComments(gameId) {
-            const commentsList = document.getElementById('commentsList');
-            
-            if (!window.firebaseDB) {
-                commentsList.innerHTML = '<div class="text-center"><p>Comments not available</p></div>';
-                return;
-            }
-            
-            try {
-                const commentsRef = collection(window.firebaseDB, 'comments');
-                const q = query(commentsRef, where('gameId', '==', gameId), orderBy('timestamp', 'desc'));
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    commentsList.innerHTML = '<div class="text-center"><p>No comments yet. Be the first to comment!</p></div>';
+                try {
+                    if (isLoginMode) {
+                        await auth.signInWithEmailAndPassword(email, password);
+                    } else {
+                        await auth.createUserWithEmailAndPassword(email, password);
+                    }
+                    hideModal(authModal);
+                    authForm.reset();
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+            });
+
+            // Poll Form
+            addOptionBtn.addEventListener('click', () => {
+                if (optionsContainer.children.length >= 4) {
+                    alert('Maksimal 4 pilihan!');
                     return;
                 }
-                
-                commentsList.innerHTML = querySnapshot.docs.map(doc => {
-                    const comment = doc.data();
-                    return `
-                        <div class="comment-item">
-                            <div class="comment-header">
-                                <div class="comment-avatar">
-                                    <img src="${comment.userPhoto || 'https://via.placeholder.com/32'}" alt="${comment.userName}">
-                                </div>
-                                <div class="comment-author">${comment.userName}</div>
-                                <div class="comment-game">${currentGame.name}</div>
-                            </div>
-                            <div class="comment-text">${comment.text}</div>
-                            <div class="comment-date">${new Date(comment.timestamp).toLocaleDateString()}</div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.error('Error loading comments:', error);
-                commentsList.innerHTML = '<div class="text-center"><p>Error loading comments</p></div>';
-            }
-        }
-        
-        async function loadUserComments() {
-            if (!currentUser || !userData || !userData.comments) {
-                document.getElementById('noComments').classList.remove('hidden');
-                document.getElementById('userCommentsList').innerHTML = '';
-                return;
-            }
-            
-            const userCommentsList = document.getElementById('userCommentsList');
-            userCommentsList.innerHTML = userData.comments.map(comment => {
-                return `
-                    <div class="comment-item" onclick="openDetail(${comment.gameId})" style="cursor: pointer;">
-                        <div class="comment-header">
-                            <div class="comment-author">${currentUser.displayName || 'You'}</div>
-                            <div class="comment-game">${comment.gameName}</div>
-                        </div>
-                        <div class="comment-text">${comment.text}</div>
-                        <div class="comment-date">${new Date(comment.timestamp).toLocaleDateString()}</div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('noComments').classList.add('hidden');
-        }
-        
-        async function loadLikedGames() {
-            if (!currentUser || !userData || !userData.likedGames || userData.likedGames.length === 0) {
-                document.getElementById('noLikedGames').classList.remove('hidden');
-                document.getElementById('likedGamesList').innerHTML = '';
-                return;
-            }
-            
-            const likedGamesList = document.getElementById('likedGamesList');
-            const likedGames = allGames.filter(game => userData.likedGames.includes(game.id));
-            
-            likedGamesList.innerHTML = likedGames.map(game => {
-                return `
-                    <div class="liked-game" onclick="openDetail(${game.id})">
-                        <img src="${game.image}" alt="${game.name}">
-                        <div class="liked-game-info">
-                            <div style="font-weight: 600;">${game.name}</div>
-                            <div style="font-size: 12px; color: #999;">${game.category}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('noLikedGames').classList.add('hidden');
-        }
-        
-        // Profile functions
-        function updateProfilePanel() {
-            if (!currentUser || !userData) {
-                document.getElementById('panelUserName').textContent = 'Guest';
-                document.getElementById('panelUserEmail').textContent = 'Not signed in';
-                return;
-            }
-            
-            document.getElementById('panelUserName').textContent = currentUser.displayName || 'User';
-            document.getElementById('panelUserEmail').textContent = currentUser.email || '';
-            
-            // Update stats
-            document.getElementById('userLevel').textContent = userData.level || 1;
-            document.getElementById('userXP').textContent = userData.xp || 0;
-            document.getElementById('userDownloads').textContent = userData.downloads || 0;
-            document.getElementById('userLikes').textContent = userData.likedGames ? userData.likedGames.length : 0;
-            
-            // Update XP progress
-            const xpForNextLevel = userData.level * 100;
-            const xpProgress = Math.min((userData.xp / xpForNextLevel) * 100, 100);
-            document.getElementById('xpFill').style.width = xpProgress + '%';
-            document.getElementById('xpProgressText').textContent = `${userData.xp}/${xpForNextLevel}`;
-            document.getElementById('nextLevel').textContent = userData.level + 1;
-            
-            // Check for admin role
-            checkAdminRole();
-        }
-        
-        function checkLevelUp() {
-            if (!userData) return;
-            
-            const xpForNextLevel = userData.level * 100;
-            if (userData.xp >= xpForNextLevel) {
-                userData.level++;
-                userData.xp -= xpForNextLevel;
-                alert(`Congratulations! You've reached Level ${userData.level}!`);
-                saveUserData();
-                updateProfilePanel();
-            }
-        }
-        
-        async function checkAdminRole() {
-            try {
-                const response = await fetch('admin.js');
-                const adminConfig = await response.json();
-                
-                if (adminConfig.admins && adminConfig.admins.includes(currentUser.uid)) {
-                    document.getElementById('adminPanel').classList.remove('hidden');
-                } else {
-                    document.getElementById('adminPanel').classList.add('hidden');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control mb-4';
+                input.placeholder = `Pilihan ${optionsContainer.children.length + 1}`;
+                input.required = true;
+                optionsContainer.appendChild(input);
+            });
+
+            pollForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    alert('Silakan login dulu!');
+                    return;
                 }
-            } catch (error) {
-                console.error('Error checking admin role:', error);
-                document.getElementById('adminPanel').classList.add('hidden');
-            }
-        }
-        
-        function openAdminPanel() {
-            alert('Admin panel would open here. This is a placeholder.');
-            // In a real implementation, this would open a full admin dashboard
-        }
-        
-        // Download functions
-        function startDownload() {
-            if (!currentGame) return;
-            
-            // Execute reCAPTCHA
-            grecaptcha.enterprise.ready(async () => {
+
+                const title = document.getElementById('pollTitle').value;
+                const options = Array.from(optionsContainer.children)
+                    .map(input => input.value.trim())
+                    .filter(val => val !== '');
+                const type = document.getElementById('pollType').value;
+
+                if (options.length < 2) {
+                    alert('Minimal 2 pilihan!');
+                    return;
+                }
+
+                // Generate unique poll ID
+                const pollId = 'poll_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                const shareableLink = `https://${window.location.hostname}/poll/${pollId}`;
+
+                // Save to Firestore
                 try {
-                    const token = await grecaptcha.enterprise.execute(
-                        '6LfmPDosAAAAAI9YNuh9-FTRW0ueLXNUxdo9g5pf', 
-                        { action: 'DOWNLOAD' }
-                    );
+                    await db.collection('polls').doc(pollId).set({
+                        title,
+                        options: options.map(opt => ({ text: opt, votes: 0 })),
+                        type,
+                        creatorId: currentUser.uid,
+                        creatorEmail: currentUser.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        totalVotes: 0,
+                        shareableLink
+                    });
+
+                    // Update UI
+                    generatedLink.value = shareableLink;
+                    hideModal(createPollModal);
+                    showModal(successModal);
+                    pollForm.reset();
                     
-                    // Add XP for downloading
-                    if (currentUser && userData) {
-                        userData.downloads = (userData.downloads || 0) + 1;
-                        userData.xp += 10;
-                        checkLevelUp();
-                        await saveUserData();
-                        updateProfilePanel();
+                    // Reset options to 2
+                    while (optionsContainer.children.length > 2) {
+                        optionsContainer.removeChild(optionsContainer.lastChild);
                     }
                     
-                    // Start countdown
-                    startDownloadCountdown();
+                    // Reload polls
+                    loadUserPolls(currentUser.uid);
+                    
+                    analytics.logEvent('create_poll', { poll_type: type });
                 } catch (error) {
-                    console.error('reCAPTCHA error:', error);
-                    alert('Please complete the verification to download.');
+                    alert(`Error: ${error.message}`);
                 }
             });
-        }
-        
-        function startDownloadDirect(gameId) {
-            const game = allGames.find(g => g.id == gameId);
-            if (!game) return;
-            
-            // Open detail first, then start download
-            openDetail(gameId);
-            setTimeout(() => {
-                startDownload();
-            }, 500);
-        }
-        
-        function startDownloadCountdown() {
-            const dlBtn = document.getElementById('dlBtn');
-            const timerContainer = document.getElementById('timerContainer');
-            const timerDisplay = document.getElementById('timerDisplay');
-            const secsDisplay = document.getElementById('secs');
-            
-            // Show timer, hide button
-            dlBtn.style.display = 'none';
-            timerContainer.style.display = 'block';
-            
-            let seconds = 5;
-            
-            downloadTimer = setInterval(() => {
-                seconds--;
-                timerDisplay.textContent = seconds;
-                secsDisplay.textContent = seconds;
-                
-                if (seconds <= 0) {
-                    clearInterval(downloadTimer);
-                    // Redirect to download URL
-                    if (currentGame && currentGame.downloadUrl) {
-                        window.open(currentGame.downloadUrl, '_blank');
-                    } else {
-                        alert('Download URL not available for this game.');
+
+            // Success Modal
+            copyLinkBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(generatedLink.value)
+                    .then(() => alert('Link berhasil disalin!'))
+                    .catch(() => alert('Gagal menyalin link'));
+            });
+
+            closeSuccessBtn.addEventListener('click', () => hideModal(successModal));
+
+            // Layout Customization
+            document.querySelectorAll('.layout-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.layout-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const layout = this.getAttribute('data-layout');
+                    pollGrid.className = `poll-grid layout-${layout}`;
+                    localStorage.setItem('pgxl-layout', layout);
+                });
+            });
+
+            // Load saved layout
+            const savedLayout = localStorage.getItem('pgxl-layout') || 'default';
+            document.querySelector(`.layout-option[data-layout="${savedLayout}"]`).click();
+
+            // Helper Functions
+            function showModal(modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hideModal(modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            async function loadUserPolls(userId) {
+                try {
+                    const snapshot = await db.collection('polls')
+                        .where('creatorId', '==', userId)
+                        .orderBy('createdAt', 'desc')
+                        .limit(10)
+                        .get();
+                    
+                    pollGrid.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        pollGrid.innerHTML = `
+                            <div class="poll-card text-center">
+                                <h4><i class="fas fa-inbox"></i> Belum ada polling</h4>
+                                <p>Klik "Buat Polling" untuk memulai</p>
+                            </div>
+                        `;
+                        return;
                     }
                     
-                    // Reset UI after a delay
-                    setTimeout(() => {
-                        dlBtn.style.display = 'block';
-                        timerContainer.style.display = 'none';
-                    }, 2000);
+                    snapshot.forEach(doc => {
+                        const poll = doc.data();
+                        const pollElement = document.createElement('div');
+                        pollElement.className = 'poll-card';
+                        pollElement.innerHTML = `
+                            <h4>${poll.title}</h4>
+                            <p><i class="fas fa-link"></i> ${poll.shareableLink}</p>
+                            <p><i class="fas fa-users"></i> ${poll.totalVotes || 0} vote</p>
+                            <p><i class="fas fa-calendar"></i> ${new Date(poll.createdAt?.toDate()).toLocaleDateString('id-ID')}</p>
+                            <button class="btn btn-outline" onclick="window.open('${poll.shareableLink}', '_blank')">
+                                <i class="fas fa-external-link-alt"></i> Buka
+                            </button>
+                        `;
+                        pollGrid.appendChild(pollElement);
+                    });
+                } catch (error) {
+                    console.error('Error loading polls:', error);
                 }
-            }, 1000);
-        }
-        
-        // Share function
-        function shareGame() {
-            if (!currentGame) return;
-            
-            const shareUrl = window.location.origin + window.location.pathname;
-            const shareText = `Check out ${currentGame.name} on PGXL.WEB.ID!`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: currentGame.name,
-                    text: shareText,
-                    url: shareUrl
-                });
-            } else if (navigator.clipboard) {
-                navigator.clipboard.writeText(shareText + ' ' + shareUrl);
-                alert('Link copied to clipboard!');
-            } else {
-                prompt('Copy this link:', shareUrl);
             }
+
+            // Initialize
+            console.log('PGXL Platform initialized successfully!');
         }
-        
-        // Report function
-        function reportBrokenLink() {
-            if (!currentGame) return;
-            
-            const email = 'spctacularstudio@gmail.com';
-            const subject = `Broken Link Report: ${currentGame.name}`;
-            const body = `Game: ${currentGame.name}\nGame ID: ${currentGame.id}\nDownload URL: ${currentGame.downloadUrl}\n\nIssue Description:\n`;
-            
-            window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        }
-        
-        // Legal modals
-        function showLegal(type) {
-            const modal = document.getElementById('legalModal');
-            const title = document.getElementById('legalTitle');
-            const body = document.getElementById('legalBody');
-            
-            if (type === 'tos') {
-                title.textContent = 'TERMS OF SERVICE';
-                body.innerHTML = getTOSContent();
-            } else {
-                title.textContent = 'PRIVACY POLICY';
-                body.innerHTML = getPrivacyPolicyContent();
-            }
-            
-            modal.style.display = 'flex';
-        }
-        
-        function closeLegal() {
-            document.getElementById('legalModal').style.display = 'none';
-        }
-        
-        function getTOSContent() {
-            return `
-                <div class="modal-section">
-                    <h3>1. ACCEPTANCE OF TERMS</h3>
-                    <p>By accessing PGXL.WEB.ID, you agree to these Terms of Service.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>2. SERVICE DESCRIPTION</h3>
-                    <p>PGXL.WEB.ID provides a platform for discovering and downloading video games. We act as an intermediary between users and game publishers.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>3. USER RESPONSIBILITIES</h3>
-                    <p>Users must comply with all applicable laws and regulations. You agree not to misuse the service.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>4. INTELLECTUAL PROPERTY</h3>
-                    <p>All game content is property of their respective owners. We do not claim ownership of any copyrighted material.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>5. DISCLAIMER</h3>
-                    <p>The service is provided "as is" without any warranties. We are not responsible for any issues with downloaded games.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>6. CONTACT</h3>
-                    <p>For questions about these terms, contact: spctacularstudio@gmail.com</p>
-                </div>
-            `;
-        }
-        
-        function getPrivacyPolicyContent() {
-            return `
-                <div class="modal-section">
-                    <h3>1. INFORMATION COLLECTION</h3>
-                    <p>We collect information when you use Google Sign-In, including your email and profile picture.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>2. DATA USAGE</h3>
-                    <p>We use your data to provide personalized features, track XP and level progression, and improve our service.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>3. DATA SHARING</h3>
-                    <p>We do not sell your data. We only share information as required by law or to protect our rights.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>4. COOKIES</h3>
-                    <p>We use cookies to remember your preferences and login status.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>5. SECURITY</h3>
-                    <p>We implement security measures to protect your data, but no system is 100% secure.</p>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>6. CONTACT</h3>
-                    <p>For privacy concerns, contact: spctacularstudio@gmail.com</p>
-                </div>
-            `;
-        }
-    </script
-    <script src="admin.js"></script
+    </script>
 </body>
 </html>
