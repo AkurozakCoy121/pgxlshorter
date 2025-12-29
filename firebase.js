@@ -1,4 +1,8 @@
 // firebase.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAP7lzXcSwmkOk88rXIx77j8s4gsfUs6k0",
   authDomain: "unews-4db42.firebaseapp.com",
@@ -11,7 +15,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const auth = getAuth(app);
 
-console.log("🔥 Firebase connected");
+// Login anonymous otomatis
+signInAnonymously(auth)
+  .then(() => console.log("✅ Anonymous login success"))
+  .catch(error => console.error("Anonymous login error:", error));
+
+export { database, auth, ref, set, get, update };
