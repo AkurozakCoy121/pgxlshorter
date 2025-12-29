@@ -3,370 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting... - pgxl.web.id</title>
+    <title>Safe Link - pgxl.web.id</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
+        /* UI SUPER SIMPLE - CLEAN & LIGHTWEIGHT */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #f4f7f6; 
+            color: #333; 
+            margin: 0; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
         }
-        
-        body {
-            background: #0a0a0a;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        .ad-container { 
+            width: 100%; 
+            max-width: 728px; 
+            background: #fff; 
+            border: 1px dashed #bbb; 
+            margin: 10px 0; 
+            text-align: center; 
+            min-height: 90px;
         }
-        
-        .container {
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
+        .card { 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            max-width: 500px; 
+            width: 100%; 
+            text-align: center; 
         }
-        
-        .logo {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #00ff88;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+        .timer { font-size: 48px; font-weight: bold; color: #ff4757; margin: 15px 0; }
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s;
         }
-        
-        .tagline {
-            color: #888;
-            margin-bottom: 30px;
-            font-size: 0.9rem;
-        }
-        
-        .redirect-box {
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 20px 0;
-            border: 1px solid #333;
-        }
-        
-        .icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        h1 {
-            color: #ffffff;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-        
-        .countdown {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #00ff88;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .progress-container {
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
-            margin: 25px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: #00ff88;
-            width: 0%;
-            transition: width 1s linear;
-        }
-        
-        .btn {
-            background: #00ff88;
-            color: #000;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 10px 5px;
-            transition: all 0.3s;
-            display: inline-block;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            background: #00cc66;
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: #00ff88;
-            border: 2px solid #00ff88;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(0, 255, 136, 0.1);
-        }
-        
-        .ad-notice {
-            color: #888;
-            font-size: 0.8rem;
-            margin-top: 25px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-        }
-        
-        .stats {
-            color: #666;
-            font-size: 0.8rem;
-            margin-top: 20px;
-        }
-        
-        /* PropellerAds Container */
-        .ad-container {
-            margin: 25px 0;
-            min-height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* Loading animation */
-        .loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #333;
-            border-top: 3px solid #00ff88;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 480px) {
-            .redirect-box {
-                padding: 20px;
-            }
-            
-            .countdown {
-                font-size: 2.5rem;
-            }
-            
-            .btn {
-                display: block;
-                width: 100%;
-                margin: 10px 0;
-            }
-        }
+        .btn-main { background: #1e90ff; color: white; }
+        .btn-main:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-bonus { background: #2ed573; color: white; }
+        .label { font-size: 11px; color: #999; text-transform: uppercase; margin-top: 5px; }
     </style>
-    
-    <!-- PropellerAds Script -->
-    <script type="text/javascript">
-        (function(){
-            var script = document.createElement('script');
-            script.src='//upgulpinon.com/1?z=5435302';
-            script.async = true;
-            document.head.appendChild(script);
-        })();
-    </script>
+
+    <script async src="https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js"></script>
+    <script async src="//upgulpinon.com/1?z=5435302"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">PGXL</div>
-        <div class="tagline">Fast URL Shortener</div>
+
+    <div class="ad-container">
+        <div class="label">Advertisement</div>
+        <ins data-revive-zoneid="5435302"></ins>
+    </div>
+
+    <div class="card">
+        <h2 style="margin:0">Halaman Sedang Dimuat</h2>
+        <p style="color:#666">Mohon tunggu sebentar...</p>
         
-        <div class="redirect-box">
-            <div class="icon">⏳</div>
-            <h1>Please Wait</h1>
-            <p>You will be redirected in <span class="countdown" id="countdown">5</span> seconds</p>
-            
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            
-            <!-- PropellerAds Display -->
-            <div class="ad-container">
-                <div id="propeller-ad">
-                    <div class="loader"></div>
-                    <span>Loading ad...</span>
-                </div>
-            </div>
-            
-            <div>
-                <button class="btn" onclick="skipWait()">
-                    🚀 Skip Wait & Continue
-                </button>
-                <button class="btn btn-secondary" onclick="window.location.href='/'">
-                    🏠 Create Your Link
-                </button>
-            </div>
-            
-            <div class="ad-notice">
-                💡 <strong>Notice:</strong> Ads help keep this service free. Thank you for your support!
-            </div>
-        </div>
-        
-        <div class="stats">
-            <span id="visitorCount">Loading stats...</span>
-        </div>
+        <div class="timer" id="countdown">8</div>
+
+        <button id="mainBtn" class="btn btn-main" disabled onclick="finalRedirect()">
+            Tunggu...
+        </button>
+
+        <button class="btn btn-bonus" onclick="window.open('https://otieu.com/4/10381160', '_blank')">
+            🎁 KLIK UNTUK BONUS (LINK CEPAT)
+        </button>
+    </div>
+
+    <div class="ad-container" style="min-height:250px;">
+        <div class="label">Sponsored Content</div>
+        <div id="container-7d3f7dcf6c27eb36646280d85dba51ed"></div>
+    </div>
+
+    <div class="ad-container">
+        <div class="label">Recommended</div>
+        <script async src="//upgulpinon.com/1?z=5435303"></script>
     </div>
 
     <script>
-        // ======================
-        // CONFIGURATION
-        // ======================
-        let waitTime = 5; // seconds
-        let countdownInterval;
-        let redirectTriggered = false;
-        
-        // ======================
-        // COUNTDOWN FUNCTION
-        // ======================
-        function startCountdown() {
-            const countdownEl = document.getElementById('countdown');
-            const progressEl = document.getElementById('progressBar');
-            
-            countdownInterval = setInterval(() => {
-                waitTime--;
-                countdownEl.textContent = waitTime;
-                progressEl.style.width = `${((5 - waitTime) / 5) * 100}%`;
-                
-                // Random PropellerAds trigger at 3 seconds
-                if (waitTime === 3) {
-                    triggerPropellerAd();
-                }
-                
-                // Final redirect
-                if (waitTime <= 0) {
-                    clearInterval(countdownInterval);
-                    performRedirect();
-                }
-            }, 1000);
-        }
-        
-        // ======================
-        // REDIRECT FUNCTIONS
-        // ======================
-        function skipWait() {
-            if (redirectTriggered) return;
-            
-            clearInterval(countdownInterval);
-            document.getElementById('countdown').textContent = '0';
-            document.getElementById('progressBar').style.width = '100%';
-            
-            // Trigger ad before redirect
-            triggerPropellerAd();
-            
-            // Small delay for ad to load
-            setTimeout(performRedirect, 500);
-        }
-        
-        function performRedirect() {
-            if (redirectTriggered) return;
-            redirectTriggered = true;
-            
-            // Get destination from localStorage
+        let seconds = 8;
+        const countdownDisplay = document.getElementById('countdown');
+        const mainBtn = document.getElementById('mainBtn');
+
+        const timer = setInterval(() => {
+            seconds--;
+            countdownDisplay.textContent = seconds;
+
+            // Trigger Pop-under tengah jalan (Opsional, nambah cuan)
+            if(seconds === 4) {
+                console.log("Triggering silent ad...");
+            }
+
+            if (seconds <= 0) {
+                clearInterval(timer);
+                mainBtn.disabled = false;
+                mainBtn.innerHTML = "Lanjutkan ke Tujuan 🚀";
+                countdownDisplay.style.display = 'none';
+            }
+        }, 1000);
+
+        function finalRedirect() {
+            // Popunder sebelum pindah
+            window.open('https://otieu.com/4/10381160', '_blank');
+
+            // Ambil URL tujuan
             const shortCode = window.location.pathname.substring(1);
-            const urlData = JSON.parse(localStorage.getItem(`pgxl_${shortCode}`));
-            const destination = urlData?.longUrl || 'https://google.com';
-            
-            // Update stats
-            updateStats();
-            
+            const rawData = localStorage.getItem(`pgxl_${shortCode}`);
+            const destination = rawData ? JSON.parse(rawData).longUrl : 'https://google.com';
+
             // Redirect
             window.location.href = destination;
         }
-        
-        // ======================
-        // PROPELLERADS FUNCTIONS
-        // ======================
-        function triggerPropellerAd() {
-            try {
-                // Try to refresh PropellerAds
-                if (typeof window.PropellerAds !== 'undefined') {
-                    window.PropellerAds.refresh();
-                }
-                
-                // Show ad container
-                document.getElementById('propeller-ad').innerHTML = 
-                    '<ins data-revive-zoneid="5435302" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>';
-                
-            } catch(e) {
-                console.log('PropellerAds error:', e);
+
+        // Auto-click ad trigger
+        document.body.onclick = function() {
+            if(!window.alreadyClicked) {
+                window.open('https://otieu.com/4/10381160', '_blank');
+                window.alreadyClicked = true;
             }
-        }
-        
-        // ======================
-        // STATS & TRACKING
-        // ======================
-        function updateStats() {
-            // Get or initialize stats
-            let stats = JSON.parse(localStorage.getItem('pgxl_stats') || '{"total":0,"today":0,"time":0}');
-            
-            // Increment counters
-            stats.total = (stats.total || 0) + 1;
-            
-            // Check if same day
-            const today = new Date().toDateString();
-            const lastDate = stats.lastDate || '';
-            
-            if (today !== lastDate) {
-                stats.today = 1;
-                stats.lastDate = today;
-            } else {
-                stats.today = (stats.today || 0) + 1;
-            }
-            
-            // Save stats
-            localStorage.setItem('pgxl_stats', JSON.stringify(stats));
-            
-            // Update display
-            document.getElementById('visitorCount').textContent = 
-                `📊 ${stats.today.toLocaleString()} redirects today • ${stats.total.toLocaleString()} total`;
-        }
-        
-        // ======================
-        // INITIALIZATION
-        // ======================
-        window.onload = function() {
-            // Start countdown
-            startCountdown();
-            
-            // Load stats
-            const stats = JSON.parse(localStorage.getItem('pgxl_stats') || '{"total":0,"today":0}');
-            document.getElementById('visitorCount').textContent = 
-                `📊 ${stats.today.toLocaleString()} redirects today • ${stats.total.toLocaleString()} total`;
-            
-            // Auto-trigger PropellerAds after 1 second
-            setTimeout(triggerPropellerAd, 1000);
         };
-        
-        // Make functions global
-        window.skipWait = skipWait;
     </script>
-    
-    <!-- Backup PropellerAds Script -->
-    <script type="text/javascript">
-        // Backup loading
-        setTimeout(function() {
-            var adContainer = document.getElementById('propeller-ad');
-            if (adContainer && adContainer.innerHTML.includes('Loading')) {
-                adContainer.innerHTML = 
-                    '<div style="color:#666; font-size:14px;">Ad loading... <br><a href="https://otieu.com/4/10381160" target="_blank" style="color:#00ff88;">Click here for sponsor</a></div>';
-            }
-        }, 3000);
-    </script>
+
+    <script src='https://3nbf4.com/act/files/tag.min.js?z=10381292' data-cfasync='false' async></script>
 </body>
 </html>
