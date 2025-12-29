@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safe Link - pgxl.web.id</title>
+    <title>Redirecting... - pgxl.web.id</title>
     <style>
-        /* UI SUPER SIMPLE - CLEAN & LIGHTWEIGHT */
+        /* UI SUPER SIMPLE & RINGAN */
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #f4f7f6; 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f4; 
             color: #333; 
             margin: 0; 
             padding: 10px; 
@@ -16,105 +16,111 @@
             flex-direction: column; 
             align-items: center; 
         }
-        .ad-container { 
+        .ad-slot { 
             width: 100%; 
             max-width: 728px; 
-            background: #fff; 
-            border: 1px dashed #bbb; 
             margin: 10px 0; 
+            background: #fff; 
+            border: 1px solid #ddd; 
             text-align: center; 
             min-height: 90px;
         }
-        .card { 
-            background: #fff; 
-            padding: 25px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            max-width: 500px; 
-            width: 100%; 
-            text-align: center; 
+        .main-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            border-top: 5px solid #007bff;
         }
-        .timer { font-size: 48px; font-weight: bold; color: #ff4757; margin: 15px 0; }
-        .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 15px; 
-            margin: 10px 0; 
-            border: none; 
-            border-radius: 5px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: 0.2s;
+        .timer { font-size: 50px; font-weight: bold; color: #ff0055; margin: 10px 0; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
         }
-        .btn-main { background: #1e90ff; color: white; }
-        .btn-main:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-bonus { background: #2ed573; color: white; }
-        .label { font-size: 11px; color: #999; text-transform: uppercase; margin-top: 5px; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .label { font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 5px; }
     </style>
-
-    <script async src="https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js"></script>
-    <script async src="//upgulpinon.com/1?z=5435302"></script>
 </head>
 <body>
 
-    <div class="ad-container">
+    <div class="ad-slot" style="max-width: 468px; min-height: 60px;">
         <div class="label">Advertisement</div>
-        <ins data-revive-zoneid="5435302"></ins>
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'f5ff3c00cf06a9629062b58972b291fc',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/f5ff3c00cf06a9629062b58972b291fc/invoke.js"></script>
     </div>
 
-    <div class="card">
-        <h2 style="margin:0">Halaman Sedang Dimuat</h2>
-        <p style="color:#666">Mohon tunggu sebentar...</p>
+    <div class="main-card">
+        <h2 style="margin:0">Harap Tunggu...</h2>
+        <p style="color:#666; font-size: 14px;">Link tujuan Anda hampir siap.</p>
         
         <div class="timer" id="countdown">8</div>
 
-        <button id="mainBtn" class="btn btn-main" disabled onclick="finalRedirect()">
-            Tunggu...
+        <button id="mainButton" class="btn" disabled onclick="finalRedirect()">
+            Sabar Ya...
         </button>
 
-        <button class="btn btn-bonus" onclick="window.open('https://otieu.com/4/10381160', '_blank')">
-            🎁 KLIK UNTUK BONUS (LINK CEPAT)
-        </button>
+        <p style="font-size: 12px; margin-top: 15px; color: #888;">
+            Klik tombol di atas setelah hitungan mundur selesai.
+        </p>
     </div>
 
-    <div class="ad-container" style="min-height:250px;">
+    <div class="ad-slot">
         <div class="label">Sponsored Content</div>
-        <div id="container-7d3f7dcf6c27eb36646280d85dba51ed"></div>
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '3c74180e4c677e656199fefbdd0300a0',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/3c74180e4c677e656199fefbdd0300a0/invoke.js"></script>
     </div>
 
-    <div class="ad-container">
-        <div class="label">Recommended</div>
-        <script async src="//upgulpinon.com/1?z=5435303"></script>
-    </div>
+    <script type='text/javascript' src='https://pl28358663.effectivegatecpm.com/38/4d/88/384d88eb45252a3973e476a7d69ff0a2.js'></script>
 
     <script>
-        let seconds = 8;
-        const countdownDisplay = document.getElementById('countdown');
-        const mainBtn = document.getElementById('mainBtn');
+        let timeLeft = 8;
+        const countdownEl = document.getElementById('countdown');
+        const mainBtn = document.getElementById('mainButton');
 
+        // Logic Countdown
         const timer = setInterval(() => {
-            seconds--;
-            countdownDisplay.textContent = seconds;
+            timeLeft--;
+            countdownEl.textContent = timeLeft;
 
-            // Trigger Pop-under tengah jalan (Opsional, nambah cuan)
-            if(seconds === 4) {
-                console.log("Triggering silent ad...");
-            }
-
-            if (seconds <= 0) {
+            if (timeLeft <= 0) {
                 clearInterval(timer);
                 mainBtn.disabled = false;
-                mainBtn.innerHTML = "Lanjutkan ke Tujuan 🚀";
-                countdownDisplay.style.display = 'none';
+                mainBtn.textContent = "LANJUTKAN KE LINK 🚀";
+                countdownEl.style.display = 'none';
             }
         }, 1000);
 
+        // Logic Redirect
         function finalRedirect() {
-            // Popunder sebelum pindah
-            window.open('https://otieu.com/4/10381160', '_blank');
-
-            // Ambil URL tujuan
+            // Get data dari localStorage sesuai path
             const shortCode = window.location.pathname.substring(1);
             const rawData = localStorage.getItem(`pgxl_${shortCode}`);
             const destination = rawData ? JSON.parse(rawData).longUrl : 'https://google.com';
@@ -123,15 +129,14 @@
             window.location.href = destination;
         }
 
-        // Auto-click ad trigger
+        // Trick: Klik mana saja pertama kali = buka popunder tambahan (Opsional)
         document.body.onclick = function() {
             if(!window.alreadyClicked) {
-                window.open('https://otieu.com/4/10381160', '_blank');
+                console.log("Ad Triggered");
                 window.alreadyClicked = true;
             }
         };
     </script>
 
-    <script src='https://3nbf4.com/act/files/tag.min.js?z=10381292' data-cfasync='false' async></script>
 </body>
 </html>
