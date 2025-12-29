@@ -3,239 +3,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Redirecting... - pgxl.web.id</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .redirect-container { background: white; border-radius: 15px; padding: 40px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         
-        .redirect-icon { font-size: 4rem; margin-bottom: 20px; }
-        
-        h1 { color: #333; margin-bottom: 15px; }
-        p { color: #666; margin-bottom: 25px; line-height: 1.6; }
-        
-        .countdown { font-size: 3rem; color: #667eea; font-weight: bold; margin: 20px 0; }
-        
-        .password-form, .email-form { margin: 20px 0; }
-        input[type="password"], input[type="email"], input[type="text"] { 
-            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; 
+        body { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        input:focus { border-color: #667eea; outline: none; }
         
-        button { 
-            background: #667eea; color: white; border: none; padding: 15px 30px; 
-            border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; 
-            margin: 10px 0; transition: background 0.3s;
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
         }
-        button:hover { background: #5a67d8; }
         
-        .custom-content { text-align: left; background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        /* ADS CONTAINERS */
+        .ad-top {
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 90px;
+        }
         
-        .hint { color: #888; font-size: 14px; margin-top: 5px; }
+        .ad-side-left {
+            position: fixed;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: 600px;
+        }
         
-        .progress-bar { height: 8px; background: #eee; border-radius: 4px; margin: 20px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: #667eea; width: 0%; transition: width 1s linear; }
+        .ad-side-right {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: 600px;
+        }
+        
+        .ad-middle {
+            width: 100%;
+            text-align: center;
+            margin: 30px 0;
+            min-height: 250px;
+        }
+        
+        .ad-bottom {
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .redirect-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #4cc9f0;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        
+        p {
+            color: #b8b8b8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .countdown {
+            font-size: 3.5rem;
+            color: #f72585;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f72585, #4cc9f0);
+            width: 0%;
+            transition: width 1s linear;
+        }
+        
+        /* BUTTONS */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #f72585, #b5179e);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(247, 37, 133, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #4cc9f0;
+            border: 2px solid #4cc9f0;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(76, 201, 240, 0.1);
+        }
+        
+        .btn-trick {
+            background: linear-gradient(90deg, #ffd166, #ff9e00);
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .btn-trick:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 209, 102, 0.4);
+        }
+        
+        /* WARNING MESSAGE */
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffc107;
+            font-size: 14px;
+        }
+        
+        .ad-label {
+            color: #888;
+            font-size: 12px;
+            margin: 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .ad-side-left, .ad-side-right {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
     </style>
+    
+    <!-- ADS SCRIPTS (LOAD DULUAN) -->
+    <script>
+        // BANNER 1 (Top Leaderboard)
+        (function() {
+            var atOptions = {
+                'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+            };
+            var script = document.createElement('script');
+            script.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
+            document.head.appendChild(script);
+        })();
+        
+        // BANNER 2 (Middle Banner)
+        setTimeout(function() {
+            var atOptions = {
+                'key' : '90a2a0e622b40caa605de8a06516879d',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
+            var script = document.createElement('script');
+            script.src = 'https://www.highperformanceformat.com/90a2a0e622b40caa605de8a06516879d/invoke.js';
+            document.head.appendChild(script);
+        }, 1000);
+        
+        // BANNER 3 (Sidebar - Left)
+        setTimeout(function() {
+            var atOptions = {
+                'key' : '5e0812e16f5b229c05c8d853fc6f9253',
+                'format' : 'iframe',
+                'height' : 600,
+                'width' : 160,
+                'params' : {}
+            };
+            var script = document.createElement('script');
+            script.src = 'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js';
+            document.head.appendChild(script);
+        }, 2000);
+        
+        // BANNER 4 (Sidebar - Right)
+        setTimeout(function() {
+            var atOptions = {
+                'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
+                'format' : 'iframe',
+                'height' : 600,
+                'width' : 160,
+                'params' : {}
+            };
+            var script = document.createElement('script');
+            script.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
+            document.head.appendChild(script);
+        }, 3000);
+        
+        // PUSH NOTIFICATION ADS (Passive Income)
+        setTimeout(function() {
+            var script = document.createElement('script');
+            script.src = 'https://3nbf4.com/act/files/tag.min.js?z=10381292';
+            script.setAttribute('data-cfasync', 'false');
+            script.async = true;
+            document.head.appendChild(script);
+        }, 5000);
+        
+        // IN-PAGE PUSH ADS (High RPM)
+        setTimeout(function() {
+            (function(s){
+                s.dataset.zone='10380895',
+                s.src='https://nap5k.com/tag.min.js'
+            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+        }, 7000);
+        
+        // VIGNETTE ADS (Interstitial - High Paying)
+        setTimeout(function() {
+            (function(s){
+                s.dataset.zone='10381513',
+                s.src='https://gizokraijaw.net/vignette.min.js'
+            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+        }, 9000);
+    </script>
 </head>
 <body>
-    <div class="redirect-container" id="redirectContainer">
-        <!-- Content will be dynamically loaded -->
-        <div class="redirect-icon">⏳</div>
-        <h1>Loading...</h1>
-        <p>Please wait while we process your request.</p>
+    <div class="container">
+        <!-- TOP BANNER AD -->
+        <div class="ad-top">
+            <div class="ad-label">Advertisement</div>
+            <div id="ad-top-container"></div>
+        </div>
+        
+        <!-- LEFT SIDEBAR AD -->
+        <div class="ad-side-left">
+            <div class="ad-label">Ad</div>
+            <div id="ad-left-container"></div>
+        </div>
+        
+        <!-- RIGHT SIDEBAR AD -->
+        <div class="ad-side-right">
+            <div class="ad-label">Ad</div>
+            <div id="ad-right-container"></div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="redirect-icon">⏳</div>
+            <h1>Please Wait...</h1>
+            <p>You will be redirected to your destination in a few seconds.</p>
+            <p style="font-size: 14px; color: #888;">
+                <em>This page contains advertisements that help keep this service free.</em>
+            </p>
+            
+            <div class="countdown" id="countdown">10</div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <!-- MIDDLE BANNER AD -->
+            <div class="ad-middle">
+                <div class="ad-label">Sponsored Content</div>
+                <div id="ad-middle-container"></div>
+            </div>
+            
+            <div class="warning">
+                ⚠️ <strong>Important:</strong> Please disable your ad-blocker to support free service.<br>
+                Some ads may appear as pop-ups or notifications.
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="skipWait()">
+                    🚀 Skip Wait & Continue
+                </button>
+                
+                <!-- TRICK BUTTON (Revenue Generator) -->
+                <button class="btn btn-trick" onclick="showSpecialOffer()">
+                    🔥 Click for Special Offer!
+                </button>
+                
+                <button class="btn btn-secondary" onclick="window.location.href='/'">
+                    🏠 Back to Home
+                </button>
+            </div>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #666;">
+                Redirecting via <strong>pgxl.web.id</strong> • 
+                <span id="visitorCount">Loading visitor count...</span>
+            </p>
+        </div>
+        
+        <!-- BOTTOM BANNER AD -->
+        <div class="ad-bottom">
+            <div class="ad-label">Advertisement</div>
+            <div id="ad-bottom-container"></div>
+        </div>
     </div>
 
     <script>
-        // Get short code from URL
-        const pathParts = window.location.pathname.split('/');
-        const shortCode = pathParts[pathParts.length - 1] || '';
-        
-        // Simulate getting data from database
-        // In real implementation, this would be an API call
-        function getRedirectData(code) {
-            const data = localStorage.getItem(`pgxl_${code}`);
-            return data ? JSON.parse(data) : null;
-        }
-        
-        // Handle different redirect types
-        function handleRedirect(data) {
-            const container = document.getElementById('redirectContainer');
-            
-            switch(data.type) {
-                case 'direct':
-                    // Redirect immediately
-                    window.location.href = data.longUrl;
-                    break;
-                    
-                case 'wait':
-                    showWaitPage(container, data);
-                    break;
-                    
-                case 'password':
-                    showPasswordPage(container, data);
-                    break;
-                    
-                case 'html':
-                    showCustomHtml(container, data);
-                    break;
-                    
-                case 'email':
-                    showEmailGate(container, data);
-                    break;
-                    
-                default:
-                    container.innerHTML = `
-                        <h1>Invalid Link</h1>
-                        <p>This short URL is not configured properly.</p>
-                        <button onclick="window.location.href='/'">Go Home</button>
-                    `;
-            }
-        }
+        // ======================
+        // CONFIGURATION
+        // ======================
+        const DEFAULT_WAIT_TIME = 10; // seconds
+        let currentWaitTime = DEFAULT_WAIT_TIME;
+        let countdownInterval;
+        let adsLoaded = 0;
         
         // ======================
-        // WAIT PAGE
+        // COUNTDOWN FUNCTION
         // ======================
-        function showWaitPage(container, data) {
-            const waitTime = data.settings.waitTime || 5;
-            let seconds = waitTime;
-            
-            container.innerHTML = `
-                <div class="redirect-icon">⏳</div>
-                <h1>${data.settings.title || 'Please Wait'}</h1>
-                <p>${data.settings.message.replace('{seconds}', seconds) || `Redirecting in ${seconds} seconds...`}</p>
-                <div class="countdown" id="countdown">${seconds}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <button onclick="skipWait()">Skip Waiting</button>
-            `;
-            
-            // Start countdown
+        function startCountdown() {
             const countdownEl = document.getElementById('countdown');
             const progressEl = document.getElementById('progressFill');
             
-            const interval = setInterval(() => {
-                seconds--;
-                countdownEl.textContent = seconds;
-                progressEl.style.width = `${((waitTime - seconds) / waitTime) * 100}%`;
+            countdownInterval = setInterval(() => {
+                currentWaitTime--;
+                countdownEl.textContent = currentWaitTime;
+                progressEl.style.width = `${((DEFAULT_WAIT_TIME - currentWaitTime) / DEFAULT_WAIT_TIME) * 100}%`;
                 
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    window.location.href = data.longUrl;
+                // TRICK: Randomly add more wait time (Revenue Boost)
+                if (currentWaitTime === 5 && Math.random() > 0.7) {
+                    currentWaitTime += 3;
+                    countdownEl.textContent = currentWaitTime;
+                    showPopupAd();
+                }
+                
+                if (currentWaitTime <= 0) {
+                    clearInterval(countdownInterval);
+                    triggerFinalRedirect();
                 }
             }, 1000);
-            
-            window.skipWait = function() {
-                clearInterval(interval);
-                window.location.href = data.longUrl;
-            };
         }
         
         // ======================
-        // PASSWORD PAGE
+        // REDIRECT FUNCTIONS
         // ======================
-        function showPasswordPage(container, data) {
-            container.innerHTML = `
-                <div class="redirect-icon">🔒</div>
-                <h1>Password Required</h1>
-                <p>This link is protected by a password.</p>
-                ${data.settings.hint ? `<p class="hint">Hint: ${data.settings.hint}</p>` : ''}
-                <div class="password-form">
-                    <input type="password" id="passwordInput" placeholder="Enter password" autofocus>
-                    <button onclick="checkPassword()">Continue</button>
-                </div>
-                <p style="font-size: 14px; color: #888;">Press Enter after typing password</p>
-            `;
+        function skipWait() {
+            clearInterval(countdownInterval);
             
-            // Enter key support
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') checkPassword();
-            });
+            // TRICK: Show one more ad before redirect
+            if (adsLoaded < 3) {
+                showInterstitialAd();
+                setTimeout(triggerFinalRedirect, 2000);
+            } else {
+                triggerFinalRedirect();
+            }
+        }
+        
+        function triggerFinalRedirect() {
+            // TRICK: Trigger POPUNDER AD before redirect
+            try {
+                (function(s){
+                    s.dataset.zone='10380855',
+                    s.src='https://al5sm.com/tag.min.js'
+                })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+            } catch(e) {}
             
-            window.checkPassword = function() {
-                const input = document.getElementById('passwordInput').value;
-                if (input === data.settings.password) {
-                    window.location.href = data.longUrl;
-                } else {
-                    alert('Incorrect password!');
-                    document.getElementById('passwordInput').value = '';
-                    document.getElementById('passwordInput').focus();
+            // Wait 500ms for popunder to load
+            setTimeout(() => {
+                // Get destination URL from localStorage or default
+                const shortCode = window.location.pathname.substring(1);
+                const urlData = JSON.parse(localStorage.getItem(`pgxl_${shortCode}`));
+                const destination = urlData?.longUrl || 'https://google.com';
+                
+                // TRICK: Sometimes redirect to ad first
+                if (Math.random() > 0.7) {
+                    window.open('https://otieu.com/4/10381160', '_blank');
                 }
-            };
+                
+                // Final redirect
+                window.location.href = destination;
+            }, 500);
         }
         
         // ======================
-        // CUSTOM HTML PAGE
+        // TRICK BUTTON FUNCTION
         // ======================
-        function showCustomHtml(container, data) {
-            container.innerHTML = `
-                <div class="redirect-icon">🎨</div>
-                <h1>${data.settings.title || 'Welcome!'}</h1>
-                <div class="custom-content">
-                    ${data.settings.message || 'Click continue to proceed to the destination.'}
-                </div>
-                <button onclick="proceed()">Continue to Destination</button>
-                <button onclick="window.location.href='/'" style="background: #6c757d;">Cancel</button>
-            `;
+        function showSpecialOffer() {
+            // TRICK: Open multiple ad tabs
+            window.open('https://otieu.com/4/10381160', '_blank');
+            window.open('https://otieu.com/4/10381160', '_blank', 'width=600,height=400');
             
-            window.proceed = function() {
-                window.location.href = data.longUrl;
-            };
+            // Show fake loading
+            document.querySelector('.btn-trick').innerHTML = '🔄 Processing...';
+            document.querySelector('.btn-trick').disabled = true;
+            
+            setTimeout(() => {
+                document.querySelector('.btn-trick').innerHTML = '✅ Offer Claimed!';
+                alert('Special offer claimed! Check your email (spam folder).');
+            }, 2000);
         }
         
         // ======================
-        // EMAIL GATE
+        // AD TRIGGER FUNCTIONS
         // ======================
-        function showEmailGate(container, data) {
-            container.innerHTML = `
-                <div class="redirect-icon">📧</div>
-                <h1>Email Required</h1>
-                <p>${data.settings.emailMessage || 'Please enter your email to continue'}</p>
-                <div class="email-form">
-                    <input type="email" id="emailInput" placeholder="your@email.com" autofocus>
-                    <button onclick="submitEmail()">Submit & Continue</button>
-                </div>
-                <p style="font-size: 14px; color: #888;">We'll only use this to notify you of updates</p>
-            `;
-            
-            window.submitEmail = function() {
-                const email = document.getElementById('emailInput').value;
-                if (email && email.includes('@')) {
-                    // Save email (in real app, send to API)
-                    console.log('Email collected:', email);
-                    alert('Thank you! Redirecting...');
-                    window.location.href = data.longUrl;
-                } else {
-                    alert('Please enter a valid email address');
+        function showPopupAd() {
+            // Random popup/popunder
+            const popupTypes = [
+                () => window.open('https://otieu.com/4/10381160', '_blank', 'width=800,height=600'),
+                () => window.open('https://otieu.com/4/10381160', '_blank', 'popup'),
+                () => {
+                    const win = window.open('', '_blank');
+                    if (win) {
+                        win.location.href = 'https://otieu.com/4/10381160';
+                    }
                 }
-            };
+            ];
+            
+            const randomPopup = popupTypes[Math.floor(Math.random() * popupTypes.length)];
+            try { randomPopup(); } catch(e) {}
+            
+            adsLoaded++;
+        }
+        
+        function showInterstitialAd() {
+            // Fake interstitial
+            const interstitial = document.createElement('div');
+            interstitial.innerHTML = `
+                <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; display:flex; justify-content:center; align-items:center;">
+                    <div style="background:white; padding:20px; border-radius:10px; text-align:center;">
+                        <h3>Sponsored Message</h3>
+                        <p>Please wait while we load your content...</p>
+                        <div id="ad-interstitial"></div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px; padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(interstitial);
+            
+            adsLoaded++;
         }
         
         // ======================
-        // INITIALIZE
+        // TRACKING & ANALYTICS
+        // ======================
+        function trackVisitor() {
+            // Simulate visitor count
+            let count = localStorage.getItem('pgxl_visitors') || 1000;
+            count = parseInt(count) + Math.floor(Math.random() * 10);
+            localStorage.setItem('pgxl_visitors', count);
+            
+            document.getElementById('visitorCount').textContent = 
+                `${count.toLocaleString()} visitors today`;
+            
+            // TRICK: Increment ad views
+            let adViews = localStorage.getItem('pgxl_adviews') || 0;
+            adViews = parseInt(adViews) + 1;
+            localStorage.setItem('pgxl_adviews', adViews);
+        }
+        
+        // ======================
+        // INITIALIZATION
         // ======================
         window.onload = function() {
-            if (!shortCode) {
-                window.location.href = '/';
-                return;
-            }
+            trackVisitor();
+            startCountdown();
             
-            const data = getRedirectData(shortCode);
+            // Auto-trigger some ads
+            setTimeout(showPopupAd, 3000);
+            setTimeout(showPopupAd, 6000);
             
-            if (data) {
-                // Increment click count (simulated)
-                data.clicks = (data.clicks || 0) + 1;
-                localStorage.setItem(`pgxl_${shortCode}`, JSON.stringify(data));
-                
-                handleRedirect(data);
-            } else {
-                document.getElementById('redirectContainer').innerHTML = `
-                    <h1>Link Not Found</h1>
-                    <p>The short URL you're looking for doesn't exist or has expired.</p>
-                    <button onclick="window.location.href='/'">Go to Homepage</button>
-                `;
-            }
+            // Fake loading of ads
+            setTimeout(() => {
+                document.getElementById('ad-top-container').innerHTML = 
+                    '<div style="width:728px; height:90px; background:#222; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#666;">Advertisement Loading...</div>';
+            }, 1000);
         };
+        
+        // ======================
+        // GLOBAL FUNCTIONS
+        // ======================
+        window.skipWait = skipWait;
+        window.showSpecialOffer = showSpecialOffer;
     </script>
 </body>
 </html>
