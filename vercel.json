@@ -5,7 +5,7 @@
     { "source": "/api/history", "destination": "/api/history.js" },
     { 
       "source": "/:shortCode([a-zA-Z0-9]{1,20})", 
-      "destination": "/api/redirect.js?short=:shortCode" 
+      "destination": "/redirect-page.html" 
     }
   ],
   "redirects": [
