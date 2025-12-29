@@ -1,18 +1,5 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { 
-      "source": "/([a-zA-Z0-9]{3,10})", 
-      "destination": "/redirect-page.html" 
-    }
-  ],
-  
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
-      ]
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
