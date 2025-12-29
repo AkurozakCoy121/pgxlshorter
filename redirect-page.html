@@ -5,192 +5,221 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting... - pgxl.web.id</title>
     <style>
-        /* CSS tetap sama seperti sebelumnya */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .container { max-width: 1200px; width: 100%; margin: 0 auto; }
-        .ad-top { width: 100%; text-align: center; margin: 20px 0; min-height: 90px; }
-        .ad-middle { width: 100%; text-align: center; margin: 30px 0; min-height: 250px; }
-        .ad-bottom { width: 100%; text-align: center; margin: 20px 0; min-height: 60px; }
-        .main-content {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 40px;
-            margin: 20px auto;
-            max-width: 800px;
+        
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
             width: 100%;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .redirect-icon { font-size: 4rem; margin-bottom: 20px; }
-        h1 { color: #4cc9f0; margin-bottom: 15px; font-size: 2.2rem; }
-        p { color: #b8b8b8; margin-bottom: 25px; line-height: 1.6; font-size: 1.1rem; }
-        .countdown { font-size: 3.5rem; color: #f72585; font-weight: bold; margin: 20px 0; font-family: 'Courier New', monospace; }
-        .progress-bar { height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; margin: 30px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #f72585, #4cc9f0); width: 0%; transition: width 1s linear; }
-        .button-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
-        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; min-width: 200px; }
-        .btn-primary { background: linear-gradient(90deg, #f72585, #b5179e); color: white; }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(247, 37, 133, 0.3); }
-        .btn-trick { background: linear-gradient(90deg, #ffd166, #ff9e00); color: #000; font-weight: bold; }
-        .btn-trick:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 209, 102, 0.4); }
-        .warning { background: rgba(255, 193, 7, 0.1); border: 2px solid #ffc107; border-radius: 10px; padding: 15px; margin: 20px 0; color: #ffc107; font-size: 14px; }
-        .ad-label { color: #888; font-size: 12px; margin: 5px 0; text-transform: uppercase; letter-spacing: 1px; }
-        @media (max-width: 768px) { .button-group { flex-direction: column; } .btn { width: 100%; } }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .redirect-box {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+        
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .progress-container {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #00ff88;
+            width: 0%;
+            transition: width 1s linear;
+        }
+        
+        .btn {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #00cc66;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        .ad-notice {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 25px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+        
+        .stats {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 20px;
+        }
+        
+        /* PropellerAds Container */
+        .ad-container {
+            margin: 25px 0;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Loading animation */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #333;
+            border-top: 3px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .redirect-box {
+                padding: 20px;
+            }
+            
+            .countdown {
+                font-size: 2.5rem;
+            }
+            
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
     </style>
     
-    <!-- PROPELLERADS (PASTI WORK) -->
+    <!-- PropellerAds Script -->
     <script type="text/javascript">
         (function(){
             var script = document.createElement('script');
             script.src='//upgulpinon.com/1?z=5435302';
+            script.async = true;
             document.head.appendChild(script);
         })();
-    </script>
-    
-    <!-- GOOGLE ADSENSE (OPTIONAL) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-    
-    <!-- ALTERNATIVE AD NETWORKS -->
-    <script>
-        // Function to load ads with fallback
-        function loadAdWithFallback(adScripts) {
-            let currentIndex = 0;
-            
-            function tryNext() {
-                if (currentIndex >= adScripts.length) return;
-                
-                const script = document.createElement('script');
-                script.src = adScripts[currentIndex];
-                script.onerror = function() {
-                    console.log('Ad script failed:', adScripts[currentIndex]);
-                    currentIndex++;
-                    setTimeout(tryNext, 1000);
-                };
-                script.onload = function() {
-                    console.log('Ad script loaded:', adScripts[currentIndex]);
-                };
-                
-                document.head.appendChild(script);
-                currentIndex++;
-            }
-            
-            tryNext();
-        }
-        
-        // Wait for DOM to load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load multiple ad networks with fallback
-            const bannerAds = [
-                // Highperformanceformat (yours)
-                'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js',
-                'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js',
-                
-                // PropellerAds backup
-                '//upgulpinon.com/1?z=5435302',
-                
-                // Adsterra (popular)
-                'https://www.profitablecreativeformat.com/12345678/invoke.js',
-                
-                // Monetag
-                'https://s.magsrv.com/iframe.js?id=123456'
-            ];
-            
-            // Load banner ads
-            setTimeout(() => loadAdWithFallback(bannerAds), 1000);
-            
-            // Load push ads
-            setTimeout(() => {
-                const pushAds = [
-                    'https://3nbf4.com/act/files/tag.min.js?z=10381292',
-                    'https://nap5k.com/tag.min.js?zone=10380895'
-                ];
-                loadAdWithFallback(pushAds);
-            }, 3000);
-        });
     </script>
 </head>
 <body>
     <div class="container">
-        <!-- TOP BANNER AD -->
-        <div class="ad-top">
-            <div class="ad-label">Advertisement</div>
-            <!-- PropellerAds Leaderboard -->
-            <div id="propeller-ads-top">
-                <ins data-revive-zoneid="5435302" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>
-                <script async src="//upgulpinon.com/1?z=5435302"></script>
+        <div class="logo">PGXL</div>
+        <div class="tagline">Fast URL Shortener</div>
+        
+        <div class="redirect-box">
+            <div class="icon">⏳</div>
+            <h1>Please Wait</h1>
+            <p>You will be redirected in <span class="countdown" id="countdown">5</span> seconds</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <!-- PropellerAds Display -->
+            <div class="ad-container">
+                <div id="propeller-ad">
+                    <div class="loader"></div>
+                    <span>Loading ad...</span>
+                </div>
+            </div>
+            
+            <div>
+                <button class="btn" onclick="skipWait()">
+                    🚀 Skip Wait & Continue
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='/'">
+                    🏠 Create Your Link
+                </button>
+            </div>
+            
+            <div class="ad-notice">
+                💡 <strong>Notice:</strong> Ads help keep this service free. Thank you for your support!
             </div>
         </div>
         
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
-            <div class="redirect-icon">⏳</div>
-            <h1>Please Wait...</h1>
-            <p>You will be redirected to your destination in a few seconds.</p>
-            <p style="font-size: 14px; color: #888;">
-                <em>Support free service by viewing ads below.</em>
-            </p>
-            
-            <div class="countdown" id="countdown">8</div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            
-            <!-- MIDDLE BANNER AD -->
-            <div class="ad-middle">
-                <div class="ad-label">Sponsored Content</div>
-                <!-- Highperformanceformat Banner -->
-                <div id="container-7d3f7dcf6c27eb36646280d85dba51ed"></div>
-                <script>
-                    atOptions = {
-                        'key' : '7d3f7dcf6c27eb36646280d85dba51ed',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                    };
-                </script>
-                <script src="https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js"></script>
-            </div>
-            
-            <div class="warning">
-                ⚠️ <strong>Ad Blocker Detected:</strong> Please disable to support free service.
-            </div>
-            
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="skipWait()">
-                    🚀 Skip Wait & Continue
-                </button>
-                
-                <!-- TRICK BUTTON FOR MORE ADS -->
-                <button class="btn btn-trick" onclick="showBonusAds()">
-                    💰 Click for Bonus!
-                </button>
-                
-                <button class="btn btn-secondary" onclick="window.location.href='/'">
-                    🏠 Create Your Own Link
-                </button>
-            </div>
-            
-            <!-- BOTTOM BANNER AD -->
-            <div class="ad-bottom">
-                <div class="ad-label">Recommended</div>
-                <!-- PropellerAds Horizontal -->
-                <div id="propeller-ads-bottom">
-                    <ins data-revive-zoneid="5435303" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>
-                    <script async src="//upgulpinon.com/1?z=5435303"></script>
-                </div>
-            </div>
+        <div class="stats">
+            <span id="visitorCount">Loading stats...</span>
         </div>
     </div>
 
@@ -198,181 +227,146 @@
         // ======================
         // CONFIGURATION
         // ======================
-        let waitTime = 8;
+        let waitTime = 5; // seconds
         let countdownInterval;
-        let adsShown = 0;
+        let redirectTriggered = false;
         
         // ======================
-        // FALLBACK ADS FUNCTION
-        // ======================
-        function showFallbackAds() {
-            if (adsShown > 2) return;
-            
-            const adContainers = ['ad-top', 'ad-middle', 'ad-bottom'];
-            const fallbackAds = [
-                '<a href="https://otieu.com/4/10381160" target="_blank" style="display:block; width:728px; height:90px; background:#222; margin:0 auto; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; border-radius:5px;">👉 Click here for Special Offer! 👈</a>',
-                '<div style="width:300px; height:250px; background:linear-gradient(135deg,#ff6b6b,#ffa726); margin:0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:10px; color:white;"><h3 style="margin:0;">Limited Time!</h3><p>Offer expires soon</p><button style="padding:10px 20px; background:white; color:#ff6b6b; border:none; border-radius:20px; font-weight:bold; cursor:pointer;">Claim Now</button></div>',
-                '<div style="width:468px; height:60px; background:#2c3e50; margin:0 auto; display:flex; align-items:center; justify-content:center; color:#ecf0f1; border-radius:5px;"><span>Advertisement • </span><a href="https://otieu.com/4/10381160" target="_blank" style="color:#3498db; margin-left:5px; text-decoration:none;">Visit Sponsor</a></div>'
-            ];
-            
-            adContainers.forEach((containerId, index) => {
-                const container = document.getElementById(containerId) || document.querySelector('.' + containerId);
-                if (container && container.innerHTML.includes('Advertisement')) {
-                    container.innerHTML += fallbackAds[index % fallbackAds.length];
-                    adsShown++;
-                }
-            });
-        }
-        
-        // ======================
-        // COUNTDOWN & REDIRECT
+        // COUNTDOWN FUNCTION
         // ======================
         function startCountdown() {
             const countdownEl = document.getElementById('countdown');
-            const progressEl = document.getElementById('progressFill');
+            const progressEl = document.getElementById('progressBar');
             
             countdownInterval = setInterval(() => {
                 waitTime--;
                 countdownEl.textContent = waitTime;
-                progressEl.style.width = `${((8 - waitTime) / 8) * 100}%`;
+                progressEl.style.width = `${((5 - waitTime) / 5) * 100}%`;
                 
-                // Show fallback ads if no ads loaded
-                if (waitTime === 6 && adsShown === 0) {
-                    showFallbackAds();
+                // Random PropellerAds trigger at 3 seconds
+                if (waitTime === 3) {
+                    triggerPropellerAd();
                 }
                 
-                // Trick: Random extra time for more ad views
-                if (waitTime === 3 && Math.random() > 0.5) {
-                    waitTime += 2;
-                    countdownEl.textContent = waitTime;
-                    triggerPopupAd();
-                }
-                
+                // Final redirect
                 if (waitTime <= 0) {
                     clearInterval(countdownInterval);
-                    finalRedirect();
+                    performRedirect();
                 }
             }, 1000);
         }
         
+        // ======================
+        // REDIRECT FUNCTIONS
+        // ======================
         function skipWait() {
+            if (redirectTriggered) return;
+            
             clearInterval(countdownInterval);
-            triggerPopupAd();
-            setTimeout(finalRedirect, 1500);
+            document.getElementById('countdown').textContent = '0';
+            document.getElementById('progressBar').style.width = '100%';
+            
+            // Trigger ad before redirect
+            triggerPropellerAd();
+            
+            // Small delay for ad to load
+            setTimeout(performRedirect, 500);
         }
         
-        function finalRedirect() {
-            // TRICK: Always open popunder before redirect
-            try {
-                window.open('https://otieu.com/4/10381160', '_blank', 'width=1,height=1,left=10000,top=10000');
-            } catch(e) {}
+        function performRedirect() {
+            if (redirectTriggered) return;
+            redirectTriggered = true;
             
-            // Get actual destination
+            // Get destination from localStorage
             const shortCode = window.location.pathname.substring(1);
             const urlData = JSON.parse(localStorage.getItem(`pgxl_${shortCode}`));
             const destination = urlData?.longUrl || 'https://google.com';
             
-            // Sometimes redirect to ad page first (30% chance)
-            if (Math.random() < 0.3) {
-                window.location.href = 'https://otieu.com/4/10381160';
-                setTimeout(() => {
-                    window.location.href = destination;
-                }, 2000);
-            } else {
-                window.location.href = destination;
-            }
+            // Update stats
+            updateStats();
+            
+            // Redirect
+            window.location.href = destination;
         }
         
         // ======================
-        // AD TRIGGERS
+        // PROPELLERADS FUNCTIONS
         // ======================
-        function triggerPopupAd() {
-            adsShown++;
-            const popupTypes = [
-                () => window.open('https://otieu.com/4/10381160', '_blank', 'width=800,height=600'),
-                () => window.open('https://otieu.com/4/10381160', '_blank', 'popup'),
-                () => {
-                    const win = window.open('', '_blank');
-                    if (win) win.location.href = 'https://otieu.com/4/10381160';
-                }
-            ];
-            
+        function triggerPropellerAd() {
             try {
-                popupTypes[Math.floor(Math.random() * popupTypes.length)]();
-            } catch(e) {}
-        }
-        
-        function showBonusAds() {
-            // Open multiple ad tabs
-            for(let i = 0; i < 2; i++) {
-                setTimeout(() => {
-                    window.open('https://otieu.com/4/10381160', '_blank');
-                }, i * 500);
+                // Try to refresh PropellerAds
+                if (typeof window.PropellerAds !== 'undefined') {
+                    window.PropellerAds.refresh();
+                }
+                
+                // Show ad container
+                document.getElementById('propeller-ad').innerHTML = 
+                    '<ins data-revive-zoneid="5435302" data-revive-id="0f1a2b3c4d5e6f7g8h9i0j"></ins>';
+                
+            } catch(e) {
+                console.log('PropellerAds error:', e);
             }
-            
-            // Fake processing
-            const btn = document.querySelector('.btn-trick');
-            btn.innerHTML = '🔄 Processing Bonus...';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                btn.innerHTML = '💰 Bonus Claimed!';
-                alert('Bonus added! Check your account.');
-            }, 2000);
-            
-            adsShown += 2;
         }
         
         // ======================
-        // INITIALIZE
+        // STATS & TRACKING
+        // ======================
+        function updateStats() {
+            // Get or initialize stats
+            let stats = JSON.parse(localStorage.getItem('pgxl_stats') || '{"total":0,"today":0,"time":0}');
+            
+            // Increment counters
+            stats.total = (stats.total || 0) + 1;
+            
+            // Check if same day
+            const today = new Date().toDateString();
+            const lastDate = stats.lastDate || '';
+            
+            if (today !== lastDate) {
+                stats.today = 1;
+                stats.lastDate = today;
+            } else {
+                stats.today = (stats.today || 0) + 1;
+            }
+            
+            // Save stats
+            localStorage.setItem('pgxl_stats', JSON.stringify(stats));
+            
+            // Update display
+            document.getElementById('visitorCount').textContent = 
+                `📊 ${stats.today.toLocaleString()} redirects today • ${stats.total.toLocaleString()} total`;
+        }
+        
+        // ======================
+        // INITIALIZATION
         // ======================
         window.onload = function() {
+            // Start countdown
             startCountdown();
             
-            // Show fallback ads after 2 seconds if no ads
-            setTimeout(() => {
-                if (adsShown === 0) {
-                    showFallbackAds();
-                }
-            }, 2000);
+            // Load stats
+            const stats = JSON.parse(localStorage.getItem('pgxl_stats') || '{"total":0,"today":0}');
+            document.getElementById('visitorCount').textContent = 
+                `📊 ${stats.today.toLocaleString()} redirects today • ${stats.total.toLocaleString()} total`;
             
-            // Auto trigger some ads
-            setTimeout(triggerPopupAd, 4000);
+            // Auto-trigger PropellerAds after 1 second
+            setTimeout(triggerPropellerAd, 1000);
         };
         
         // Make functions global
         window.skipWait = skipWait;
-        window.showBonusAds = showBonusAds;
     </script>
     
-    <!-- BACKUP AD SCRIPTS AT BOTTOM -->
-    <script>
-        // Try loading your ads again at the end
-        setTimeout(() => {
-            // Your highperformanceformat ads
-            try {
-                var atOptions1 = { 'key' : '7d3f7dcf6c27eb36646280d85dba51ed', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
-                var script1 = document.createElement('script');
-                script1.src = 'https://www.highperformanceformat.com/7d3f7dcf6c27eb36646280d85dba51ed/invoke.js';
-                document.body.appendChild(script1);
-            } catch(e) {}
-            
-            try {
-                var atOptions2 = { 'key' : '5e0812e16f5b229c05c8d853fc6f9253', 'format' : 'iframe', 'height' : 600, 'width' : 160, 'params' : {} };
-                var script2 = document.createElement('script');
-                script2.src = 'https://www.highperformanceformat.com/5e0812e16f5b229c05c8d853fc6f9253/invoke.js';
-                document.body.appendChild(script2);
-            } catch(e) {}
-            
-            // Push notification ads
-            try {
-                var script3 = document.createElement('script');
-                script3.src = 'https://3nbf4.com/act/files/tag.min.js?z=10381292';
-                script3.setAttribute('data-cfasync', 'false');
-                script3.async = true;
-                document.body.appendChild(script3);
-            } catch(e) {}
-        }, 5000);
+    <!-- Backup PropellerAds Script -->
+    <script type="text/javascript">
+        // Backup loading
+        setTimeout(function() {
+            var adContainer = document.getElementById('propeller-ad');
+            if (adContainer && adContainer.innerHTML.includes('Loading')) {
+                adContainer.innerHTML = 
+                    '<div style="color:#666; font-size:14px;">Ad loading... <br><a href="https://otieu.com/4/10381160" target="_blank" style="color:#00ff88;">Click here for sponsor</a></div>';
+            }
+        }, 3000);
     </script>
 </body>
 </html>
