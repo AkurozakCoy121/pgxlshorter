@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 PGXL Wallpapers - HD Anime & Gaming Wallpapers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* PGXL Theme - Gaming Style */
+        :root {
+            --pgxl-primary: #ff4757;
+            --pgxl-secondary: #3742fa;
+            --pgxl-dark: #0a0a0a;
+            --pgxl-darker: #050505;
+            --pgxl-card: #1a1a1a;
+            --pgxl-text: #ffffff;
+            --pgxl-text-light: #b0b0b0;
+            --pgxl-border: #333333;
+            --neon-glow: 0 0 15px rgba(255, 71, 87, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--pgxl-dark);
+            color: var(--pgxl-text);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 71, 87, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(55, 66, 250, 0.1) 0%, transparent 20%);
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(10, 10, 10, 0.95);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--pgxl-primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--neon-glow);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff4757, #3742fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.5));
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ff4757, #3742fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+            letter-spacing: -0.5px;
+        }
+        
+        .tagline {
+            color: var(--pgxl-text-light);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            letter-spacing: 1.5px;
+            font-weight: 300;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .search-box {
+            display: flex;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 50px;
+            padding: 5px;
+            border: 2px solid var(--pgxl-border);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--pgxl-primary);
+            box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2), var(--neon-glow);
+        }
+        
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 15px 25px;
+            color: var(--pgxl-text);
+            font-size: 1.1rem;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, var(--pgxl-primary), var(--pgxl-secondary));
+            border: none;
+            color: white;
+            padding: 0 35px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+        }
+        
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 15px;
+            padding: 1.5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .category-btn {
+            background: rgba(26, 26, 26, 0.8);
+            color: var(--pgxl-text);
+            border: 2px solid var(--pgxl-border);
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .category-btn.active,
+        .category-btn:hover {
+            background: linear-gradient(135deg, var(--pgxl-primary), var(--pgxl-secondary));
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: var(--neon-glow);
+        }
+        
+        /* Wallpaper Grid */
+        .wallpaper-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .wallpaper-card {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--pgxl-border);
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+        
+        .wallpaper-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pgxl-primary), var(--pgxl-secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .wallpaper-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--pgxl-primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), var(--neon-glow);
+        }
+        
+        .wallpaper-card:hover::before {
+            opacity: 1;
+        }
+        
+        .wallpaper-img-container {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+        
+        .wallpaper-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+        
+        .wallpaper-card:hover .wallpaper-img {
+            transform: scale(1.1);
+        }
+        
+        .wallpaper-resolution {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .wallpaper-info {
+            padding: 20px;
+        }
+        
+        .wallpaper-stats {
+            display: flex;
+            justify-content: space-between;
+            color: var(--pgxl-text-light);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--pgxl-border);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .download-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pgxl-primary), var(--pgxl-secondary));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #ff3838, #4834d4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+        }
+        
+        /* Filters */
+        .filters {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 2rem;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--pgxl-border);
+        }
+        
+        .filter-label {
+            color: var(--pgxl-text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .filter-select {
+            background: var(--pgxl-dark);
+            color: var(--pgxl-text);
+            border: 1px solid var(--pgxl-border);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .filter-select:focus {
+            border-color: var(--pgxl-primary);
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--pgxl-text-light);
+            font-size: 1.2rem;
+        }
+        
+        .loading-spinner {
+            border: 4px solid var(--pgxl-border);
+            border-top: 4px solid var(--pgxl-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            background: rgba(5, 5, 5, 0.95);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--pgxl-border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--pgxl-primary), var(--pgxl-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-ads {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(37, 37, 37, 0.9));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+            border: 1px solid var(--pgxl-border);
+            backdrop-filter: blur(5px);
+        }
+        
+        .ad-label {
+            color: var(--pgxl-text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ad-space {
+            background: linear-gradient(135deg, rgba(42, 42, 42, 0.9), rgba(51, 51, 51, 0.9));
+            height: 100px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pgxl-text-light);
+            font-size: 0.9rem;
+            margin: 0 auto;
+            max-width: 728px;
+            border: 1px dashed var(--pgxl-border);
+        }
+        
+        .copyright {
+            text-align: center;
+            color: var(--pgxl-text-light);
+            font-size: 0.85rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--pgxl-border);
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--pgxl-primary), var(--pgxl-secondary));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4), var(--neon-glow);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            font-weight: 600;
+            max-width: 300px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .wallpaper-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                padding: 1rem;
+                gap: 15px;
+            }
+            
+            .categories, .filters {
+                padding: 1rem;
+            }
+            
+            .search-btn {
+                padding: 0 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .wallpaper-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo-text {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Resolution Badge */
+        .resolution-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--pgxl-primary), var(--pgxl-secondary));
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <div class="logo-icon">🎮</div>
+                <div>
+                    <div class="logo-text">PGXL WALLPAPERS</div>
+                    <div class="tagline">HD • 4K • ANIME • GAMING • FREE DOWNLOAD</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Search -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" 
+                   placeholder="Search wallpapers (anime, cyberpunk, landscape, dark, aesthetic...)">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i> SEARCH
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters" id="filters">
+        <div class="filter-group">
+            <span class="filter-label">Sort by:</span>
+            <select class="filter-select" id="sortSelect">
+                <option value="relevance">Relevance</option>
+                <option value="date_added">Newest</option>
+                <option value="random">Random</option>
+                <option value="views">Most Views</option>
+                <option value="favorites">Most Favorites</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-label">Purity:</span>
+            <select class="filter-select" id="puritySelect">
+                <option value="100">SFW</option>
+                <option value="110">SFW + Sketchy</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-label">Ratio:</span>
+            <select class="filter-select" id="ratioSelect">
+                <option value="all">All Ratios</option>
+                <option value="16x9">16:9</option>
+                <option value="16x10">16:10</option>
+                <option value="21x9">21:9</option>
+                <option value="4x3">4:3</option>
+                <option value="portrait">Portrait</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Categories -->
+    <div class="categories" id="categories">
+        <!-- Categories will be loaded here -->
+    </div>
+    
+    <!-- Wallpaper Grid -->
+    <div class="wallpaper-grid" id="wallpaperGrid">
+        <!-- Wallpapers will be loaded here -->
+    </div>
+    
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading HD wallpapers...</p>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">PGXL</div>
+                <p style="color: var(--pgxl-text-light); line-height: 1.6; font-size: 0.95rem;">
+                    The ultimate destination for HD wallpapers. Featuring anime, gaming, cyberpunk, and aesthetic wallpapers in 4K resolution.
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer-ads">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-space">
+                [ Advertisement Space - 728x90 ]
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © 2024 PGXL Wallpapers. Powered by Wallhaven API.
+            <br>All wallpapers are copyrighted to their respective artists.
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // Wallhaven Configuration
+        const CONFIG = {
+            API_BASE_URL: 'https://wallhaven.cc/api/v1',
+            DEFAULT_QUERY: 'anime',
+            ITEMS_PER_PAGE: 24,
+            CATEGORIES: [
+                { id: 'anime', name: 'Anime', icon: '🎌', query: 'anime' },
+                { id: 'gaming', name: 'Gaming', icon: '🎮', query: 'gaming' },
+                { id: 'cyberpunk', name: 'Cyberpunk', icon: '🤖', query: 'cyberpunk' },
+                { id: 'digital-art', name: 'Digital Art', icon: '🎨', query: 'digital+art' },
+                { id: 'fantasy', name: 'Fantasy', icon: '🐉', query: 'fantasy' },
+                { id: 'landscape', name: 'Landscape', icon: '🏞️', query: 'landscape' },
+                { id: 'cars', name: 'Cars', icon: '🚗', query: 'cars' },
+                { id: 'space', name: 'Space', icon: '🚀', query: 'space' },
+                { id: 'dark', name: 'Dark', icon: '🌑', query: 'dark' },
+                { id: 'minimal', name: 'Minimal', icon: '⬜', query: 'minimal' }
+            ]
+        };
+        
+        // State
+        let currentPage = 1;
+        let currentQuery = CONFIG.DEFAULT_QUERY;
+        let isLoading = false;
+        let hasMore = true;
+        let currentSort = 'relevance';
+        let currentPurity = '100';
+        let currentRatio = 'all';
+        
+        // DOM Elements
+        const wallpaperGrid = document.getElementById('wallpaperGrid');
+        const loadingElement = document.getElementById('loading');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const categoriesContainer = document.getElementById('categories');
+        const sortSelect = document.getElementById('sortSelect');
+        const puritySelect = document.getElementById('puritySelect');
+        const ratioSelect = document.getElementById('ratioSelect');
+        const toast = document.getElementById('toast');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCategories();
+            loadWallpapers();
+            setupEventListeners();
+        });
+        
+        // Render categories
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+            
+            CONFIG.CATEGORIES.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                button.innerHTML = `${category.icon} ${category.name}`;
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Load wallpapers for this category
+                    currentQuery = category.query;
+                    currentPage = 1;
+                    wallpaperGrid.innerHTML = '';
+                    hasMore = true;
+                    loadWallpapers();
+                    
+                    // Update search input
+                    searchInput.value = category.name;
+                });
+                
+                categoriesContainer.appendChild(button);
+            });
+            
+            // Activate first category
+            if (categoriesContainer.firstChild) {
+                categoriesContainer.firstChild.classList.add('active');
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search button click
+            searchBtn.addEventListener('click', performSearch);
+            
+            // Enter key in search input
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Filter changes
+            sortSelect.addEventListener('change', () => {
+                currentSort = sortSelect.value;
+                currentPage = 1;
+                wallpaperGrid.innerHTML = '';
+                hasMore = true;
+                loadWallpapers();
+            });
+            
+            puritySelect.addEventListener('change', () => {
+                currentPurity = puritySelect.value;
+                currentPage = 1;
+                wallpaperGrid.innerHTML = '';
+                hasMore = true;
+                loadWallpapers();
+            });
+            
+            ratioSelect.addEventListener('change', () => {
+                currentRatio = ratioSelect.value;
+                currentPage = 1;
+                wallpaperGrid.innerHTML = '';
+                hasMore = true;
+                loadWallpapers();
+            });
+            
+            // Infinite scroll
+            window.addEventListener('scroll', () => {
+                if (isLoading || !hasMore) return;
+                
+                const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+                
+                if (scrollTop + clientHeight >= scrollHeight - 200) {
+                    currentPage++;
+                    loadWallpapers(false);
+                }
+            });
+        }
+        
+        // Perform search
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                currentQuery = query.replace(/\s+/g, '+');
+                currentPage = 1;
+                wallpaperGrid.innerHTML = '';
+                hasMore = true;
+                loadWallpapers();
+                
+                // Remove active class from all category buttons
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+            }
+        }
+        
+        // Load wallpapers from Wallhaven
+        async function loadWallpapers(clear = true) {
+            if (isLoading) return;
+            
+            isLoading = true;
+            loadingElement.style.display = 'block';
+            
+            try {
+                // Build API URL with filters
+                let url = `${CONFIG.API_BASE_URL}/search?q=${currentQuery}&page=${currentPage}`;
+                
+                // Add sorting
+                if (currentSort && currentSort !== 'relevance') {
+                    url += `&sorting=${currentSort}`;
+                }
+                
+                // Add purity filter
+                url += `&purity=${currentPurity}`;
+                
+                // Add ratio filter
+                if (currentRatio !== 'all') {
+                    if (currentRatio === 'portrait') {
+                        url += '&ratios=9x16,10x16,9x18';
+                    } else {
+                        url += `&ratios=${currentRatio}`;
+                    }
+                }
+                
+                console.log('Fetching from:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Wallhaven API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    renderWallpapers(data.data);
+                    
+                    // Check if there are more pages
+                    if (data.data.length < CONFIG.ITEMS_PER_PAGE) {
+                        hasMore = false;
+                    }
+                } else {
+                    showToast('No wallpapers found. Try a different search!', 'warning');
+                    hasMore = false;
+                    
+                    // Load fallback wallpapers
+                    loadFallbackWallpapers();
+                }
+                
+            } catch (error) {
+                console.error('Error loading wallpapers:', error);
+                showToast('Error loading wallpapers. Please try again.', 'error');
+                
+                // Load fallback wallpapers
+                loadFallbackWallpapers();
+                hasMore = false;
+            } finally {
+                isLoading = false;
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        // Render wallpapers to the grid
+        function renderWallpapers(wallpapers) {
+            wallpapers.forEach(wallpaper => {
+                // Skip if no thumbnail
+                if (!wallpaper.thumbs || !wallpaper.thumbs.small) {
+                    return;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'wallpaper-card';
+                
+                // Format resolution
+                const resolution = wallpaper.resolution ? wallpaper.resolution : '1920x1080';
+                const [width, height] = resolution.split('x').map(Number);
+                const ratio = width && height ? (width / height).toFixed(2) : '16:9';
+                
+                card.innerHTML = `
+                    <div class="wallpaper-img-container">
+                        <img src="${wallpaper.thumbs.small}" 
+                             alt="Wallpaper" 
+                             class="wallpaper-img"
+                             loading="lazy"
+                             data-full="${wallpaper.path}">
+                        <div class="wallpaper-resolution">${resolution}</div>
+                    </div>
+                    
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-eye"></i>
+                                <span>${wallpaper.views.toLocaleString()}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-heart"></i>
+                                <span>${wallpaper.favorites.toLocaleString()}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-expand-alt"></i>
+                                <span>${ratio}</span>
+                            </div>
+                        </div>
+                        
+                        <button class="download-btn" 
+                                onclick="downloadWallpaper('${wallpaper.path}', '${wallpaper.id}')">
+                            <i class="fas fa-download"></i> DOWNLOAD HD
+                        </button>
+                    </div>
+                `;
+                
+                // Add click to view full image
+                card.querySelector('.wallpaper-img').addEventListener('click', () => {
+                    viewFullImage(wallpaper.path);
+                });
+                
+                wallpaperGrid.appendChild(card);
+            });
+        }
+        
+        // View full image
+        function viewFullImage(imageUrl) {
+            window.open(imageUrl, '_blank');
+        }
+        
+        // Download wallpaper
+        async function downloadWallpaper(imageUrl, wallpaperId) {
+            try {
+                showToast('Preparing download...', 'info');
+                
+                // Track download in localStorage
+                trackDownload(wallpaperId);
+                
+                // Create download link
+                const a = document.createElement('a');
+                a.href = imageUrl;
+                a.download = `pgxl-wallpaper-${wallpaperId}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showToast('Download started!', 'success');
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('Download failed. Try again.', 'error');
+            }
+        }
+        
+        // Track downloads in localStorage
+        function trackDownload(wallpaperId) {
+            try {
+                let downloads = JSON.parse(localStorage.getItem('pgxl_downloads') || '{}');
+                downloads[wallpaperId] = (downloads[wallpaperId] || 0) + 1;
+                localStorage.setItem('pgxl_downloads', JSON.stringify(downloads));
+                
+                // Log total downloads
+                const total = Object.values(downloads).reduce((a, b) => a + b, 0);
+                console.log(`Total downloads: ${total}`);
+                
+            } catch (error) {
+                console.error('Error tracking download:', error);
+            }
+        }
+        
+        // Load fallback wallpapers
+        async function loadFallbackWallpapers() {
+            try {
+                const fallbackWallpapers = [
+                    {
+                        id: 'fallback1',
+                        path: 'https://w.wallhaven.cc/full/jx/wallhaven-jxqy91.jpg',
+                        thumbs: {
+                            small: 'https://th.wallhaven.cc/small/jx/jxqy91.jpg'
+                        },
+                        resolution: '1920x1080',
+                        views: 15000,
+                        favorites: 450
+                    },
+                    {
+                        id: 'fallback2',
+                        path: 'https://w.wallhaven.cc/full/zy/wallhaven-zyxv8k.jpg',
+                        thumbs: {
+                            small: 'https://th.wallhaven.cc/small/zy/zyxv8k.jpg'
+                        },
+                        resolution: '3840x2160',
+                        views: 22000,
+                        favorites: 780
+                    },
+                    {
+                        id: 'fallback3',
+                        path: 'https://w.wallhaven.cc/full/ox/wallhaven-ox6lp8.jpg',
+                        thumbs: {
+                            small: 'https://th.wallhaven.cc/small/ox/ox6lp8.jpg'
+                        },
+                        resolution: '2560x1440',
+                        views: 18000,
+                        favorites: 620
+                    }
+                ];
+                
+                renderWallpapers(fallbackWallpapers);
+                showToast('Showing fallback wallpapers', 'info');
+                
+            } catch (error) {
+                console.error('Error loading fallback:', error);
+                showToast('Unable to load wallpapers', 'error');
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            // Set background color based on type
+            if (type === 'error') {
+                toast.style.background = 'linear-gradient(135deg, #ff3838, #ff4757)';
+            } else if (type === 'success') {
+                toast.style.background = 'linear-gradient(135deg, #2ed573, #1dd1a1)';
+            } else if (type === 'warning') {
+                toast.style.background = 'linear-gradient(135deg, #ff9f43, #ffaf40)';
+            }
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Export functions to global scope
+        window.downloadWallpaper = downloadWallpaper;
+        window.viewFullImage = viewFullImage;
+        window.performSearch = performSearch;
+    </script>
+</body>
+</html>
