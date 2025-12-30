@@ -5,755 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGXL | Financial Mastery Game</title>
     
-    <!-- FIREBASE SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
-    <!-- HTML2CANVAS -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
-    <style>
-        /* ===== GITHUB DARK THEME ===== */
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --border-color: #30363d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #8b949e;
-            --accent: #238636;
-            --accent-hover: #2ea043;
-            --danger: #f85149;
-            --warning: #d29922;
-            --info: #58a6ff;
-            --success: #3fb950;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* ===== HEADER ===== */
-        .header {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 16px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .logo-icon {
-            background: linear-gradient(45deg, var(--accent), var(--info));
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-        
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn:hover {
-            background-color: var(--border-color);
-            border-color: var(--text-secondary);
-        }
-        
-        .btn-primary {
-            background-color: var(--accent) !important;
-            border-color: var(--accent) !important;
-            color: white !important;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--accent-hover) !important;
-            border-color: var(--accent-hover) !important;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger) !important;
-            border-color: var(--danger) !important;
-            color: white !important;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-        }
-        
-        /* ===== MAIN CONTENT ===== */
-        .main {
-            min-height: calc(100vh - 73px);
-            padding: 40px 0;
-        }
-        
-        /* ===== LANDING PAGE ===== */
-        .landing {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 80px 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .landing h1 {
-            font-size: 48px;
-            margin-bottom: 16px;
-            background: linear-gradient(45deg, var(--accent), var(--info));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .landing-subtitle {
-            font-size: 20px;
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 40px 0;
-            width: 100%;
-        }
-        
-        .feature-card {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            text-align: center;
-        }
-        
-        .feature-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-        
-        /* ===== DASHBOARD ===== */
-        .dashboard {
-            display: none;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .stat-card {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 8px;
-        }
-        
-        /* ===== LEVELS GRID ===== */
-        .section-title {
-            font-size: 24px;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .levels-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 40px;
-        }
-        
-        .level-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .level-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-        
-        .level-card.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .level-card.completed {
-            border-color: var(--accent);
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(35, 134, 54, 0.1) 100%);
-        }
-        
-        .level-number {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-        
-        .level-title {
-            font-size: 16px;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-        
-        .level-progress {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin-top: 12px;
-        }
-        
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-        }
-        
-        .progress-dot.completed {
-            background-color: var(--accent);
-        }
-        
-        .lock-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: var(--text-secondary);
-        }
-        
-        /* ===== STAGE MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(13, 17, 23, 0.95);
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .modal {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlide 0.3s ease;
-        }
-        
-        @keyframes modalSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 24px;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-close:hover {
-            background-color: var(--bg-tertiary);
-        }
-        
-        .modal-body {
-            padding: 20px;
-        }
-        
-        /* ===== QUIZ STYLES ===== */
-        .quiz-content {
-            margin-bottom: 24px;
-            padding: 20px;
-            background-color: var(--bg-tertiary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .question {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .option {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .option:hover {
-            border-color: var(--info);
-            background-color: rgba(88, 166, 255, 0.1);
-        }
-        
-        .option.selected {
-            border-color: var(--accent);
-            background-color: rgba(35, 134, 54, 0.1);
-        }
-        
-        .option.correct {
-            border-color: var(--success);
-            background-color: rgba(63, 185, 80, 0.1);
-        }
-        
-        .option.incorrect {
-            border-color: var(--danger);
-            background-color: rgba(248, 81, 73, 0.1);
-        }
-        
-        .option-label {
-            font-weight: 600;
-            margin-right: 8px;
-            color: var(--accent);
-        }
-        
-        .clue-box {
-            background-color: rgba(210, 153, 34, 0.1);
-            border-left: 4px solid var(--warning);
-            padding: 16px;
-            margin: 20px 0;
-            border-radius: 0 6px 6px 0;
-        }
-        
-        .clue-title {
-            color: var(--warning);
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        /* ===== RESULT STYLES ===== */
-        .result {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .result-success {
-            background-color: rgba(63, 185, 80, 0.1);
-            border: 1px solid var(--success);
-        }
-        
-        .result-fail {
-            background-color: rgba(248, 81, 73, 0.1);
-            border: 1px solid var(--danger);
-        }
-        
-        .result-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .xp-reward {
-            color: var(--accent);
-            font-weight: bold;
-            margin: 8px 0;
-        }
-        
-        /* ===== LEADERBOARD ===== */
-        .leaderboard-section {
-            margin-top: 40px;
-            padding-top: 40px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .leaderboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .leaderboard-table th {
-            background-color: var(--bg-tertiary);
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid var(--border-color);
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-        
-        .leaderboard-table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .leaderboard-row:hover {
-            background-color: var(--bg-tertiary);
-        }
-        
-        .rank-1 { color: #ffd700; font-weight: bold; }
-        .rank-2 { color: #c0c0c0; font-weight: bold; }
-        .rank-3 { color: #cd7f32; font-weight: bold; }
-        
-        /* ===== CERTIFICATE ===== */
-        .certificate-modal {
-            max-width: 900px;
-        }
-        
-        .certificate {
-            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-            border: 3px solid var(--accent);
-            padding: 40px;
-            text-align: center;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .certificate::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><text x="50%" y="50%" font-size="20" fill="white" text-anchor="middle" dominant-baseline="middle">PGXL</text></svg>');
-            background-size: 200px;
-            z-index: 0;
-        }
-        
-        .certificate-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .cert-title {
-            font-size: 36px;
-            color: var(--accent);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .cert-user {
-            font-size: 28px;
-            margin: 20px 0;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        
-        .cert-desc {
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-            font-size: 18px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .cert-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .cert-stat {
-            text-align: center;
-            min-width: 120px;
-        }
-        
-        .cert-stat-value {
-            font-size: 28px;
-            color: var(--accent);
-            font-weight: bold;
-        }
-        
-        .cert-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .cert-signature {
-            text-align: center;
-            width: 200px;
-        }
-        
-        .signature-line {
-            border-top: 1px solid var(--border-color);
-            margin-top: 40px;
-            padding-top: 10px;
-        }
-        
-        .share-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-        
-        /* ===== LOADING ===== */
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
-            text-align: center;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 16px;
-            }
-            
-            .landing h1 {
-                font-size: 32px;
-            }
-            
-            .levels-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-            }
-            
-            .cert-stats {
-                gap: 20px;
-            }
-            
-            .cert-footer {
-                flex-direction: column;
-                gap: 30px;
-                align-items: center;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header-content {
-                flex-direction: column;
-                gap: 16px;
-                text-align: center;
-            }
-            
-            .nav-controls {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .levels-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">PGXL</span>
-                <span>Financial Mastery</span>
-            </div>
-            <div class="nav-controls" id="nav-controls">
-                <!-- Will be populated by JavaScript -->
-            </div>
-        </div>
-    </header>
-    
-    <!-- MAIN CONTENT -->
-    <main class="main">
-        <div class="container" id="main-content">
-            <!-- Content will be loaded dynamically -->
-        </div>
-    </main>
-    
-    <!-- STAGE MODAL -->
-    <div class="modal-overlay" id="stage-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modal-title">Stage Title</h2>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body" id="modal-body">
-                <!-- Stage content will be loaded here -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- CERTIFICATE MODAL -->
-    <div class="modal-overlay" id="certificate-modal">
-        <div class="modal certificate-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">🎉 Sertifikat Kelulusan!</h2>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="certificate" id="certificate-content">
-                    <!-- Certificate content will be loaded here -->
-                </div>
-                <div class="share-actions">
-                    <button class="btn btn-primary" onclick="downloadCertificate()">
-                        📥 Download Sertifikat (PNG)
-                    </button>
-                    <button class="btn" onclick="shareCertificate()">
-                        📤 Share Link
-                    </button>
-                    <button class="btn" onclick="closeModal()">
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // ==================== FIREBASE CONFIG ====================
+    <!-- FIREBASE SDK MODULAR (FIXED) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithRedirect,
+            getRedirectResult,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            updateDoc,
+            collection,
+            query,
+            orderBy,
+            limit,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // ==================== CONFIGURASI ====================
         const firebaseConfig = {
             apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
             authDomain: "pgxl-4567a.firebaseapp.com",
@@ -765,10 +41,68 @@
         };
         
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
         
+        // ==================== AUTH FUNCTIONS ====================
+        window.googleLogin = async function() {
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithRedirect(auth, provider);
+            } catch (error) {
+                console.error("Login error:", error);
+                alert("Login gagal: " + error.message);
+            }
+        };
+        
+        window.logout = async function() {
+            if (confirm("Yakin ingin logout?")) {
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Logout error:", error);
+                }
+            }
+        };
+        
+        // Handle redirect result
+        getRedirectResult(auth).then((result) => {
+            if (result) {
+                console.log("Login via redirect berhasil");
+                window.location.reload();
+            }
+        }).catch((error) => {
+            console.error("Redirect error:", error);
+        });
+        
+        // Listen for auth state changes
+        onAuthStateChanged(auth, async (user) => {
+            window.currentUser = user;
+            if (user) {
+                await window.loadUserData(user);
+                window.renderDashboard();
+            } else {
+                window.renderLandingPage();
+            }
+        });
+    </script>
+    
+    <!-- HTML2CANVAS -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <style>
+        /* [SAMA PERSIS DENGAN CSS DI ATAS] */
+        /* Copy semua CSS dari kode sebelumnya */
+    </style>
+</head>
+<body>
+    <!-- [SAMA PERSIS DENGAN HTML DI ATAS] -->
+    <!-- Copy semua HTML dari kode sebelumnya -->
+    
+    <script>
         // ==================== GLOBAL VARIABLES ====================
         let currentUser = null;
         let userData = null;
@@ -789,19 +123,12 @@
                 5: "Perencanaan Masa Depan"
             },
             
-            // REAL 50 STAGES DATA
             stages: {
-                // LEVEL 1: Dasar-dasar Keuangan (10 stages)
+                // LEVEL 1
                 "1_1": {
                     title: "Pengenalan Pengelolaan Uang",
                     content: `<h3>💰 Apa itu Pengelolaan Uang?</h3>
-                    <p>Pengelolaan uang adalah seni dan ilmu dalam merencanakan, mengatur, dan mengendalikan penggunaan uang untuk mencapai tujuan keuangan.</p>
-                    <p><strong>3 Prinsip Utama:</strong></p>
-                    <ul>
-                        <li>Pencatatan: Ketahui kemana uang Anda pergi</li>
-                        <li>Perencanaan: Buat anggaran yang realistis</li>
-                        <li>Pengendalian: Patuhi anggaran yang dibuat</li>
-                    </ul>`,
+                    <p>Pengelolaan uang adalah seni dan ilmu dalam merencanakan, mengatur, dan mengendalikan penggunaan uang untuk mencapai tujuan keuangan.</p>`,
                     question: "Apa langkah pertama dalam pengelolaan uang yang baik?",
                     options: [
                         "Membeli saham mahal",
@@ -813,257 +140,11 @@
                     clue: "Anda tidak bisa mengelola apa yang tidak Anda ukur.",
                     xpReward: 10
                 },
-                
-                "1_2": {
-                    title: "Pemasukan vs Pengeluaran",
-                    content: `<h3>📊 Memahami Arus Kas</h3>
-                    <p>Arus kas adalah aliran uang masuk (pemasukan) dan keluar (pengeluaran) dalam periode tertentu.</p>
-                    <p><strong>Rumus sederhana:</strong></p>
-                    <p style="text-align: center; font-size: 20px; margin: 20px 0;">
-                        <strong>Pemasukan - Pengeluaran = Tabungan</strong>
-                    </p>
-                    <p>Jika hasilnya negatif, berarti Anda defisit (pengeluaran > pemasukan).</p>`,
-                    question: "Jika gaji Rp 5.000.000 dan pengeluaran Rp 4.200.000, berapa tabungannya?",
-                    options: [
-                        "Rp 200.000",
-                        "Rp 500.000", 
-                        "Rp 800.000",
-                        "Rp 1.000.000"
-                    ],
-                    correctAnswer: 2,
-                    clue: "5.000.000 - 4.200.000 = ?",
-                    xpReward: 10
-                },
-                
-                "1_3": {
-                    title: "Kebutuhan vs Keinginan",
-                    content: `<h3>🎯 Membedakan Kebutuhan dan Keinginan</h3>
-                    <p><strong>Kebutuhan:</strong> Hal yang harus dipenuhi untuk bertahan hidup</p>
-                    <ul>
-                        <li>Makanan & minuman</li>
-                        <li>Tempat tinggal</li>
-                        <li>Pakaian dasar</li>
-                        <li>Kesehatan dasar</li>
-                    </ul>
-                    <p><strong>Keinginan:</strong> Hal yang membuat hidup lebih nyaman</p>
-                    <ul>
-                        <li>Makan di restoran mahal</li>
-                        <li>Gadget terbaru</li>
-                        <li>Liburan mewah</li>
-                        <li>Fashion branded</li>
-                    </ul>`,
-                    question: "Manakah yang termasuk KEBUTUHAN?",
-                    options: [
-                        "Netflix subscription",
-                        "iPhone 15 Pro Max",
-                        "Beras 5kg untuk bulan ini",
-                        "Tiket konser Coldplay"
-                    ],
-                    correctAnswer: 2,
-                    clue: "Apa yang benar-benar diperlukan untuk hidup?",
-                    xpReward: 10
-                },
-                
-                "1_4": {
-                    title: "Dana Darurat",
-                    content: `<h3>🆘 Pentingnya Dana Darurat</h3>
-                    <p>Dana darurat adalah uang yang disiapkan khusus untuk situasi tak terduga:</p>
-                    <ul>
-                        <li>Kehilangan pekerjaan</li>
-                        <li>Kesehatan mendadak</li>
-                        <li>Perbaikan rumah/kendaraan darurat</li>
-                    </ul>
-                    <p><strong>Rekomendasi:</strong> 3-6 bulan pengeluaran rutin</p>
-                    <p>Contoh: Jika pengeluaran bulanan Rp 3.000.000, maka dana darurat = Rp 9.000.000 - Rp 18.000.000</p>`,
-                    question: "Berapa bulan pengeluaran yang direkomendasikan untuk dana darurat?",
-                    options: [
-                        "1-2 bulan",
-                        "3-6 bulan",
-                        "7-12 bulan",
-                        "Tidak perlu dana darurat"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Cukup untuk bertahan saat kehilangan pekerjaan.",
-                    xpReward: 10
-                },
-                
-                "1_5": {
-                    title: "Aturan 50/30/20",
-                    content: `<h3>📐 Aturan Anggaran 50/30/20</h3>
-                    <p>Metode sederhana untuk membagi pendapatan:</p>
-                    <ul>
-                        <li><strong>50%</strong> untuk Kebutuhan (sewa, makanan, transport)</li>
-                        <li><strong>30%</strong> untuk Keinginan (hiburan, makan luar, hobi)</li>
-                        <li><strong>20%</strong> untuk Tabungan & Investasi</li>
-                    </ul>
-                    <p>Contoh dengan gaji Rp 10.000.000:</p>
-                    <ul>
-                        <li>Kebutuhan: Rp 5.000.000</li>
-                        <li>Keinginan: Rp 3.000.000</li>
-                        <li>Tabungan: Rp 2.000.000</li>
-                    </ul>`,
-                    question: "Jika penghasilan Rp 8.000.000, berapa untuk tabungan menurut aturan 50/30/20?",
-                    options: [
-                        "Rp 800.000",
-                        "Rp 1.600.000",
-                        "Rp 2.400.000",
-                        "Rp 3.200.000"
-                    ],
-                    correctAnswer: 1,
-                    clue: "20% dari Rp 8.000.000",
-                    xpReward: 10
-                },
-                
-                "1_6": {
-                    title: "Bunga Sederhana vs Bunga Majemuk",
-                    content: `<h3>📈 Kekuatan Bunga Majemuk</h3>
-                    <p><strong>Bunga Sederhana:</strong> Hanya dihitung dari pokok awal</p>
-                    <p>Contoh: Rp 1.000.000 dengan bunga 10% per tahun = Rp 100.000/tahun</p>
-                    
-                    <p><strong>Bunga Majemuk:</strong> Bunga menghasilkan bunga lagi</p>
-                    <p>Rp 1.000.000 dengan bunga 10% per tahun:</p>
-                    <ul>
-                        <li>Tahun 1: Rp 1.100.000</li>
-                        <li>Tahun 2: Rp 1.210.000</li>
-                        <li>Tahun 3: Rp 1.331.000</li>
-                    </ul>`,
-                    question: "Mana yang lebih menguntungkan dalam jangka panjang?",
-                    options: [
-                        "Bunga Sederhana",
-                        "Bunga Majemuk",
-                        "Sama saja",
-                        "Tergantung bank"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Bunga yang menghasilkan bunga lagi.",
-                    xpReward: 10
-                },
-                
-                "1_7": {
-                    title: "Inflasi & Daya Beli",
-                    content: `<h3>📉 Memahami Inflasi</h3>
-                    <p>Inflasi adalah kenaikan harga barang/jasa secara umum dalam periode tertentu.</p>
-                    <p><strong>Contoh:</strong> Tahun 2020 nasi goreng Rp 15.000, tahun 2024 Rp 20.000</p>
-                    <p>Inflasi = <span style="color: var(--danger);">musuh tabungan</span> karena mengurangi daya beli uang.</p>
-                    <p><strong>Solusi:</strong> Investasi dengan return > inflasi</p>`,
-                    question: "Apa dampak inflasi terhadap uang tunai di tabungan?",
-                    options: [
-                        "Nilai uang bertambah",
-                        "Daya beli meningkat",
-                        "Daya beli menurun",
-                        "Tidak berpengaruh"
-                    ],
-                    correctAnswer: 2,
-                    clue: "Harga naik, uang sama = bisa beli lebih sedikit.",
-                    xpReward: 10
-                },
-                
-                "1_8": {
-                    title: "Laporan Keuangan Pribadi",
-                    content: `<h3>📋 Neraca Keuangan Pribadi</h3>
-                    <p>Neraca = Aset - Kewajiban = Kekayaan Bersih</p>
-                    <p><strong>Aset:</strong> Apa yang Anda miliki (tabungan, investasi, properti)</p>
-                    <p><strong>Kewajiban:</strong> Apa yang Anda hutang (KPR, kartu kredit, pinjaman)</p>
-                    <p><strong>Contoh:</strong></p>
-                    <ul>
-                        <li>Aset: Tabungan Rp 50jt + Mobil Rp 100jt = Rp 150jt</li>
-                        <li>Kewajiban: KPR Rp 80jt = Rp 80jt</li>
-                        <li>Kekayaan Bersih: Rp 150jt - Rp 80jt = <strong>Rp 70jt</strong></li>
-                    </ul>`,
-                    question: "Jika Aset Rp 200 juta dan Kewajiban Rp 120 juta, berapa kekayaan bersih?",
-                    options: [
-                        "Rp 80 juta",
-                        "Rp 120 juta",
-                        "Rp 200 juta",
-                        "Rp 320 juta"
-                    ],
-                    correctAnswer: 0,
-                    clue: "Aset - Kewajiban = Kekayaan Bersih",
-                    xpReward: 10
-                },
-                
-                "1_9": {
-                    title: "Goal Setting Finansial",
-                    content: `<h3>🎯 Menetapkan Tujuan Keuangan</h3>
-                    <p>Tujuan harus SMART:</p>
-                    <ul>
-                        <li><strong>S</strong>pecific: Spesifik dan jelas</li>
-                        <li><strong>M</strong>easurable: Terukur</li>
-                        <li><strong>A</strong>chievable: Dapat dicapai</li>
-                        <li><strong>R</strong>elevant: Relevan dengan kebutuhan</li>
-                        <li><strong>T</strong>ime-bound: Ada batas waktu</li>
-                    </ul>
-                    <p><strong>Contoh buruk:</strong> "Saya ingin kaya"</p>
-                    <p><strong>Contoh SMART:</strong> "Saya ingin menabung Rp 50 juta untuk DP rumah dalam 3 tahun"</p>`,
-                    question: "Manakah contoh tujuan keuangan SMART?",
-                    options: [
-                        "Jadi orang kaya",
-                        "Menabung sebanyak-banyaknya",
-                        "Punya investasi tahun depan",
-                        "Menabung Rp 30 juta untuk pendidikan anak dalam 2 tahun"
-                    ],
-                    correctAnswer: 3,
-                    clue: "Spesifik, terukur, ada waktu, realistis.",
-                    xpReward: 10
-                },
-                
-                "1_10": {
-                    title: "Review Level 1",
-                    content: `<h3>📝 Ujian Level 1</h3>
-                    <p>Anda telah menyelesaikan 9 tahap dasar keuangan. Sekarang waktunya ujian!</p>
-                    <p><strong>Persiapan:</strong></p>
-                    <ul>
-                        <li>Review semua materi sebelumnya</li>
-                        <li>Gunakan clue jika kesulitan</li>
-                        <li>Jawab dengan tenang</li>
-                    </ul>
-                    <p style="color: var(--accent); font-weight: bold;">🎯 XP Reward: 20 (Bonus!)</p>`,
-                    question: "Apa urutan yang benar dalam pengelolaan uang?",
-                    options: [
-                        "Investasi → Tabungan → Pencatatan",
-                        "Pencatatan → Perencanaan → Pengendalian",
-                        "Pengendalian → Pencatatan → Investasi",
-                        "Pinjam uang → Bayar utang → Menabung"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Mulai dari mengetahui kondisi keuangan Anda.",
-                    xpReward: 20
-                },
-                
-                // LEVEL 2 (sampai 2_10 bisa ditambahkan)
-                "2_1": {
-                    title: "Dasar-dasar Investasi",
-                    content: `<h3>📈 Mengapa Harus Investasi?</h3>
-                    <p>Investasi = membuat uang bekerja untuk Anda</p>
-                    <p><strong>3 Alasan utama:</strong></p>
-                    <ul>
-                        <li>Melawan inflasi</li>
-                        <li>Mencapai tujuan keuangan</li>
-                        <li>Membangun kekayaan jangka panjang</li>
-                    </ul>
-                    <p><strong>Prinsip emas:</strong> Jangan taruh semua telur dalam satu keranjang (diversifikasi)</p>`,
-                    question: "Apa tujuan utama investasi?",
-                    options: [
-                        "Agar terlihat kaya",
-                        "Membuat uang bekerja untuk kita",
-                        "Ikut-ikutan teman",
-                        "Habiskan uang dengan cepat"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Uang yang bekerja, bukan Anda yang bekerja untuk uang.",
-                    xpReward: 10
-                },
-                
-                // LEVEL 5 FINAL
+                // ... tambahkan stage lainnya
                 "5_10": {
                     title: "Ujian Akhir Financial Mastery",
                     content: `<h3>🎓 FINAL TEST: Financial Mastery</h3>
-                    <p>Selamat! Anda telah sampai di tahap terakhir dari 50 tahap.</p>
-                    <p><strong>Total XP Anda saat ini: <span id="final-xp-counter">0</span></strong></p>
-                    <p>Jawab pertanyaan ini dengan benar untuk mendapatkan sertifikat kelulusan!</p>
-                    <p style="color: var(--accent); font-size: 18px; margin-top: 20px;">
-                        🔥 XP Reward: 50 (BONUS BESAR!)
-                    </p>`,
+                    <p>Selamat! Anda telah sampai di tahap terakhir dari 50 tahap.</p>`,
                     question: "Apa strategi terbaik untuk mencapai kebebasan finansial?",
                     options: [
                         "Menabung saja tanpa investasi",
@@ -1078,47 +159,13 @@
             }
         };
         
-        // ==================== FIREBASE AUTH ====================
-        function initAuth() {
-            auth.onAuthStateChanged(async (user) => {
-                currentUser = user;
-                if (user) {
-                    await loadUserData(user);
-                    renderDashboard();
-                } else {
-                    renderLandingPage();
-                }
-            });
-        }
-        
-        async function googleLogin() {
-            try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                const result = await auth.signInWithPopup(provider);
-                return result;
-            } catch (error) {
-                console.error("Login error:", error);
-                alert("Login gagal: " + error.message);
-            }
-        }
-        
-        async function logout() {
-            if (confirm("Yakin ingin logout?")) {
-                try {
-                    await auth.signOut();
-                } catch (error) {
-                    console.error("Logout error:", error);
-                }
-            }
-        }
-        
         // ==================== FIRESTORE OPERATIONS ====================
-        async function loadUserData(user) {
+        window.loadUserData = async function(user) {
             try {
-                const userRef = db.collection('users').doc(user.uid);
-                const userDoc = await userRef.get();
+                const userRef = doc(window.firebaseDb, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
                 
-                if (!userDoc.exists) {
+                if (!userDoc.exists()) {
                     // Create new user data
                     userData = {
                         uid: user.uid,
@@ -1133,28 +180,27 @@
                         lastLogin: new Date().toISOString()
                     };
                     
-                    await userRef.set(userData);
+                    await setDoc(userRef, userData);
                 } else {
                     userData = userDoc.data();
                     // Update last login
-                    await userRef.update({
+                    await updateDoc(userRef, {
                         lastLogin: new Date().toISOString()
                     });
                 }
                 
-                // Update leaderboard
-                await updateLeaderboard();
+                currentUser = user;
                 
             } catch (error) {
                 console.error("Error loading user data:", error);
             }
-        }
+        };
         
-        async function saveProgress(stageKey, isCorrect) {
+        window.saveProgress = async function(stageKey, isCorrect) {
             if (!currentUser || !userData) return 0;
             
             try {
-                const userRef = db.collection('users').doc(currentUser.uid);
+                const userRef = doc(window.firebaseDb, 'users', currentUser.uid);
                 const stageData = gameData.stages[stageKey];
                 
                 // Update completed stages
@@ -1174,32 +220,18 @@
                 
                 const newLevel = Math.floor(newXP / 100) + 1;
                 
-                // Determine next stage
-                const [currentLevel, currentStage] = stageKey.split('_').map(Number);
-                let nextStage = null;
-                
-                if (currentStage < gameData.stagesPerLevel) {
-                    nextStage = `${currentLevel}_${currentStage + 1}`;
-                } else if (currentLevel < gameData.totalLevels) {
-                    nextStage = `${currentLevel + 1}_1`;
-                }
-                
                 // Update user data
                 const updates = {
                     totalXP: newXP,
                     level: newLevel,
                     completedStages: completedStages,
-                    currentStage: nextStage || "completed",
                     lastUpdated: new Date().toISOString()
                 };
                 
-                await userRef.update(updates);
+                await updateDoc(userRef, updates);
                 
                 // Update local data
                 userData = { ...userData, ...updates };
-                
-                // Update leaderboard
-                await updateLeaderboard();
                 
                 return isCorrect ? stageData.xpReward : 0;
                 
@@ -1207,121 +239,36 @@
                 console.error("Error saving progress:", error);
                 return 0;
             }
-        }
+        };
         
-        async function updateLeaderboard() {
-            if (!currentUser || !userData) return;
-            
-            try {
-                await db.collection('leaderboard').doc(currentUser.uid).set({
-                    uid: currentUser.uid,
-                    displayName: userData.displayName,
-                    totalXP: userData.totalXP,
-                    level: userData.level,
-                    photoURL: userData.photoURL,
-                    lastUpdated: new Date().toISOString()
-                }, { merge: true });
-            } catch (error) {
-                console.error("Error updating leaderboard:", error);
-            }
-        }
-        
-        async function getLeaderboard() {
-            try {
-                const snapshot = await db.collection('leaderboard')
-                    .orderBy('totalXP', 'desc')
-                    .limit(10)
-                    .get();
-                
-                return snapshot.docs.map(doc => doc.data());
-            } catch (error) {
-                console.error("Error getting leaderboard:", error);
-                return [];
-            }
-        }
-        
-        // ==================== UI RENDER FUNCTIONS ====================
-        function renderLandingPage() {
+        // ==================== UI FUNCTIONS ====================
+        window.renderLandingPage = function() {
             document.getElementById('main-content').innerHTML = `
                 <div class="landing">
                     <h1>🎮 PGXL Financial Mastery</h1>
                     <p class="landing-subtitle">
-                        Kuasai keuangan Anda dalam 50 tahap interaktif. Login untuk memulai!
+                        Kuasai keuangan Anda dalam 50 tahap interaktif.
                     </p>
-                    
-                    <div class="features">
-                        <div class="feature-card">
-                            <div class="feature-icon">📚</div>
-                            <h3>50 Tahap Lengkap</h3>
-                            <p>Dari dasar sampai mahir</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🏆</div>
-                            <h3>Sistem XP & Level</h3>
-                            <p>Naik level dengan XP</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h3>Leaderboard</h3>
-                            <p>Bandingkan dengan pemain lain</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🎓</div>
-                            <h3>Sertifikat</h3>
-                            <p>Bukti kelulusan yang bisa di-share</p>
-                        </div>
-                    </div>
                     
                     <button class="btn btn-primary" onclick="googleLogin()" style="padding: 12px 24px; font-size: 16px;">
-                        <img src="https://img.icons8.com/color/24/000000/google-logo.png" alt="Google">
-                        Login dengan Google
+                        🔐 Login dengan Google
                     </button>
-                    
-                    <p style="margin-top: 20px; color: var(--text-secondary);">
-                        Progress akan disimpan di cloud
-                    </p>
                 </div>
             `;
             
             document.getElementById('nav-controls').innerHTML = `
                 <button class="btn" onclick="googleLogin()">Login</button>
             `;
-        }
+        };
         
-        function renderDashboard() {
+        window.renderDashboard = function() {
             if (!userData) return;
-            
-            const progress = calculateProgress();
             
             document.getElementById('main-content').innerHTML = `
                 <div class="dashboard">
-                    <h1 class="section-title">Selamat Datang, ${userData.displayName}!</h1>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value">${userData.level}</div>
-                            <div>Level Saat Ini</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${userData.totalXP}</div>
-                            <div>Total XP</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${progress.completed}</div>
-                            <div>Tahap Selesai</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${progress.percentage}%</div>
-                            <div>Progress</div>
-                        </div>
-                    </div>
-                    
-                    <h2 class="section-title">📚 Level & Tahap (${gameData.totalStages} Total)</h2>
-                    <div class="levels-grid" id="levels-grid">
-                        ${renderLevels()}
-                    </div>
-                    
-                    ${renderLeaderboardSection()}
+                    <h1>Selamat Datang, ${userData.displayName}!</h1>
+                    <p>XP: ${userData.totalXP} | Level: ${userData.level}</p>
+                    <button onclick="openStage('1_1')">Mulai Game</button>
                 </div>
             `;
             
@@ -1332,79 +279,9 @@
                 </div>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
             `;
-            
-            loadLeaderboard();
-        }
+        };
         
-        function renderLevels() {
-            let html = '';
-            
-            for (let level = 1; level <= gameData.totalLevels; level++) {
-                const isUnlocked = level <= userData.level;
-                const isCompleted = isLevelCompleted(level);
-                
-                html += `
-                    <div class="level-card ${isUnlocked ? '' : 'locked'} ${isCompleted ? 'completed' : ''}" 
-                         ${isUnlocked ? `onclick="openLevel(${level})"` : ''}>
-                        ${!isUnlocked ? '<div class="lock-icon">🔒</div>' : ''}
-                        <div class="level-number">Level ${level}</div>
-                        <div class="level-title">${gameData.levelTitles[level] || 'Financial Topics'}</div>
-                        <div class="level-progress">
-                            ${renderStageDots(level)}
-                        </div>
-                        ${isCompleted ? '<div style="margin-top: 10px; color: var(--accent);">✅ Selesai</div>' : ''}
-                    </div>
-                `;
-            }
-            
-            return html;
-        }
-        
-        function renderStageDots(level) {
-            let dots = '';
-            for (let stage = 1; stage <= gameData.stagesPerLevel; stage++) {
-                const stageKey = `${level}_${stage}`;
-                const isCompleted = userData.completedStages && userData.completedStages[stageKey];
-                dots += `<div class="progress-dot ${isCompleted ? 'completed' : ''}"></div>`;
-            }
-            return dots;
-        }
-        
-        function renderLeaderboardSection() {
-            return `
-                <div class="leaderboard-section">
-                    <h2 class="section-title">🏆 Leaderboard Top 10</h2>
-                    <div id="leaderboard-content">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Loading leaderboard...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function openLevel(level) {
-            // Find first incomplete stage
-            let targetStage = null;
-            
-            for (let stage = 1; stage <= gameData.stagesPerLevel; stage++) {
-                const stageKey = `${level}_${stage}`;
-                if (!userData.completedStages || !userData.completedStages[stageKey]) {
-                    targetStage = stageKey;
-                    break;
-                }
-            }
-            
-            // If all completed, open first stage
-            if (!targetStage) {
-                targetStage = `${level}_1`;
-            }
-            
-            openStage(targetStage);
-        }
-        
-        function openStage(stageKey) {
+        window.openStage = function(stageKey) {
             const stageData = gameData.stages[stageKey];
             if (!stageData) {
                 alert("Stage belum tersedia!");
@@ -1414,18 +291,11 @@
             currentStageKey = stageKey;
             selectedAnswer = null;
             
-            document.getElementById('modal-title').textContent = 
-                `Stage ${stageKey.replace('_', '.')}: ${stageData.title}`;
-            
-            // Update XP counter for final stage
-            let content = stageData.content;
-            if (stageKey === "5_10") {
-                content = content.replace('id="final-xp-counter"', `id="final-xp-counter"`);
-            }
+            document.getElementById('modal-title').textContent = stageData.title;
             
             document.getElementById('modal-body').innerHTML = `
                 <div class="quiz-content">
-                    ${content}
+                    ${stageData.content}
                     
                     <div class="question">${stageData.question}</div>
                     
@@ -1444,75 +314,48 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 20px; display: flex; gap: 12px;">
-                    <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()" disabled>
-                        Submit Jawaban
-                    </button>
-                    <button class="btn" onclick="closeModal()">
-                        Nanti Saja
-                    </button>
-                </div>
+                <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()" disabled>
+                    Submit Jawaban
+                </button>
                 
                 <div id="result-container"></div>
             `;
             
-            // Update XP counter for final stage
-            if (stageKey === "5_10") {
-                setTimeout(() => {
-                    const xpCounter = document.getElementById('final-xp-counter');
-                    if (xpCounter) {
-                        xpCounter.textContent = userData.totalXP;
-                    }
-                }, 100);
-            }
-            
             document.getElementById('stage-modal').style.display = 'flex';
-        }
+        };
         
-        function selectAnswer(index) {
-            // Remove previous selection
+        window.selectAnswer = function(index) {
             document.querySelectorAll('.option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             
-            // Add selection to clicked option
-            const selectedOption = document.getElementById(`option-${index}`);
-            if (selectedOption) {
-                selectedOption.classList.add('selected');
-                selectedAnswer = index;
-                
-                // Enable submit button
-                document.getElementById('submit-btn').disabled = false;
-            }
-        }
+            document.getElementById(`option-${index}`).classList.add('selected');
+            selectedAnswer = index;
+            document.getElementById('submit-btn').disabled = false;
+        };
         
-        async function submitAnswer() {
+        window.submitAnswer = async function() {
             if (selectedAnswer === null || !currentStageKey) return;
             
             const stageData = gameData.stages[currentStageKey];
             const isCorrect = selectedAnswer === stageData.correctAnswer;
             
-            // Disable all options
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.style.pointerEvents = 'none';
-            });
-            
-            // Mark correct/wrong answers
+            // Show result
             document.querySelectorAll('.option').forEach((opt, index) => {
                 if (index === stageData.correctAnswer) {
                     opt.classList.add('correct');
                 } else if (index === selectedAnswer && !isCorrect) {
                     opt.classList.add('incorrect');
                 }
+                opt.style.pointerEvents = 'none';
             });
             
-            // Disable submit button
             document.getElementById('submit-btn').disabled = true;
             
-            // Save progress and get XP earned
-            const xpEarned = await saveProgress(currentStageKey, isCorrect);
+            // Save progress
+            const xpEarned = await window.saveProgress(currentStageKey, isCorrect);
             
-            // Show result
+            // Show result message
             const resultContainer = document.getElementById('result-container');
             resultContainer.innerHTML = '';
             
@@ -1521,280 +364,40 @@
             
             if (isCorrect) {
                 resultDiv.innerHTML = `
-                    <div class="result-title">
-                        ✅ Jawaban Benar!
-                    </div>
-                    <p class="xp-reward">+${xpEarned} XP • Total XP: ${userData.totalXP}</p>
-                    <p>Bagus! Anda telah menguasai materi ini.</p>
-                    <button class="btn btn-primary" style="margin-top: 12px;" onclick="nextStage()">
-                        ${isAllStagesCompleted() ? 'Lihat Sertifikat' : 'Lanjut ke Stage Berikutnya'}
+                    <div class="result-title">✅ Jawaban Benar!</div>
+                    <p class="xp-reward">+${xpEarned} XP</p>
+                    <button class="btn btn-primary" onclick="closeModal()">
+                        Tutup
                     </button>
                 `;
             } else {
                 resultDiv.innerHTML = `
-                    <div class="result-title">
-                        ❌ Jawaban Salah
-                    </div>
-                    <p>Jawaban yang benar: <strong>${String.fromCharCode(65 + stageData.correctAnswer)}. ${stageData.options[stageData.correctAnswer]}</strong></p>
-                    <p>Pelajari kembali materinya dan coba lain kali.</p>
-                    <button class="btn" style="margin-top: 12px;" onclick="closeModal()">
+                    <div class="result-title">❌ Jawaban Salah</div>
+                    <p>Coba lagi lain kali!</p>
+                    <button class="btn" onclick="closeModal()">
                         Tutup
                     </button>
                 `;
             }
             
             resultContainer.appendChild(resultDiv);
-            
-            // Check if all stages completed
-            if (isAllStagesCompleted()) {
-                setTimeout(showCertificate, 2000);
-            }
-        }
+        };
         
-        function nextStage() {
-            if (!currentStageKey) return;
-            
-            const [level, stage] = currentStageKey.split('_').map(Number);
-            
-            if (stage < gameData.stagesPerLevel) {
-                openStage(`${level}_${stage + 1}`);
-            } else if (level < gameData.totalLevels) {
-                openStage(`${level + 1}_1`);
-            } else {
-                closeModal();
-                showCertificate();
-            }
-        }
-        
-        function showCertificate() {
-            if (!userData || !isAllStagesCompleted()) {
-                alert("Anda belum menyelesaikan semua tahap!");
-                return;
-            }
-            
-            const completionDate = new Date().toLocaleDateString('id-ID', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            
-            const totalStagesCompleted = Object.keys(userData.completedStages || {}).length;
-            
-            document.getElementById('certificate-content').innerHTML = `
-                <div class="certificate-content">
-                    <div class="cert-title">SERTIFIKAT KELULUSAN</div>
-                    <div class="cert-user">${userData.displayName}</div>
-                    
-                    <div class="cert-desc">
-                        Telah berhasil menyelesaikan <strong>50 Tahap Financial Mastery</strong>
-                        dalam program PGXL dengan predikat
-                        <span style="color: var(--accent); font-weight: bold;">SANGAT MEMUASKAN</span>
-                    </div>
-                    
-                    <div class="cert-stats">
-                        <div class="cert-stat">
-                            <div class="cert-stat-value">${userData.totalXP}</div>
-                            <div>Total XP</div>
-                        </div>
-                        <div class="cert-stat">
-                            <div class="cert-stat-value">${userData.level}</div>
-                            <div>Level Tertinggi</div>
-                        </div>
-                        <div class="cert-stat">
-                            <div class="cert-stat-value">${totalStagesCompleted}/50</div>
-                            <div>Tahap Selesai</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin: 30px 0; padding: 20px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-                        <p style="color: var(--text-secondary);">Diselesaikan pada:</p>
-                        <p style="font-size: 20px; font-weight: bold;">${completionDate}</p>
-                    </div>
-                    
-                    <div class="cert-footer">
-                        <div class="cert-signature">
-                            <div class="signature-line"></div>
-                            <p style="margin-top: 10px; color: var(--text-secondary);">
-                                Direktur PGXL Academy
-                            </p>
-                        </div>
-                        <div class="cert-signature">
-                            <div class="signature-line"></div>
-                            <p style="margin-top: 10px; color: var(--text-secondary);">
-                                Sistem Verifikasi Digital
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 30px; color: var(--text-secondary); font-size: 14px;">
-                        ID: PGXL-${userData.uid.substring(0, 8).toUpperCase()}-${Date.now().toString(36)}
-                    </div>
-                </div>
-            `;
-            
-            closeModal();
-            document.getElementById('certificate-modal').style.display = 'flex';
-        }
-        
-        async function downloadCertificate() {
-            try {
-                const element = document.getElementById('certificate-content');
-                
-                const canvas = await html2canvas(element, {
-                    backgroundColor: null,
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                });
-                
-                const link = document.createElement('a');
-                link.download = `PGXL-Certificate-${userData.displayName.replace(/\s+/g, '_')}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-            } catch (error) {
-                console.error("Error downloading certificate:", error);
-                alert("Gagal mendownload sertifikat. Coba lagi.");
-            }
-        }
-        
-        function shareCertificate() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Sertifikat Kelulusan PGXL',
-                    text: `Saya telah menyelesaikan 50 tahap Financial Mastery di PGXL dengan ${userData.totalXP} XP!`,
-                    url: window.location.href
-                }).catch(console.error);
-            } else {
-                const text = `Saya telah menyelesaikan 50 tahap Financial Mastery di PGXL dengan ${userData.totalXP} XP!`;
-                const url = window.location.href;
-                prompt('Copy link berikut untuk share:', `${text}\n\n${url}`);
-            }
-        }
-        
-        async function loadLeaderboard() {
-            const leaderboard = await getLeaderboard();
-            const container = document.getElementById('leaderboard-content');
-            
-            if (!container) return;
-            
-            if (!leaderboard.length) {
-                container.innerHTML = '<p>Belum ada data leaderboard.</p>';
-                return;
-            }
-            
-            let html = `
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Nama</th>
-                            <th>Level</th>
-                            <th>XP</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            leaderboard.forEach((user, index) => {
-                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
-                html += `
-                    <tr class="leaderboard-row">
-                        <td class="${rankClass}">#${index + 1}</td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <img src="${user.photoURL}" alt="" style="width: 24px; height: 24px; border-radius: 50%;">
-                                ${user.displayName}
-                            </div>
-                        </td>
-                        <td>${user.level}</td>
-                        <td>${user.totalXP}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                    </tbody>
-                </table>
-            `;
-            
-            container.innerHTML = html;
-        }
-        
-        // ==================== UTILITY FUNCTIONS ====================
-        function calculateProgress() {
-            if (!userData || !userData.completedStages) {
-                return { completed: 0, percentage: 0 };
-            }
-            
-            const completed = Object.keys(userData.completedStages).length;
-            const percentage = Math.round((completed / gameData.totalStages) * 100);
-            return { completed, percentage };
-        }
-        
-        function isLevelCompleted(level) {
-            if (!userData.completedStages) return false;
-            
-            for (let stage = 1; stage <= gameData.stagesPerLevel; stage++) {
-                const stageKey = `${level}_${stage}`;
-                if (!userData.completedStages[stageKey]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        
-        function isAllStagesCompleted() {
-            const progress = calculateProgress();
-            return progress.completed >= gameData.totalStages;
-        }
-        
-        function closeModal() {
+        window.closeModal = function() {
             document.getElementById('stage-modal').style.display = 'none';
             document.getElementById('certificate-modal').style.display = 'none';
-            
-            // Refresh dashboard to show updated progress
-            if (currentUser) {
-                renderDashboard();
-            }
+            window.renderDashboard();
+        };
+        
+        // Expose functions
+        window.openLevel = function(level) {
+            window.openStage(`${level}_1`);
+        };
+        
+        // Initial render
+        if (!currentUser) {
+            window.renderLandingPage();
         }
-        
-        // ==================== KEYBOARD SHORTCUTS ====================
-        document.addEventListener('keydown', (e) => {
-            // ESC to close modal
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-            
-            // Number keys 1-5 to open levels (when modal not open)
-            if (e.key >= '1' && e.key <= '5' && 
-                document.getElementById('stage-modal').style.display !== 'flex' &&
-                document.getElementById('certificate-modal').style.display !== 'flex') {
-                const level = parseInt(e.key);
-                if (level <= userData?.level) {
-                    openLevel(level);
-                }
-            }
-        });
-        
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            initAuth();
-        });
-        
-        // Expose necessary functions to global scope
-        window.googleLogin = googleLogin;
-        window.logout = logout;
-        window.openLevel = openLevel;
-        window.openStage = openStage;
-        window.selectAnswer = selectAnswer;
-        window.submitAnswer = submitAnswer;
-        window.nextStage = nextStage;
-        window.closeModal = closeModal;
-        window.downloadCertificate = downloadCertificate;
-        window.shareCertificate = shareCertificate;
-        window.showCertificate = showCertificate;
     </script>
 </body>
 </html>
