@@ -1,0 +1,88 @@
+{
+  "wallpapers": [
+    {
+      "id": "wh_anime_001",
+      "path": "https://w.wallhaven.cc/full/zy/wallhaven-zyxw1v.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/zy/zyxw1v.jpg",
+        "original": "https://th.wallhaven.cc/full/zy/wallhaven-zyxw1v.jpg"
+      },
+      "resolution": "1920x1080",
+      "ratio": "1.78",
+      "views": 24500,
+      "favorites": 1200,
+      "category": "anime",
+      "purity": "sfw"
+    },
+    {
+      "id": "wh_gaming_001",
+      "path": "https://w.wallhaven.cc/full/jx/wallhaven-jxqy91.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/jx/jxqy91.jpg",
+        "original": "https://th.wallhaven.cc/full/jx/wallhaven-jxqy91.jpg"
+      },
+      "resolution": "3840x2160",
+      "ratio": "1.78",
+      "views": 32000,
+      "favorites": 1800,
+      "category": "gaming",
+      "purity": "sfw"
+    },
+    {
+      "id": "wh_cyberpunk_001",
+      "path": "https://w.wallhaven.cc/full/ox/wallhaven-ox6lp8.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/ox/ox6lp8.jpg",
+        "original": "https://th.wallhaven.cc/full/ox/wallhaven-ox6lp8.jpg"
+      },
+      "resolution": "2560x1440",
+      "ratio": "1.78",
+      "views": 18500,
+      "favorites": 950,
+      "category": "cyberpunk",
+      "purity": "sfw"
+    },
+    {
+      "id": "wh_art_001",
+      "path": "https://w.wallhaven.cc/full/l8/wallhaven-l8vq9y.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/l8/l8vq9y.jpg",
+        "original": "https://th.wallhaven.cc/full/l8/wallhaven-l8vq9y.jpg"
+      },
+      "resolution": "1920x1080",
+      "ratio": "1.78",
+      "views": 15200,
+      "favorites": 850,
+      "category": "digital-art",
+      "purity": "sfw"
+    },
+    {
+      "id": "wh_fantasy_001",
+      "path": "https://w.wallhaven.cc/full/7p/wallhaven-7p39gy.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/7p/7p39gy.jpg",
+        "original": "https://th.wallhaven.cc/full/7p/wallhaven-7p39gy.jpg"
+      },
+      "resolution": "3840x2160",
+      "ratio": "1.78",
+      "views": 27800,
+      "favorites": 2100,
+      "category": "fantasy",
+      "purity": "sfw"
+    },
+    {
+      "id": "wh_minimal_001",
+      "path": "https://w.wallhaven.cc/full/we/wallhaven-we58jl.jpg",
+      "thumbs": {
+        "small": "https://th.wallhaven.cc/small/we/we58jl.jpg",
+        "original": "https://th.wallhaven.cc/full/we/wallhaven-we58jl.jpg"
+      },
+      "resolution": "1920x1080",
+      "ratio": "1.78",
+      "views": 9800,
+      "favorites": 520,
+      "category": "minimal",
+      "purity": "sfw"
+    }
+  ]
+}
