@@ -436,7 +436,7 @@ window.updateDomainPreview = function() {
         .replace(/[^a-z0-9-]/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '') || 'myproject';
-    document.getElementById('domainPreview').textContent = `${name}.pgxl.web.id`;
+    document.getElementById('domainPreview').textContent = name + '.pgxl.web.id';
 };
 
 window.createProject = async function() {
@@ -463,7 +463,7 @@ window.createProject = async function() {
     const projectData = {
         name: name,
         description: description,
-        domain: `${projectId}.pgxl.web.id`,
+        domain: projectId + '.pgxl.web.id',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         owner: currentUser.uid,
         ownerEmail: currentUser.email,
@@ -479,7 +479,7 @@ window.createProject = async function() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>\${name} - Hosted on PGXL</title>
+    <title>${name} - Hosted on PGXL</title>
     <style>
         * {
             margin: 0;
@@ -570,7 +570,7 @@ window.createProject = async function() {
     <div class="container">
         <div class="logo">
             <i class="fas fa-server"></i>
-            <h2>\${name}</h2>
+            <h2>${name}</h2>
         </div>
         
         <h1>Selamat! Website Anda Sudah Online 🎉</h1>
@@ -595,7 +595,7 @@ window.createProject = async function() {
             </div>
         </div>
         
-        <p>Untuk mulai mengedit, login ke <a href="https://pgxl.web.id">PGXL.WEB.ID</a> dan pilih project "\${name}".</p>
+        <p>Untuk mulai mengedit, login ke <a href="https://pgxl.web.id">PGXL.WEB.ID</a> dan pilih project "${name}".</p>
         
         <div class="pgxl-ads">
             <h3>🚀 Powered by PGXL.WEB.ID</h3>
@@ -603,16 +603,16 @@ window.createProject = async function() {
             <a href="https://pgxl.web.id" target="_blank">Buat Website Gratis Anda</a>
         </div>
         
-        <p><small>Domain: \${projectId}.pgxl.web.id</small></p>
+        <p><small>Domain: ${projectId}.pgxl.web.id</small></p>
     </div>
 </body>
 </html>`;
 
         // Upload default files
-        await storage.ref(\`projects/\${projectId}/index.html\`).putString(defaultHTML, 'raw');
+        await storage.ref('projects/' + projectId + '/index.html').putString(defaultHTML, 'raw');
         
         // Create default CSS
-        const defaultCSS = \`/* Style untuk website \${name} */
+        const defaultCSS = `/* Style untuk website ${name} */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
@@ -636,9 +636,9 @@ h1, h2, h3 {
     border-radius: 10px;
     text-align: center;
     margin: 30px 0;
-}\`;
+}`;
 
-        await storage.ref(\`projects/\${projectId}/style.css\`).putString(defaultCSS, 'raw');
+        await storage.ref('projects/' + projectId + '/style.css').putString(defaultCSS, 'raw');
         
         bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
         alert('Website berhasil dibuat!');
@@ -664,38 +664,30 @@ window.loadProjects = async function() {
             const project = doc.data();
             const li = document.createElement('li');
             li.className = 'list-group-item list-group-item-action';
-            li.innerHTML = \`
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="fw-bold">\${project.name}</div>
-                        <small class="text-muted">\${project.domain}</small>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="openProject('\${doc.id}')">
-                        <i class="fas fa-folder-open"></i>
-                    </button>
-                </div>
-            \`;
+            li.innerHTML = '<div class="d-flex justify-content-between align-items-center">' +
+                '<div>' +
+                    '<div class="fw-bold">' + project.name + '</div>' +
+                    '<small class="text-muted">' + project.domain + '</small>' +
+                '</div>' +
+                '<button class="btn btn-sm btn-outline-primary" onclick="openProject(\'' + doc.id + '\')">' +
+                    '<i class="fas fa-folder-open"></i>' +
+                '</button>' +
+            '</div>';
             projectList.appendChild(li);
         });
         
         if (snapshot.empty) {
-            projectList.innerHTML = \`
-                <li class="list-group-item text-center text-muted py-4">
-                    <i class="fas fa-folder-open fa-2x mb-3"></i>
-                    <p>Belum ada website</p>
-                    <button class="btn btn-sm btn-primary" onclick="showAddProjectModal()">
-                        Buat Website Pertama
-                    </button>
-                </li>
-            \`;
+            projectList.innerHTML = '<li class="list-group-item text-center text-muted py-4">' +
+                '<i class="fas fa-folder-open fa-2x mb-3"></i>' +
+                '<p>Belum ada website</p>' +
+                '<button class="btn btn-sm btn-primary" onclick="showAddProjectModal()">' +
+                    'Buat Website Pertama' +
+                '</button>' +
+            '</li>';
         }
     } catch (error) {
         console.error('Error loading projects:', error);
-        document.getElementById('projectList').innerHTML = \`
-            <li class="list-group-item text-center text-danger py-4">
-                Error loading projects
-            </li>
-        \`;
+        document.getElementById('projectList').innerHTML = '<li class="list-group-item text-center text-danger py-4">Error loading projects</li>';
     }
 };
 
@@ -709,7 +701,7 @@ window.openProject = function(projectId) {
         const project = doc.data();
         document.getElementById('currentProjectName').textContent = project.name;
         document.getElementById('currentProjectUrl').innerHTML = 
-            \` → <a href="https://\${project.domain}" target="_blank" class="text-decoration-none">\${project.domain} <i class="fas fa-external-link-alt fa-xs"></i></a>\`;
+            ' → <a href="https://' + project.domain + '" target="_blank" class="text-decoration-none">' + project.domain + ' <i class="fas fa-external-link-alt fa-xs"></i></a>';
     });
     
     window.loadFiles('/');
@@ -732,7 +724,7 @@ window.loadFiles = async function(path) {
         currentBreadcrumbPath += part + '/';
         const li = document.createElement('li');
         li.className = 'breadcrumb-item';
-        li.innerHTML = \`<a href="#" onclick="loadFiles('\${currentBreadcrumbPath}')">\${part}</a>\`;
+        li.innerHTML = '<a href="#" onclick="loadFiles(\'' + currentBreadcrumbPath + '\')">' + part + '</a>';
         breadcrumb.appendChild(li);
     });
     
@@ -740,7 +732,7 @@ window.loadFiles = async function(path) {
     filesTable.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
     
     try {
-        const listRef = storage.ref(\`projects/\${currentProject}\${path}\`);
+        const listRef = storage.ref('projects/' + currentProject + path);
         const result = await listRef.listAll();
         
         filesTable.innerHTML = '';
@@ -750,17 +742,15 @@ window.loadFiles = async function(path) {
             const name = folderRef.name;
             const tr = document.createElement('tr');
             tr.className = 'file-item';
-            tr.innerHTML = \`
-                <td><i class="fas fa-folder text-warning"></i></td>
-                <td><strong>\${name}</strong></td>
-                <td>-</td>
-                <td>-</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="openFolder('\${name}/')">
-                        Buka
-                    </button>
-                </td>
-            \`;
+            tr.innerHTML = '<td><i class="fas fa-folder text-warning"></i></td>' +
+                '<td><strong>' + name + '</strong></td>' +
+                '<td>-</td>' +
+                '<td>-</td>' +
+                '<td>' +
+                    '<button class="btn btn-sm btn-outline-primary" onclick="openFolder(\'' + name + '/\')">' +
+                        'Buka' +
+                    '</button>' +
+                '</td>';
             filesTable.appendChild(tr);
         });
         
@@ -779,49 +769,43 @@ window.loadFiles = async function(path) {
             
             const tr = document.createElement('tr');
             tr.className = 'file-item';
-            tr.innerHTML = \`
-                <td><i class="fas fa-file text-primary"></i></td>
-                <td>\${name}</td>
-                <td>\${size}</td>
-                <td>\${updated}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-success me-1" onclick="editFile('\${name}')">
-                        Edit
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFile('\${name}')">
-                        Hapus
-                    </button>
-                </td>
-            \`;
+            tr.innerHTML = '<td><i class="fas fa-file text-primary"></i></td>' +
+                '<td>' + name + '</td>' +
+                '<td>' + size + '</td>' +
+                '<td>' + updated + '</td>' +
+                '<td>' +
+                    '<button class="btn btn-sm btn-outline-success me-1" onclick="editFile(\'' + name + '\')">' +
+                        'Edit' +
+                    '</button>' +
+                    '<button class="btn btn-sm btn-outline-danger" onclick="deleteFile(\'' + name + '\')">' +
+                        'Hapus' +
+                    '</button>' +
+                '</td>';
             filesTable.appendChild(tr);
         }
         
         if (result.prefixes.length === 0 && result.items.length === 0) {
-            filesTable.innerHTML = \`
-                <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
-                        <i class="fas fa-folder-open fa-2x mb-3 d-block"></i>
-                        Folder kosong
-                    </td>
-                </tr>
-            \`;
+            filesTable.innerHTML = '<tr>' +
+                '<td colspan="5" class="text-center py-4 text-muted">' +
+                    '<i class="fas fa-folder-open fa-2x mb-3 d-block"></i>' +
+                    'Folder kosong' +
+                '</td>' +
+            '</tr>';
         }
     } catch (error) {
         console.error('Error loading files:', error);
-        filesTable.innerHTML = \`
-            <tr>
-                <td colspan="5" class="text-center py-4 text-danger">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    Error loading files
-                </td>
-            </tr>
-        \`;
+        filesTable.innerHTML = '<tr>' +
+            '<td colspan="5" class="text-center py-4 text-danger">' +
+                '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                'Error loading files' +
+            '</td>' +
+        '</tr>';
     }
 };
 
 window.editFile = async function(fileName) {
     try {
-        const fileRef = storage.ref(\`projects/\${currentProject}\${currentPath}\${fileName}\`);
+        const fileRef = storage.ref('projects/' + currentProject + currentPath + fileName);
         const url = await fileRef.getDownloadURL();
         const response = await fetch(url);
         const content = await response.text();
@@ -874,12 +858,12 @@ window.saveFile = async function() {
     const content = editor.getValue();
     
     try {
-        const fileRef = storage.ref(\`projects/\${currentProject}\${currentPath}\${fileName}\`);
+        const fileRef = storage.ref('projects/' + currentProject + currentPath + fileName);
         await fileRef.putString(content, 'raw');
         
         // Update project's files list
         await db.collection('projects').doc(currentProject).update({
-            [\`files.\${currentPath}\${fileName}\`]: firebase.firestore.FieldValue.serverTimestamp()
+            ['files.' + currentPath + fileName]: firebase.firestore.FieldValue.serverTimestamp()
         });
         
         alert('✅ File berhasil disimpan!');
@@ -906,7 +890,7 @@ window.showAddFileModal = function() {
     const name = prompt('Nama file baru (contoh: style.css, script.js, about.html):');
     if (name) {
         const defaultContent = window.getDefaultFileContent(name);
-        const fileRef = storage.ref(\`projects/\${currentProject}\${currentPath}\${name}\`);
+        const fileRef = storage.ref('projects/' + currentProject + currentPath + name);
         fileRef.putString(defaultContent, 'raw').then(() => {
             window.loadFiles(currentPath);
             alert('File berhasil dibuat: ' + name);
@@ -918,7 +902,7 @@ window.showAddFileModal = function() {
 
 window.getDefaultFileContent = function(filename) {
     if (filename.endsWith('.html')) {
-        return \`<!DOCTYPE html>
+        return `<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -938,9 +922,9 @@ window.getDefaultFileContent = function(filename) {
         </div>
     </div>
 </body>
-</html>\`;
+</html>`;
     } else if (filename.endsWith('.css')) {
-        return \`/* \${filename} - Stylesheet */
+        return `/* ${filename} - Stylesheet */
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -965,9 +949,9 @@ body {
     border-radius: 5px;
     text-align: center;
     margin: 20px 0;
-}\`;
+}`;
     } else if (filename.endsWith('.js')) {
-        return \`// \${filename} - JavaScript file
+        return `// ${filename} - JavaScript file
 console.log('Hello from PGXL.WEB.ID!');
 
 // PGXL Branding
@@ -983,9 +967,9 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', showPGXLBranding);
 } else {
     showPGXLBranding();
-}\`;
+}`;
     } else {
-        return \`// \${filename}\\n\\nFile ini dibuat dengan PGXL.WEB.ID\\nhttps://pgxl.web.id\`;
+        return `// ${filename}\n\nFile ini dibuat dengan PGXL.WEB.ID\nhttps://pgxl.web.id`;
     }
 };
 
@@ -996,19 +980,19 @@ window.showUploadModal = function() {
     input.onchange = async (e) => {
         const files = e.target.files;
         for (let file of files) {
-            const fileRef = storage.ref(\`projects/\${currentProject}\${currentPath}\${file.name}\`);
+            const fileRef = storage.ref('projects/' + currentProject + currentPath + file.name);
             await fileRef.put(file);
         }
         window.loadFiles(currentPath);
-        alert(\`✅ \${files.length} file berhasil diupload!\`);
+        alert('✅ ' + files.length + ' file berhasil diupload!');
     };
     input.click();
 };
 
 window.deleteFile = async function(fileName) {
-    if (confirm(\`Hapus file "\${fileName}"?\`)) {
+    if (confirm('Hapus file "' + fileName + '"?')) {
         try {
-            const fileRef = storage.ref(\`projects/\${currentProject}\${currentPath}\${fileName}\`);
+            const fileRef = storage.ref('projects/' + currentProject + currentPath + fileName);
             await fileRef.delete();
             window.loadFiles(currentPath);
             alert('✅ File berhasil dihapus');
@@ -1041,35 +1025,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Init domain preview
     document.getElementById('projectName').addEventListener('input', window.updateDomainPreview);
-    
-    // Initialize button events
-    document.querySelectorAll('[onclick*="showAuthModal"]').forEach(btn => {
-        btn.onclick = window.showAuthModal;
-    });
 });
 
 function showWelcome() {
     document.getElementById('welcomeSection').classList.remove('d-none');
     document.getElementById('dashboard').classList.add('d-none');
-    document.getElementById('authButtons').innerHTML = \`
-        <button class="btn btn-outline-primary" onclick="showAuthModal()">
-            <i class="fas fa-sign-in-alt me-1"></i> Login
-        </button>
-    \`;
+    document.getElementById('authButtons').innerHTML = '<button class="btn btn-outline-primary" onclick="showAuthModal()">' +
+        '<i class="fas fa-sign-in-alt me-1"></i> Login' +
+    '</button>';
 }
 
 function showDashboard() {
     document.getElementById('welcomeSection').classList.add('d-none');
     document.getElementById('dashboard').classList.remove('d-none');
     document.getElementById('userEmail').textContent = currentUser.email;
-    document.getElementById('authButtons').innerHTML = \`
-        <div class="d-flex align-items-center">
-            <span class="me-3 text-muted">\${currentUser.email}</span>
-            <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
-    \`;
+    document.getElementById('authButtons').innerHTML = '<div class="d-flex align-items-center">' +
+        '<span class="me-3 text-muted">' + currentUser.email + '</span>' +
+        '<button class="btn btn-outline-danger btn-sm" onclick="logout()">' +
+            '<i class="fas fa-sign-out-alt"></i>' +
+        '</button>' +
+    '</div>';
     window.loadProjects();
 }
 </script>
