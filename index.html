@@ -650,23 +650,7 @@ console.log('Website ${name} loaded!');
 document.addEventListener('DOMContentLoaded', function() {
     // Tambahkan branding PGXL
     const pgxlBrand = document.createElement('div');
-    pgxlBrand.innerHTML = \`
-        <div style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            margin-top: 40px;
-            border-radius: 0 0 10px 10px;
-            font-size: 14px;
-        ">
-            🚀 <strong>Powered by PGXL.WEB.ID</strong> | 
-            <a href="https://pgxl.web.id" target="_blank" 
-               style="color: white; text-decoration: underline;">
-                Free Static Hosting
-            </a>
-        </div>
-    \`;
+    pgxlBrand.innerHTML = '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; text-align: center; margin-top: 40px; border-radius: 0 0 10px 10px; font-size: 14px;">🚀 <strong>Powered by PGXL.WEB.ID</strong> | <a href="https://pgxl.web.id" target="_blank" style="color: white; text-decoration: underline;">Free Static Hosting</a></div>';
     
     document.body.appendChild(pgxlBrand);
     
@@ -736,30 +720,26 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 const project = doc.data();
                 const li = document.createElement('li');
                 li.className = 'list-group-item list-group-item-action';
-                li.innerHTML = \`
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="fw-bold">\${project.name}</div>
-                            <small class="text-muted">\${project.domain}</small>
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary" onclick="openProject('\${doc.id}')">
-                            <i class="fas fa-folder-open"></i>
-                        </button>
-                    </div>
-                \`;
+                li.innerHTML = '<div class="d-flex justify-content-between align-items-center">' +
+                    '<div>' +
+                        '<div class="fw-bold">' + project.name + '</div>' +
+                        '<small class="text-muted">' + project.domain + '</small>' +
+                    '</div>' +
+                    '<button class="btn btn-sm btn-outline-primary" onclick="openProject(\'' + doc.id + '\')">' +
+                        '<i class="fas fa-folder-open"></i>' +
+                    '</button>' +
+                '</div>';
                 projectList.appendChild(li);
             });
             
             if (snapshot.empty) {
-                projectList.innerHTML = \`
-                    <li class="list-group-item text-center text-muted py-4">
-                        <i class="fas fa-folder-open fa-2x mb-3"></i>
-                        <p>Belum ada website</p>
-                        <button class="btn btn-sm btn-primary" onclick="showAddProjectModal()">
-                            Buat Website Pertama
-                        </button>
-                    </li>
-                \`;
+                projectList.innerHTML = '<li class="list-group-item text-center text-muted py-4">' +
+                    '<i class="fas fa-folder-open fa-2x mb-3"></i>' +
+                    '<p>Belum ada website</p>' +
+                    '<button class="btn btn-sm btn-primary" onclick="showAddProjectModal()">' +
+                        'Buat Website Pertama' +
+                    '</button>' +
+                '</li>';
             }
         } catch (error) {
             console.error('Error loading projects:', error);
@@ -776,7 +756,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             const project = doc.data();
             document.getElementById('currentProjectName').textContent = project.name;
             document.getElementById('currentProjectUrl').innerHTML = 
-                \` → <a href="https://\${project.domain}" target="_blank" class="text-decoration-none">\${project.domain} <i class="fas fa-external-link-alt fa-xs"></i></a>\`;
+                ' → <a href="https://' + project.domain + '" target="_blank" class="text-decoration-none">' + 
+                project.domain + ' <i class="fas fa-external-link-alt fa-xs"></i></a>';
         });
         
         window.loadFiles('/');
@@ -795,7 +776,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             currentBreadcrumbPath += part + '/';
             const li = document.createElement('li');
             li.className = 'breadcrumb-item';
-            li.innerHTML = \`<a href="#" onclick="loadFiles('\${currentBreadcrumbPath}')">\${part}</a>\`;
+            li.innerHTML = '<a href="#" onclick="loadFiles(\'' + currentBreadcrumbPath + '\')">' + part + '</a>';
             breadcrumb.appendChild(li);
         });
         
@@ -846,17 +827,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     const folderName = key.replace('/', '');
                     const tr = document.createElement('tr');
                     tr.className = 'file-item';
-                    tr.innerHTML = \`
-                        <td><i class="fas fa-folder text-warning"></i></td>
-                        <td><strong>\${folderName}</strong></td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="loadFiles('\${item.path}')">
-                                Buka
-                            </button>
-                        </td>
-                    \`;
+                    tr.innerHTML = '<td><i class="fas fa-folder text-warning"></i></td>' +
+                        '<td><strong>' + folderName + '</strong></td>' +
+                        '<td>-</td>' +
+                        '<td>-</td>' +
+                        '<td>' +
+                            '<button class="btn btn-sm btn-outline-primary" onclick="loadFiles(\'' + item.path + '\')">' +
+                                'Buka' +
+                            '</button>' +
+                        '</td>';
                     filesTable.appendChild(tr);
                 }
             });
@@ -873,44 +852,38 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     
                     const tr = document.createElement('tr');
                     tr.className = 'file-item';
-                    tr.innerHTML = \`
-                        <td><i class="fas fa-file text-primary"></i></td>
-                        <td>\${key}</td>
-                        <td>\${size}</td>
-                        <td>\${updated}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-success me-1" onclick="editFile('\${key}')">
-                                Edit
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFile('\${key}')">
-                                Hapus
-                            </button>
-                        </td>
-                    \`;
+                    tr.innerHTML = '<td><i class="fas fa-file text-primary"></i></td>' +
+                        '<td>' + key + '</td>' +
+                        '<td>' + size + '</td>' +
+                        '<td>' + updated + '</td>' +
+                        '<td>' +
+                            '<button class="btn btn-sm btn-outline-success me-1" onclick="editFile(\'' + key + '\')">' +
+                                'Edit' +
+                            '</button>' +
+                            '<button class="btn btn-sm btn-outline-danger" onclick="deleteFile(\'' + key + '\')">' +
+                                'Hapus' +
+                            '</button>' +
+                        '</td>';
                     filesTable.appendChild(tr);
                 }
             });
             
             if (Object.keys(fileMap).length === 0) {
-                filesTable.innerHTML = \`
-                    <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">
-                            <i class="fas fa-folder-open fa-2x mb-3 d-block"></i>
-                            Folder kosong
-                        </td>
-                    </tr>
-                \`;
+                filesTable.innerHTML = '<tr>' +
+                    '<td colspan="5" class="text-center py-4 text-muted">' +
+                        '<i class="fas fa-folder-open fa-2x mb-3 d-block"></i>' +
+                        'Folder kosong' +
+                    '</td>' +
+                '</tr>';
             }
         } catch (error) {
             console.error('Error loading files:', error);
-            filesTable.innerHTML = \`
-                <tr>
-                    <td colspan="5" class="text-center py-4 text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Error loading files
-                    </td>
-                </tr>
-            \`;
+            filesTable.innerHTML = '<tr>' +
+                '<td colspan="5" class="text-center py-4 text-danger">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                    'Error loading files' +
+                '</td>' +
+            '</tr>';
         }
     };
     
@@ -991,10 +964,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         
         try {
             const updateData = {};
-            updateData[\`files.\${filePath}.content\`] = content;
-            updateData[\`files.\${filePath}.updated\`] = firebase.firestore.FieldValue.serverTimestamp();
-            updateData[\`files.\${filePath}.type\`] = fileName.split('.').pop().toLowerCase();
-            updateData[\`files.\${filePath}.size\`] = content.length;
+            updateData['files.' + filePath + '.content'] = content;
+            updateData['files.' + filePath + '.updated'] = firebase.firestore.FieldValue.serverTimestamp();
+            updateData['files.' + filePath + '.type'] = fileName.split('.').pop().toLowerCase();
+            updateData['files.' + filePath + '.size'] = content.length;
             
             await db.collection('projects').doc(currentProject).update(updateData);
             
@@ -1027,7 +1000,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         const filePath = currentPath + name;
         
         const updateData = {};
-        updateData[\`files.\${filePath}\`] = {
+        updateData['files.' + filePath] = {
             content: defaultContent,
             type: name.split('.').pop().toLowerCase(),
             size: defaultContent.length,
@@ -1174,16 +1147,15 @@ if (document.readyState === 'loading') {
         const name = prompt('Nama folder baru:', 'new-folder');
         if (!name) return;
         
-        // Folder tidak butuh data, cukup path aja
         alert('Folder akan dibuat ketika ada file di dalamnya');
     };
     
     window.deleteFile = async function(fileName) {
-        if (!confirm(`Hapus file "${fileName}"?`)) return;
+        if (!confirm('Hapus file "' + fileName + '"?')) return;
         
         try {
             const updateData = {};
-            updateData[\`files.\${currentPath}${fileName}\`] = firebase.firestore.FieldValue.delete();
+            updateData['files.' + currentPath + fileName] = firebase.firestore.FieldValue.delete();
             
             await db.collection('projects').doc(currentProject).update(updateData);
             
@@ -1216,25 +1188,23 @@ if (document.readyState === 'loading') {
     function showWelcome() {
         document.getElementById('welcomeSection').classList.remove('d-none');
         document.getElementById('dashboard').classList.add('d-none');
-        document.getElementById('authButtons').innerHTML = \`
-            <button class="btn btn-outline-primary" onclick="showAuthModal()">
-                <i class="fas fa-sign-in-alt me-1"></i> Login
-            </button>
-        \`;
+        document.getElementById('authButtons').innerHTML = 
+            '<button class="btn btn-outline-primary" onclick="showAuthModal()">' +
+                '<i class="fas fa-sign-in-alt me-1"></i> Login' +
+            '</button>';
     }
     
     function showDashboard() {
         document.getElementById('welcomeSection').classList.add('d-none');
         document.getElementById('dashboard').classList.remove('d-none');
         document.getElementById('userEmail').textContent = currentUser.email;
-        document.getElementById('authButtons').innerHTML = \`
-            <div class="d-flex align-items-center">
-                <span class="me-3 text-muted">\${currentUser.email}</span>
-                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
-        \`;
+        document.getElementById('authButtons').innerHTML = 
+            '<div class="d-flex align-items-center">' +
+                '<span class="me-3 text-muted">' + currentUser.email + '</span>' +
+                '<button class="btn btn-outline-danger btn-sm" onclick="logout()">' +
+                    '<i class="fas fa-sign-out-alt"></i>' +
+                '</button>' +
+            '</div>';
         window.loadProjects();
     }
     
