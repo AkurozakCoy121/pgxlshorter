@@ -3,284 +3,661 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGXL | Financial Mastery Game</title>
+    <title>PGXL.WEB.ID - Free Static Hosting</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* [CSS sama seperti sebelumnya] */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .file-item:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        .ads-footer {
+            background: #f8f9fa;
+            border-top: 3px solid #667eea;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">PGXL</span>
-                <span>Financial Mastery</span>
-            </div>
-            <div class="nav-controls" id="nav-controls">
-                <!-- Will be populated by JavaScript -->
-            </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-server"></i> PGXL.WEB.ID
+            </a>
+            <div id="authButtons"></div>
         </div>
-    </header>
-    
-    <!-- MAIN CONTENT -->
-    <main class="main">
-        <div class="container" id="main-content">
-            <!-- Content will be loaded dynamically -->
-        </div>
-    </main>
-    
-    <!-- MODALS -->
-    <div class="modal-overlay" id="login-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Masuk ke PGXL</h2>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="player-name" placeholder="Masukkan nama Anda" style="width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
-                <button class="btn btn-primary" onclick="loginWithName()" style="width: 100%; padding: 12px;">
-                    🎮 Mulai Game
+    </nav>
+
+    <div class="container py-5">
+        <!-- Welcome Section -->
+        <div class="row mb-4" id="welcomeSection">
+            <div class="col-12 text-center text-white">
+                <h1 class="display-4 mb-3">🎯 Free Static Hosting</h1>
+                <p class="lead">Host website HTML/CSS/JS mu dengan mudah!</p>
+                <p>Dapatkan subdomain: <code>namaproject.pgxl.web.id</code></p>
+                <button class="btn btn-light btn-lg mt-3" onclick="showAuthModal()">
+                    <i class="fas fa-rocket"></i> Mulai Sekarang
                 </button>
-                <p style="margin-top: 16px; color: var(--text-secondary); text-align: center;">
-                    Progress akan disimpan di browser Anda
-                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard (Tampil setelah login) -->
+        <div class="row d-none" id="dashboard">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5><i class="fas fa-user-circle"></i> <span id="userEmail"></span></h5>
+                        <button class="btn btn-primary w-100 mb-2" onclick="showAddProjectModal()">
+                            <i class="fas fa-plus"></i> Add Website
+                        </button>
+                        <button class="btn btn-outline-danger w-100" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project List -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-globe"></i> Website Saya
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush" id="projectList">
+                            <!-- Project list akan diisi JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- File Manager -->
+                <div class="card mb-4 d-none" id="fileManager">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-folder"></i> 
+                            <span id="currentProjectName"></span>
+                            <small class="text-muted" id="currentProjectUrl"></small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="showAddFileModal()">
+                                <i class="fas fa-plus"></i> File Baru
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="showUploadModal()">
+                                <i class="fas fa-upload"></i> Upload
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb" id="breadcrumb">
+                                <li class="breadcrumb-item active">/</li>
+                            </ol>
+                        </nav>
+
+                        <!-- Files Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="50px"></th>
+                                        <th>Nama</th>
+                                        <th>Ukuran</th>
+                                        <th>Terakhir diubah</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="filesTable">
+                                    <!-- Files akan diisi JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor -->
+                <div class="card d-none" id="editorSection">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span id="editorFileName"></span>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="saveFile()">
+                                <i class="fas fa-save"></i> Simpan
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="closeEditor()">
+                                <i class="fas fa-times"></i> Tutup
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="codeEditor" style="height: 500px;"></div>
+                    </div>
+                </div>
+
+                <!-- Welcome to Dashboard -->
+                <div class="card" id="welcomeDashboard">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-cloud-upload-alt fa-4x text-muted mb-3"></i>
+                        <h3>Selamat Datang di PGXL.WEB.ID</h3>
+                        <p class="text-muted">Pilih website dari sidebar atau buat website baru</p>
+                        <p>📁 Upload file HTML, CSS, JS, gambar, dll</p>
+                        <p>🌐 Dapatkan subdomain gratis</p>
+                        <p>⚡ Auto deploy dalam hitungan detik</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="row mt-5">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
+                        <h5>⚡ Cepat & Mudah</h5>
+                        <p>Upload file, langsung online. Tidak perlu config ribet.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tag fa-3x text-success mb-3"></i>
+                        <h5>💰 100% Gratis</h5>
+                        <p>Tidak ada biaya hosting. Selamanya gratis untuk website statis.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-warning mb-3"></i>
+                        <h5>🔧 File Manager</h5>
+                        <p>Edit file langsung di browser. Support HTML, CSS, JavaScript.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- [Stage Modal dan Certificate Modal sama seperti sebelumnya] -->
-    
-    <script>
-        // ==================== SIMPLE AUTH SYSTEM ====================
-        let currentUser = null;
-        let userData = null;
-        
-        function checkAuth() {
-            const savedUser = localStorage.getItem('pgxl_user');
-            if (savedUser) {
-                userData = JSON.parse(savedUser);
-                currentUser = { displayName: userData.displayName };
-                renderDashboard();
-            } else {
-                showLoginModal();
-            }
-        }
-        
-        function showLoginModal() {
-            document.getElementById('login-modal').style.display = 'flex';
-            document.getElementById('main-content').innerHTML = `
-                <div class="landing">
-                    <h1>🎮 PGXL Financial Mastery</h1>
-                    <p class="landing-subtitle">Kuasa keuangan dalam 50 tahap</p>
-                    <button class="btn btn-primary" onclick="document.getElementById('login-modal').style.display='flex'">
-                        Mulai Game
+
+    <!-- Footer with Ads -->
+    <footer class="ads-footer mt-5">
+        <div class="container">
+            <p>
+                <strong>Powered by PGXL.WEB.ID</strong> | 
+                Free Static Hosting for Indonesia | 
+                <a href="#" class="text-decoration-none">Terms</a> | 
+                <a href="#" class="text-decoration-none">Privacy</a>
+            </p>
+            <p class="mb-0">
+                © 2025 PGXL.WEB.ID - Hosting website statis gratis dengan subdomain custom.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal fade" id="authModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login / Daftar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <button class="btn btn-outline-dark w-100 mb-2" onclick="signInWithGoogle()">
+                        <i class="fab fa-google"></i> Lanjut dengan Google
+                    </button>
+                    <button class="btn btn-outline-primary w-100" onclick="signInWithFacebook()">
+                        <i class="fab fa-facebook"></i> Lanjut dengan Facebook
                     </button>
                 </div>
-            `;
-            
-            document.getElementById('nav-controls').innerHTML = `
-                <button class="btn" onclick="document.getElementById('login-modal').style.display='flex'">
-                    Login
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Project Modal -->
+    <div class="modal fade" id="addProjectModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">➕ Add Website Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Project</label>
+                        <input type="text" class="form-control" id="projectName" placeholder="my-portfolio">
+                        <div class="form-text">Akan menjadi: <span id="domainPreview">...</span></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea class="form-control" id="projectDescription" rows="3" placeholder="Website portfolio saya..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="createProject()">Buat Website</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    
+    <script>
+        // Firebase Config (akan diganti dengan file terpisah)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "pgxl-web-id.firebaseapp.com",
+            projectId: "pgxl-web-id",
+            storageBucket: "pgxl-web-id.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Global variables
+        let currentUser = null;
+        let currentProject = null;
+        let currentPath = '/';
+        let editor = null;
+
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auth State Listener
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    showDashboard();
+                } else {
+                    showWelcome();
+                }
+            });
+
+            // Init domain preview
+            document.getElementById('projectName').addEventListener('input', updateDomainPreview);
+        });
+
+        // Functions
+        function showWelcome() {
+            document.getElementById('welcomeSection').classList.remove('d-none');
+            document.getElementById('dashboard').classList.add('d-none');
+            document.getElementById('authButtons').innerHTML = `
+                <button class="btn btn-outline-light" onclick="showAuthModal()">
+                    <i class="fas fa-sign-in-alt"></i> Login
                 </button>
             `;
         }
-        
-        function loginWithName() {
-            const nameInput = document.getElementById('player-name');
-            const playerName = nameInput.value.trim();
+
+        function showDashboard() {
+            document.getElementById('welcomeSection').classList.add('d-none');
+            document.getElementById('dashboard').classList.remove('d-none');
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('authButtons').innerHTML = `
+                <span class="text-white me-3">${currentUser.email}</span>
+                <button class="btn btn-outline-light" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            `;
+            loadProjects();
+        }
+
+        function showAuthModal() {
+            new bootstrap.Modal(document.getElementById('authModal')).show();
+        }
+
+        function showAddProjectModal() {
+            document.getElementById('projectName').value = '';
+            document.getElementById('projectDescription').value = '';
+            updateDomainPreview();
+            new bootstrap.Modal(document.getElementById('addProjectModal')).show();
+        }
+
+        function updateDomainPreview() {
+            const name = document.getElementById('projectName').value.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || 'myproject';
+            document.getElementById('domainPreview').textContent = `${name}.pgxl.web.id`;
+        }
+
+        async function createProject() {
+            const name = document.getElementById('projectName').value;
+            const description = document.getElementById('projectDescription').value;
             
-            if (!playerName) {
-                alert("Masukkan nama terlebih dahulu!");
+            if (!name) {
+                alert('Nama project harus diisi!');
                 return;
             }
+
+            const projectId = name.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
             
-            // Create user data
-            userData = {
-                uid: 'user_' + Date.now(),
-                displayName: playerName,
-                photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(playerName)}&background=random`,
-                createdAt: new Date().toISOString(),
-                totalXP: 0,
-                level: 1,
-                completedStages: {},
-                currentStage: "1_1"
+            const projectData = {
+                name: name,
+                description: description,
+                domain: `${projectId}.pgxl.web.id`,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                owner: currentUser.uid,
+                files: []
             };
-            
-            // Save to localStorage
-            localStorage.setItem('pgxl_user', JSON.stringify(userData));
-            currentUser = { displayName: playerName };
-            
-            closeModal();
-            renderDashboard();
-        }
-        
-        function logout() {
-            if (confirm("Yakin ingin logout? Progress akan tetap tersimpan.")) {
-                localStorage.removeItem('pgxl_user');
-                currentUser = null;
-                userData = null;
-                showLoginModal();
+
+            try {
+                await db.collection('projects').doc(projectId).set(projectData);
+                
+                // Create default index.html with ads
+                const defaultHTML = `<!DOCTYPE html>
+<html>
+<head>
+    <title>${name}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .pgxl-ads { background: #f8f9fa; border: 2px solid #667eea; padding: 15px; text-align: center; margin: 30px 0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to ${name}</h1>
+    <p>Your website is hosted on PGXL.WEB.ID</p>
+    
+    <div class="pgxl-ads">
+        <h3>🚀 Powered by PGXL.WEB.ID</h3>
+        <p>Free static hosting with custom subdomain</p>
+        <a href="https://pgxl.web.id" target="_blank">Create your own free website</a>
+    </div>
+    
+    <p>Edit this file in your dashboard to customize your website.</p>
+</body>
+</html>`;
+
+                await storage.ref(`projects/${projectId}/index.html`).putString(defaultHTML, 'raw');
+                
+                bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
+                alert('Website berhasil dibuat!');
+                loadProjects();
+            } catch (error) {
+                console.error('Error creating project:', error);
+                alert('Gagal membuat website: ' + error.message);
             }
         }
-        
-        function saveProgress() {
-            if (userData) {
-                localStorage.setItem('pgxl_user', JSON.stringify(userData));
+
+        async function loadProjects() {
+            try {
+                const snapshot = await db.collection('projects')
+                    .where('owner', '==', currentUser.uid)
+                    .get();
+                
+                const projectList = document.getElementById('projectList');
+                projectList.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const project = doc.data();
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${project.name}</strong><br>
+                                <small class="text-muted">${project.domain}</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openProject('${doc.id}')">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </div>
+                    `;
+                    projectList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading projects:', error);
             }
         }
-        
-        // ==================== GAME DATA ====================
-        const gameData = {
-            totalLevels: 5,
-            stagesPerLevel: 10,
-            totalStages: 50,
+
+        function openProject(projectId) {
+            currentProject = projectId;
+            document.getElementById('welcomeDashboard').classList.add('d-none');
+            document.getElementById('fileManager').classList.remove('d-none');
+            document.getElementById('editorSection').classList.add('d-none');
             
-            levelTitles: {
-                1: "Dasar-dasar Keuangan",
-                2: "Anggaran & Tabungan", 
-                3: "Investasi Pemula",
-                4: "Manajemen Utang",
-                5: "Perencanaan Masa Depan"
-            },
+            db.collection('projects').doc(projectId).get().then(doc => {
+                const project = doc.data();
+                document.getElementById('currentProjectName').textContent = project.name;
+                document.getElementById('currentProjectUrl').innerHTML = 
+                    `<a href="https://${project.domain}" target="_blank">${project.domain}</a>`;
+            });
             
-            stages: {
-                "1_1": {
-                    title: "Pengenalan Pengelolaan Uang",
-                    content: `<h3>💰 Apa itu Pengelolaan Uang?</h3>
-                    <p>Pengelolaan uang adalah seni dan ilmu dalam merencanakan, mengatur, dan mengendalikan penggunaan uang untuk mencapai tujuan keuangan.</p>`,
-                    question: "Apa langkah pertama dalam pengelolaan uang yang baik?",
-                    options: [
-                        "Membeli saham mahal",
-                        "Mencatat semua pemasukan dan pengeluaran",
-                        "Mengajukan kartu kredit",
-                        "Menabung tanpa tujuan"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Anda tidak bisa mengelola apa yang tidak Anda ukur.",
-                    xpReward: 10
-                },
-                // ... tambahkan semua 50 stage
-                "5_10": {
-                    title: "Ujian Akhir Financial Mastery",
-                    content: `<h3>🎓 FINAL TEST</h3>
-                    <p>Selamat! Anda telah sampai di tahap terakhir.</p>`,
-                    question: "Apa strategi terbaik untuk mencapai kebebasan finansial?",
-                    options: [
-                        "Menabung saja tanpa investasi",
-                        "Investasi konsisten + penghasilan pasif + pengelolaan risiko",
-                        "Bergantung pada warisan orang tua",
-                        "Beli lotre setiap minggu"
-                    ],
-                    correctAnswer: 1,
-                    clue: "Konsistensi, passive income, dan manajemen risiko.",
-                    xpReward: 50
+            loadFiles('/');
+        }
+
+        async function loadFiles(path) {
+            currentPath = path;
+            
+            // Update breadcrumb
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = '<li class="breadcrumb-item active">/</li>';
+            
+            const filesTable = document.getElementById('filesTable');
+            filesTable.innerHTML = '<tr><td colspan="5" class="text-center">Loading...</td></tr>';
+            
+            try {
+                const listRef = storage.ref(`projects/${currentProject}${path}`);
+                const result = await listRef.listAll();
+                
+                filesTable.innerHTML = '';
+                
+                // Directories first
+                result.prefixes.forEach(folderRef => {
+                    const name = folderRef.name;
+                    const tr = document.createElement('tr');
+                    tr.className = 'file-item';
+                    tr.innerHTML = `
+                        <td><i class="fas fa-folder text-warning"></i></td>
+                        <td><strong>${name}</strong></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openFolder('${name}')">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </td>
+                    `;
+                    filesTable.appendChild(tr);
+                });
+                
+                // Files
+                for (const itemRef of result.items) {
+                    const metadata = await itemRef.getMetadata();
+                    const name = itemRef.name;
+                    const size = formatBytes(metadata.size);
+                    const updated = new Date(metadata.updated).toLocaleString();
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'file-item';
+                    tr.innerHTML = `
+                        <td><i class="fas fa-file text-primary"></i></td>
+                        <td>${name}</td>
+                        <td>${size}</td>
+                        <td>${updated}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success" onclick="editFile('${name}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFile('${name}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    filesTable.appendChild(tr);
+                }
+                
+                if (result.prefixes.length === 0 && result.items.length === 0) {
+                    filesTable.innerHTML = '<tr><td colspan="5" class="text-center">Folder kosong</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+                filesTable.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading files</td></tr>';
+            }
+        }
+
+        function openFolder(folderName) {
+            loadFiles(currentPath + folderName + '/');
+        }
+
+        async function editFile(fileName) {
+            try {
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                const url = await fileRef.getDownloadURL();
+                const response = await fetch(url);
+                const content = await response.text();
+                
+                document.getElementById('fileManager').classList.add('d-none');
+                document.getElementById('editorSection').classList.remove('d-none');
+                document.getElementById('editorFileName').textContent = fileName;
+                
+                if (!editor) {
+                    editor = ace.edit("codeEditor");
+                    editor.setTheme("ace/theme/monokai");
+                    editor.session.setMode("ace/mode/html");
+                }
+                
+                editor.setValue(content, -1);
+                editor.session.setMode(getEditorMode(fileName));
+            } catch (error) {
+                console.error('Error editing file:', error);
+                alert('Gagal membuka file: ' + error.message);
+            }
+        }
+
+        function getEditorMode(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const modes = {
+                'html': 'ace/mode/html',
+                'css': 'ace/mode/css',
+                'js': 'ace/mode/javascript',
+                'json': 'ace/mode/json',
+                'txt': 'ace/mode/text'
+            };
+            return modes[ext] || 'ace/mode/text';
+        }
+
+        async function saveFile() {
+            const fileName = document.getElementById('editorFileName').textContent;
+            const content = editor.getValue();
+            
+            try {
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                await fileRef.putString(content, 'raw');
+                alert('File berhasil disimpan!');
+                loadFiles(currentPath);
+            } catch (error) {
+                console.error('Error saving file:', error);
+                alert('Gagal menyimpan file: ' + error.message);
+            }
+        }
+
+        function closeEditor() {
+            document.getElementById('editorSection').classList.add('d-none');
+            document.getElementById('fileManager').classList.remove('d-none');
+        }
+
+        function showAddFileModal() {
+            const name = prompt('Nama file (contoh: style.css):');
+            if (name) {
+                const defaultContent = name.endsWith('.html') ? 
+                    `<!DOCTYPE html>
+<html>
+<head>
+    <title>New Page</title>
+</head>
+<body>
+    <h1>New Page</h1>
+    <div class="pgxl-ads">
+        <p>Hosted on PGXL.WEB.ID</p>
+    </div>
+</body>
+</html>` : '';
+                
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${name}`);
+                fileRef.putString(defaultContent, 'raw').then(() => {
+                    loadFiles(currentPath);
+                });
+            }
+        }
+
+        function showUploadModal() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.onchange = async (e) => {
+                const files = e.target.files;
+                for (let file of files) {
+                    const fileRef = storage.ref(`projects/${currentProject}${currentPath}${file.name}`);
+                    await fileRef.put(file);
+                }
+                loadFiles(currentPath);
+            };
+            input.click();
+        }
+
+        async function deleteFile(fileName) {
+            if (confirm(`Hapus file ${fileName}?`)) {
+                try {
+                    const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                    await fileRef.delete();
+                    loadFiles(currentPath);
+                } catch (error) {
+                    console.error('Error deleting file:', error);
+                    alert('Gagal menghapus file');
                 }
             }
-        };
-        
-        // ==================== GAME FUNCTIONS ====================
-        function renderDashboard() {
-            if (!userData) return;
-            
-            const progress = calculateProgress();
-            
-            document.getElementById('main-content').innerHTML = `
-                <div class="dashboard">
-                    <h1>Selamat Datang, ${userData.displayName}!</h1>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value">${userData.level}</div>
-                            <div>Level</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${userData.totalXP}</div>
-                            <div>Total XP</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${progress.completed}</div>
-                            <div>Tahap Selesai</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${progress.percentage}%</div>
-                            <div>Progress</div>
-                        </div>
-                    </div>
-                    
-                    <h2>📚 Level & Tahap</h2>
-                    <div class="levels-grid">
-                        ${renderLevels()}
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('nav-controls').innerHTML = `
-                <div class="user-info">
-                    <img src="${userData.photoURL}" alt="Avatar" class="avatar">
-                    <span>${userData.displayName}</span>
-                </div>
-                <button class="btn btn-danger" onclick="logout()">Logout</button>
-            `;
         }
-        
-        function renderLevels() {
-            let html = '';
-            for (let level = 1; level <= 5; level++) {
-                html += `
-                    <div class="level-card" onclick="openLevel(${level})">
-                        <div class="level-number">Level ${level}</div>
-                        <div class="level-title">${gameData.levelTitles[level]}</div>
-                        <div class="level-progress">
-                            ${renderStageDots(level)}
-                        </div>
-                    </div>
-                `;
-            }
-            return html;
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
-        
-        function renderStageDots(level) {
-            let dots = '';
-            for (let i = 1; i <= 10; i++) {
-                const stageKey = `${level}_${i}`;
-                const isCompleted = userData.completedStages && userData.completedStages[stageKey];
-                dots += `<div class="progress-dot ${isCompleted ? 'completed' : ''}"></div>`;
-            }
-            return dots;
+
+        // Auth Functions
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider);
         }
-        
-        function openLevel(level) {
-            openStage(`${level}_1`);
+
+        function signInWithFacebook() {
+            const provider = new firebase.auth.FacebookAuthProvider();
+            auth.signInWithPopup(provider);
         }
-        
-        function openStage(stageKey) {
-            const stageData = gameData.stages[stageKey];
-            // ... [sama seperti sebelumnya]
+
+        function logout() {
+            auth.signOut();
         }
-        
-        function calculateProgress() {
-            if (!userData || !userData.completedStages) {
-                return { completed: 0, percentage: 0 };
-            }
-            const completed = Object.keys(userData.completedStages).length;
-            const percentage = Math.round((completed / 50) * 100);
-            return { completed, percentage };
-        }
-        
-        function closeModal() {
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('stage-modal').style.display = 'none';
-            document.getElementById('certificate-modal').style.display = 'none';
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', checkAuth);
-        
-        // Expose functions to global scope
-        window.loginWithName = loginWithName;
-        window.logout = logout;
-        window.openLevel = openLevel;
-        window.openStage = openStage;
-        window.closeModal = closeModal;
     </script>
 </body>
 </html>
