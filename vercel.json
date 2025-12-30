@@ -1,16 +1,30 @@
 {
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/certificate", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/:user/:project",
+      "destination": "/api/proxy.js?user=:user&project=:project"
+    },
+    {
+      "source": "/:user/:project/:file*",
+      "destination": "/api/proxy.js?user=:user&project=:project&file=:file"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self' https:; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:;"
-        }
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Authorization" }
       ]
     }
   ]
