@@ -4,110 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGXL | Financial Mastery Game</title>
-    
-    <!-- FIREBASE SDK MODULAR (FIXED) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            GoogleAuthProvider, 
-            signInWithRedirect,
-            getRedirectResult,
-            signOut,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getFirestore,
-            doc,
-            getDoc,
-            setDoc,
-            updateDoc,
-            collection,
-            query,
-            orderBy,
-            limit,
-            getDocs
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        
-        // ==================== CONFIGURASI ====================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
-            authDomain: "pgxl-4567a.firebaseapp.com",
-            projectId: "pgxl-4567a",
-            storageBucket: "pgxl-4567a.firebasestorage.app",
-            messagingSenderId: "545920930826",
-            appId: "1:545920930826:web:18458fd3382a83f17abbf3",
-            measurementId: "G-1Y4E635M4R"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getFirestore();
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        
-        // ==================== AUTH FUNCTIONS ====================
-        window.googleLogin = async function() {
-            try {
-                const provider = new GoogleAuthProvider();
-                await signInWithRedirect(auth, provider);
-            } catch (error) {
-                console.error("Login error:", error);
-                alert("Login gagal: " + error.message);
-            }
-        };
-        
-        window.logout = async function() {
-            if (confirm("Yakin ingin logout?")) {
-                try {
-                    await signOut(auth);
-                } catch (error) {
-                    console.error("Logout error:", error);
-                }
-            }
-        };
-        
-        // Handle redirect result
-        getRedirectResult(auth).then((result) => {
-            if (result) {
-                console.log("Login via redirect berhasil");
-                window.location.reload();
-            }
-        }).catch((error) => {
-            console.error("Redirect error:", error);
-        });
-        
-        // Listen for auth state changes
-        onAuthStateChanged(auth, async (user) => {
-            window.currentUser = user;
-            if (user) {
-                await window.loadUserData(user);
-                window.renderDashboard();
-            } else {
-                window.renderLandingPage();
-            }
-        });
-    </script>
-    
-    <!-- HTML2CANVAS -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
     <style>
-        /* [SAMA PERSIS DENGAN CSS DI ATAS] */
-        /* Copy semua CSS dari kode sebelumnya */
+        /* [CSS sama seperti sebelumnya] */
     </style>
 </head>
 <body>
-    <!-- [SAMA PERSIS DENGAN HTML DI ATAS] -->
-    <!-- Copy semua HTML dari kode sebelumnya -->
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">PGXL</span>
+                <span>Financial Mastery</span>
+            </div>
+            <div class="nav-controls" id="nav-controls">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </header>
+    
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <div class="container" id="main-content">
+            <!-- Content will be loaded dynamically -->
+        </div>
+    </main>
+    
+    <!-- MODALS -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Masuk ke PGXL</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="player-name" placeholder="Masukkan nama Anda" style="width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                <button class="btn btn-primary" onclick="loginWithName()" style="width: 100%; padding: 12px;">
+                    🎮 Mulai Game
+                </button>
+                <p style="margin-top: 16px; color: var(--text-secondary); text-align: center;">
+                    Progress akan disimpan di browser Anda
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- [Stage Modal dan Certificate Modal sama seperti sebelumnya] -->
     
     <script>
-        // ==================== GLOBAL VARIABLES ====================
+        // ==================== SIMPLE AUTH SYSTEM ====================
         let currentUser = null;
         let userData = null;
-        let currentStageKey = null;
-        let selectedAnswer = null;
+        
+        function checkAuth() {
+            const savedUser = localStorage.getItem('pgxl_user');
+            if (savedUser) {
+                userData = JSON.parse(savedUser);
+                currentUser = { displayName: userData.displayName };
+                renderDashboard();
+            } else {
+                showLoginModal();
+            }
+        }
+        
+        function showLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+            document.getElementById('main-content').innerHTML = `
+                <div class="landing">
+                    <h1>🎮 PGXL Financial Mastery</h1>
+                    <p class="landing-subtitle">Kuasa keuangan dalam 50 tahap</p>
+                    <button class="btn btn-primary" onclick="document.getElementById('login-modal').style.display='flex'">
+                        Mulai Game
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('nav-controls').innerHTML = `
+                <button class="btn" onclick="document.getElementById('login-modal').style.display='flex'">
+                    Login
+                </button>
+            `;
+        }
+        
+        function loginWithName() {
+            const nameInput = document.getElementById('player-name');
+            const playerName = nameInput.value.trim();
+            
+            if (!playerName) {
+                alert("Masukkan nama terlebih dahulu!");
+                return;
+            }
+            
+            // Create user data
+            userData = {
+                uid: 'user_' + Date.now(),
+                displayName: playerName,
+                photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(playerName)}&background=random`,
+                createdAt: new Date().toISOString(),
+                totalXP: 0,
+                level: 1,
+                completedStages: {},
+                currentStage: "1_1"
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('pgxl_user', JSON.stringify(userData));
+            currentUser = { displayName: playerName };
+            
+            closeModal();
+            renderDashboard();
+        }
+        
+        function logout() {
+            if (confirm("Yakin ingin logout? Progress akan tetap tersimpan.")) {
+                localStorage.removeItem('pgxl_user');
+                currentUser = null;
+                userData = null;
+                showLoginModal();
+            }
+        }
+        
+        function saveProgress() {
+            if (userData) {
+                localStorage.setItem('pgxl_user', JSON.stringify(userData));
+            }
+        }
         
         // ==================== GAME DATA ====================
         const gameData = {
@@ -124,7 +144,6 @@
             },
             
             stages: {
-                // LEVEL 1
                 "1_1": {
                     title: "Pengenalan Pengelolaan Uang",
                     content: `<h3>💰 Apa itu Pengelolaan Uang?</h3>
@@ -140,11 +159,11 @@
                     clue: "Anda tidak bisa mengelola apa yang tidak Anda ukur.",
                     xpReward: 10
                 },
-                // ... tambahkan stage lainnya
+                // ... tambahkan semua 50 stage
                 "5_10": {
                     title: "Ujian Akhir Financial Mastery",
-                    content: `<h3>🎓 FINAL TEST: Financial Mastery</h3>
-                    <p>Selamat! Anda telah sampai di tahap terakhir dari 50 tahap.</p>`,
+                    content: `<h3>🎓 FINAL TEST</h3>
+                    <p>Selamat! Anda telah sampai di tahap terakhir.</p>`,
                     question: "Apa strategi terbaik untuk mencapai kebebasan finansial?",
                     options: [
                         "Menabung saja tanpa investasi",
@@ -159,116 +178,38 @@
             }
         };
         
-        // ==================== FIRESTORE OPERATIONS ====================
-        window.loadUserData = async function(user) {
-            try {
-                const userRef = doc(window.firebaseDb, 'users', user.uid);
-                const userDoc = await getDoc(userRef);
-                
-                if (!userDoc.exists()) {
-                    // Create new user data
-                    userData = {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName || user.email,
-                        photoURL: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`,
-                        createdAt: new Date().toISOString(),
-                        totalXP: 0,
-                        level: 1,
-                        completedStages: {},
-                        currentStage: "1_1",
-                        lastLogin: new Date().toISOString()
-                    };
-                    
-                    await setDoc(userRef, userData);
-                } else {
-                    userData = userDoc.data();
-                    // Update last login
-                    await updateDoc(userRef, {
-                        lastLogin: new Date().toISOString()
-                    });
-                }
-                
-                currentUser = user;
-                
-            } catch (error) {
-                console.error("Error loading user data:", error);
-            }
-        };
-        
-        window.saveProgress = async function(stageKey, isCorrect) {
-            if (!currentUser || !userData) return 0;
-            
-            try {
-                const userRef = doc(window.firebaseDb, 'users', currentUser.uid);
-                const stageData = gameData.stages[stageKey];
-                
-                // Update completed stages
-                const completedStages = { ...userData.completedStages };
-                completedStages[stageKey] = {
-                    completed: true,
-                    isCorrect: isCorrect,
-                    completedAt: new Date().toISOString(),
-                    xpEarned: isCorrect ? stageData.xpReward : 0
-                };
-                
-                // Calculate new XP and level
-                let newXP = userData.totalXP;
-                if (isCorrect) {
-                    newXP += stageData.xpReward;
-                }
-                
-                const newLevel = Math.floor(newXP / 100) + 1;
-                
-                // Update user data
-                const updates = {
-                    totalXP: newXP,
-                    level: newLevel,
-                    completedStages: completedStages,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                await updateDoc(userRef, updates);
-                
-                // Update local data
-                userData = { ...userData, ...updates };
-                
-                return isCorrect ? stageData.xpReward : 0;
-                
-            } catch (error) {
-                console.error("Error saving progress:", error);
-                return 0;
-            }
-        };
-        
-        // ==================== UI FUNCTIONS ====================
-        window.renderLandingPage = function() {
-            document.getElementById('main-content').innerHTML = `
-                <div class="landing">
-                    <h1>🎮 PGXL Financial Mastery</h1>
-                    <p class="landing-subtitle">
-                        Kuasai keuangan Anda dalam 50 tahap interaktif.
-                    </p>
-                    
-                    <button class="btn btn-primary" onclick="googleLogin()" style="padding: 12px 24px; font-size: 16px;">
-                        🔐 Login dengan Google
-                    </button>
-                </div>
-            `;
-            
-            document.getElementById('nav-controls').innerHTML = `
-                <button class="btn" onclick="googleLogin()">Login</button>
-            `;
-        };
-        
-        window.renderDashboard = function() {
+        // ==================== GAME FUNCTIONS ====================
+        function renderDashboard() {
             if (!userData) return;
+            
+            const progress = calculateProgress();
             
             document.getElementById('main-content').innerHTML = `
                 <div class="dashboard">
                     <h1>Selamat Datang, ${userData.displayName}!</h1>
-                    <p>XP: ${userData.totalXP} | Level: ${userData.level}</p>
-                    <button onclick="openStage('1_1')">Mulai Game</button>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${userData.level}</div>
+                            <div>Level</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${userData.totalXP}</div>
+                            <div>Total XP</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${progress.completed}</div>
+                            <div>Tahap Selesai</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${progress.percentage}%</div>
+                            <div>Progress</div>
+                        </div>
+                    </div>
+                    
+                    <h2>📚 Level & Tahap</h2>
+                    <div class="levels-grid">
+                        ${renderLevels()}
+                    </div>
                 </div>
             `;
             
@@ -279,125 +220,67 @@
                 </div>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
             `;
-        };
+        }
         
-        window.openStage = function(stageKey) {
+        function renderLevels() {
+            let html = '';
+            for (let level = 1; level <= 5; level++) {
+                html += `
+                    <div class="level-card" onclick="openLevel(${level})">
+                        <div class="level-number">Level ${level}</div>
+                        <div class="level-title">${gameData.levelTitles[level]}</div>
+                        <div class="level-progress">
+                            ${renderStageDots(level)}
+                        </div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
+        function renderStageDots(level) {
+            let dots = '';
+            for (let i = 1; i <= 10; i++) {
+                const stageKey = `${level}_${i}`;
+                const isCompleted = userData.completedStages && userData.completedStages[stageKey];
+                dots += `<div class="progress-dot ${isCompleted ? 'completed' : ''}"></div>`;
+            }
+            return dots;
+        }
+        
+        function openLevel(level) {
+            openStage(`${level}_1`);
+        }
+        
+        function openStage(stageKey) {
             const stageData = gameData.stages[stageKey];
-            if (!stageData) {
-                alert("Stage belum tersedia!");
-                return;
+            // ... [sama seperti sebelumnya]
+        }
+        
+        function calculateProgress() {
+            if (!userData || !userData.completedStages) {
+                return { completed: 0, percentage: 0 };
             }
-            
-            currentStageKey = stageKey;
-            selectedAnswer = null;
-            
-            document.getElementById('modal-title').textContent = stageData.title;
-            
-            document.getElementById('modal-body').innerHTML = `
-                <div class="quiz-content">
-                    ${stageData.content}
-                    
-                    <div class="question">${stageData.question}</div>
-                    
-                    <div class="options" id="options-container">
-                        ${stageData.options.map((option, index) => `
-                            <div class="option" onclick="selectAnswer(${index})" id="option-${index}">
-                                <span class="option-label">${String.fromCharCode(65 + index)}</span>
-                                ${option}
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="clue-box">
-                        <div class="clue-title">💡 Clue</div>
-                        <p>${stageData.clue}</p>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()" disabled>
-                    Submit Jawaban
-                </button>
-                
-                <div id="result-container"></div>
-            `;
-            
-            document.getElementById('stage-modal').style.display = 'flex';
-        };
+            const completed = Object.keys(userData.completedStages).length;
+            const percentage = Math.round((completed / 50) * 100);
+            return { completed, percentage };
+        }
         
-        window.selectAnswer = function(index) {
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            document.getElementById(`option-${index}`).classList.add('selected');
-            selectedAnswer = index;
-            document.getElementById('submit-btn').disabled = false;
-        };
-        
-        window.submitAnswer = async function() {
-            if (selectedAnswer === null || !currentStageKey) return;
-            
-            const stageData = gameData.stages[currentStageKey];
-            const isCorrect = selectedAnswer === stageData.correctAnswer;
-            
-            // Show result
-            document.querySelectorAll('.option').forEach((opt, index) => {
-                if (index === stageData.correctAnswer) {
-                    opt.classList.add('correct');
-                } else if (index === selectedAnswer && !isCorrect) {
-                    opt.classList.add('incorrect');
-                }
-                opt.style.pointerEvents = 'none';
-            });
-            
-            document.getElementById('submit-btn').disabled = true;
-            
-            // Save progress
-            const xpEarned = await window.saveProgress(currentStageKey, isCorrect);
-            
-            // Show result message
-            const resultContainer = document.getElementById('result-container');
-            resultContainer.innerHTML = '';
-            
-            const resultDiv = document.createElement('div');
-            resultDiv.className = `result ${isCorrect ? 'result-success' : 'result-fail'}`;
-            
-            if (isCorrect) {
-                resultDiv.innerHTML = `
-                    <div class="result-title">✅ Jawaban Benar!</div>
-                    <p class="xp-reward">+${xpEarned} XP</p>
-                    <button class="btn btn-primary" onclick="closeModal()">
-                        Tutup
-                    </button>
-                `;
-            } else {
-                resultDiv.innerHTML = `
-                    <div class="result-title">❌ Jawaban Salah</div>
-                    <p>Coba lagi lain kali!</p>
-                    <button class="btn" onclick="closeModal()">
-                        Tutup
-                    </button>
-                `;
-            }
-            
-            resultContainer.appendChild(resultDiv);
-        };
-        
-        window.closeModal = function() {
+        function closeModal() {
+            document.getElementById('login-modal').style.display = 'none';
             document.getElementById('stage-modal').style.display = 'none';
             document.getElementById('certificate-modal').style.display = 'none';
-            window.renderDashboard();
-        };
-        
-        // Expose functions
-        window.openLevel = function(level) {
-            window.openStage(`${level}_1`);
-        };
-        
-        // Initial render
-        if (!currentUser) {
-            window.renderLandingPage();
         }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        
+        // Expose functions to global scope
+        window.loginWithName = loginWithName;
+        window.logout = logout;
+        window.openLevel = openLevel;
+        window.openStage = openStage;
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
