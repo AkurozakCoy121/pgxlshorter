@@ -887,76 +887,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     };
     
-    window.editFile = async function(fileName) {
-        try {
-            const doc = await db.collection('projects').doc(currentProject).get();
-            const project = doc.data();
-            const filePath = currentPath + fileName;
-            const fileData = project.files[filePath];
-            
-            if (!fileData) {
-                alert('File tidak ditemukan!');
-                return;
-            }
-            
-            document.getElementById('fileManager').classList.add('d-none');
-            document.getElementById('editorSection').classList.remove('d-none');
-            document.getElementById('editorFileName').textContent = fileName;
-            
-            // Initialize Ace Editor
-            if (!editor) {
-                editor = ace.edit("codeEditor");
-                editor.setTheme("ace/theme/chrome");
-                editor.setOptions({
-                    fontSize: "14px",
-                    showPrintMargin: false,
-                    wrap: false,
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    enableSnippets: true,
-                    showLineNumbers: true,
-                    tabSize: 2
-                });
-            }
-            
-            // Set mode based on file extension
-            const mode = getEditorMode(fileName);
-            editor.session.setMode(mode);
-            
-            // Set content
-            editor.setValue(fileData.content || '', -1);
-            originalContent = fileData.content || '';
-            editor.focus();
-            editor.clearSelection();
-            
-        } catch (error) {
-            console.error('Error editing file:', error);
-            alert('Gagal membuka file: ' + error.message);
-        }
-    };
-    
-    function getEditorMode(filename) {
-        const ext = filename.split('.').pop().toLowerCase();
-        const modes = {
-            'html': 'ace/mode/html',
-            'htm': 'ace/mode/html',
-            'css': 'ace/mode/css',
-            'js': 'ace/mode/javascript',
-            'json': 'ace/mode/json',
-            'txt': 'ace/mode/text',
-            'md': 'ace/mode/markdown',
-            'php': 'ace/mode/php',
-            'py': 'ace/mode/python',
-            'java': 'ace/mode/java',
-            'xml': 'ace/mode/xml',
-            'sql': 'ace/mode/sql',
-            'sh': 'ace/mode/sh',
-            'yaml': 'ace/mode/yaml',
-            'yml': 'ace/mode/yaml'
-        };
-        return modes[ext] || 'ace/mode/text';
-    }
-    
+    // Pastikan semua fungsi sudah ditutup dengan benar
     window.saveFile = async function() {
         const fileName = document.getElementById('editorFileName').textContent;
         const content = editor.getValue();
@@ -1043,8 +974,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         </div>
     </div>
     
-    <script src="script.js">
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>`;
         } else if (ext === 'css') {
@@ -1217,6 +1147,7 @@ if (document.readyState === 'loading') {
         // Initialize Ace Editor options
         ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/');
     });
-    </script>
+    // End of script
+</script>
 </body>
 </html>
