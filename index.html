@@ -358,12 +358,12 @@
     <script>
         // 🔥 FIREBASE CONFIG (Sesuaikan dengan project Firebase kamu)
         const firebaseConfig = {
-            apiKey: "AIzaSyCjKsJ0FZv1U0h-zBOU_XN0xEYk1nVbp6E",  // Ganti dengan API Key kamu
+            apiKey: "AIzaSyCjKsJ0FZv1U0h-zBOU_XN0xEYk1nVbp6E",
             authDomain: "pgxl-web-id.firebaseapp.com",
             projectId: "pgxl-web-id",
             storageBucket: "pgxl-web-id.appspot.com",
-            messagingSenderId: "545920930826",  // Ganti dengan sender ID kamu
-            appId: "1:545920930826:web:xxxxxxxxxxxxxxxx"  // Ganti dengan App ID kamu
+            messagingSenderId: "545920930826",
+            appId: "1:545920930826:web:xxxxxxxxxxxxxxxx"
         };
 
         // Initialize Firebase
@@ -372,13 +372,13 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        // Google OAuth Provider dengan Client ID kamu
+        // Google OAuth Provider
         const googleProvider = new firebase.auth.GoogleAuthProvider();
         googleProvider.setCustomParameters({
             client_id: '545920930826-tbk59eu6j9jh9dobt9v8km1bhcf13il6.apps.googleusercontent.com'
         });
 
-        // GitHub OAuth Provider (Ganti Facebook dengan GitHub)
+        // GitHub OAuth Provider
         const githubProvider = new firebase.auth.GithubAuthProvider();
         githubProvider.addScope('repo');
         githubProvider.setCustomParameters({
@@ -390,6 +390,347 @@
         let currentProject = null;
         let currentPath = '/';
         let editor = null;
+
+        // 🔥 DEFINE FUNCTIONS DI GLOBAL SCOPE
+        window.showAuthModal = function() {
+            new bootstrap.Modal(document.getElementById('authModal')).show();
+        };
+
+        window.signInWithGoogle = function() {
+            auth.signInWithPopup(googleProvider)
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                })
+                .catch(error => {
+                    console.error('Google sign in error:', error);
+                    alert('Login dengan Google gagal: ' + error.message);
+                });
+        };
+
+        window.signInWithGithub = function() {
+            auth.signInWithPopup(githubProvider)
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                })
+                .catch(error => {
+                    console.error('GitHub sign in error:', error);
+                    alert('Login dengan GitHub gagal: ' + error.message);
+                });
+        };
+
+        window.logout = function() {
+            if (confirm('Yakin ingin logout?')) {
+                auth.signOut();
+            }
+        };
+
+        window.showAddProjectModal = function() {
+            document.getElementById('projectName').value = '';
+            document.getElementById('projectDescription').value = '';
+            updateDomainPreview();
+            new bootstrap.Modal(document.getElementById('addProjectModal')).show();
+        };
+
+        window.updateDomainPreview = function() {
+            const name = document.getElementById('projectName').value.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || 'myproject';
+            document.getElementById('domainPreview').textContent = `${name}.pgxl.web.id`;
+        };
+
+        window.createProject = async function() {
+            const name = document.getElementById('projectName').value;
+            const description = document.getElementById('projectDescription').value;
+            
+            if (!name) {
+                alert('Nama project harus diisi!');
+                return;
+            }
+
+            const projectId = name.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            // Check if project already exists
+            const existingProject = await db.collection('projects').doc(projectId).get();
+            if (existingProject.exists) {
+                alert('Nama project sudah digunakan. Coba nama lain.');
+                return;
+            }
+
+            const projectData = {
+                name: name,
+                description: description,
+                domain: `${projectId}.pgxl.web.id`,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                owner: currentUser.uid,
+                ownerEmail: currentUser.email,
+                files: []
+            };
+
+            try {
+                await db.collection('projects').doc(projectId).set(projectData);
+                
+                // Create default index.html
+                const defaultHTML = `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${name} - Hosted on PGXL</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .pgxl-ads { background: #f8f9fa; border: 2px solid #667eea; padding: 15px; text-align: center; margin: 30px 0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to ${name}</h1>
+    <p>Your website is hosted on PGXL.WEB.ID</p>
+    
+    <div class="pgxl-ads">
+        <h3>🚀 Powered by PGXL.WEB.ID</h3>
+        <p>Free static hosting with custom subdomain</p>
+        <a href="https://pgxl.web.id" target="_blank">Create your own free website</a>
+    </div>
+    
+    <p>Edit this file in your dashboard to customize your website.</p>
+</body>
+</html>`;
+
+                await storage.ref(`projects/${projectId}/index.html`).putString(defaultHTML, 'raw');
+                
+                bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
+                alert('Website berhasil dibuat!');
+                loadProjects();
+                openProject(projectId);
+            } catch (error) {
+                console.error('Error creating project:', error);
+                alert('Gagal membuat website: ' + error.message);
+            }
+        };
+
+        // Load projects function
+        async function loadProjects() {
+            try {
+                const snapshot = await db.collection('projects')
+                    .where('owner', '==', currentUser.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const projectList = document.getElementById('projectList');
+                projectList.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const project = doc.data();
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">${project.name}</div>
+                                <small class="text-muted">${project.domain}</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openProject('${doc.id}')">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </div>
+                    `;
+                    projectList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading projects:', error);
+            }
+        }
+
+        window.openProject = function(projectId) {
+            currentProject = projectId;
+            document.getElementById('welcomeDashboard').classList.add('d-none');
+            document.getElementById('fileManager').classList.remove('d-none');
+            document.getElementById('editorSection').classList.add('d-none');
+            
+            db.collection('projects').doc(projectId).get().then(doc => {
+                const project = doc.data();
+                document.getElementById('currentProjectName').textContent = project.name;
+                document.getElementById('currentProjectUrl').innerHTML = 
+                    ` → <a href="https://${project.domain}" target="_blank" class="text-decoration-none">${project.domain} <i class="fas fa-external-link-alt fa-xs"></i></a>`;
+            });
+            
+            loadFiles('/');
+        };
+
+        window.openFolder = function(folderName) {
+            loadFiles(currentPath + folderName);
+        };
+
+        window.editFile = async function(fileName) {
+            try {
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                const url = await fileRef.getDownloadURL();
+                const response = await fetch(url);
+                const content = await response.text();
+                
+                document.getElementById('fileManager').classList.add('d-none');
+                document.getElementById('editorSection').classList.remove('d-none');
+                document.getElementById('editorFileName').textContent = fileName;
+                
+                if (!editor) {
+                    editor = ace.edit("codeEditor");
+                    editor.setTheme("ace/theme/chrome");
+                    editor.session.setMode("ace/mode/html");
+                }
+                
+                editor.setValue(content, -1);
+                editor.session.setMode(getEditorMode(fileName));
+            } catch (error) {
+                console.error('Error editing file:', error);
+                alert('Gagal membuka file: ' + error.message);
+            }
+        };
+
+        window.saveFile = async function() {
+            const fileName = document.getElementById('editorFileName').textContent;
+            const content = editor.getValue();
+            
+            try {
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                await fileRef.putString(content, 'raw');
+                alert('✅ File berhasil disimpan!');
+                loadFiles(currentPath);
+            } catch (error) {
+                console.error('Error saving file:', error);
+                alert('❌ Gagal menyimpan file: ' + error.message);
+            }
+        };
+
+        window.closeEditor = function() {
+            document.getElementById('editorSection').classList.add('d-none');
+            document.getElementById('fileManager').classList.remove('d-none');
+        };
+
+        window.showAddFileModal = function() {
+            const name = prompt('Nama file baru:');
+            if (name) {
+                const defaultContent = name.endsWith('.html') ? 
+                    `<!DOCTYPE html><html><body><h1>New Page</h1></body></html>` : '';
+                
+                const fileRef = storage.ref(`projects/${currentProject}${currentPath}${name}`);
+                fileRef.putString(defaultContent, 'raw').then(() => {
+                    loadFiles(currentPath);
+                });
+            }
+        };
+
+        window.showUploadModal = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.onchange = async (e) => {
+                const files = e.target.files;
+                for (let file of files) {
+                    const fileRef = storage.ref(`projects/${currentProject}${currentPath}${file.name}`);
+                    await fileRef.put(file);
+                }
+                loadFiles(currentPath);
+            };
+            input.click();
+        };
+
+        window.deleteFile = async function(fileName) {
+            if (confirm(`Hapus file "${fileName}"?`)) {
+                try {
+                    const fileRef = storage.ref(`projects/${currentProject}${currentPath}${fileName}`);
+                    await fileRef.delete();
+                    loadFiles(currentPath);
+                    alert('✅ File berhasil dihapus');
+                } catch (error) {
+                    console.error('Error deleting file:', error);
+                    alert('❌ Gagal menghapus file');
+                }
+            }
+        };
+
+        // Helper functions
+        async function loadFiles(path) {
+            currentPath = path;
+            
+            const filesTable = document.getElementById('filesTable');
+            filesTable.innerHTML = '<tr><td colspan="5" class="text-center">Loading...</td></tr>';
+            
+            try {
+                const listRef = storage.ref(`projects/${currentProject}${path}`);
+                const result = await listRef.listAll();
+                
+                filesTable.innerHTML = '';
+                
+                result.prefixes.forEach(folderRef => {
+                    const name = folderRef.name;
+                    const tr = document.createElement('tr');
+                    tr.className = 'file-item';
+                    tr.innerHTML = `
+                        <td><i class="fas fa-folder text-warning"></i></td>
+                        <td><strong>${name}</strong></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openFolder('${name}/')">
+                                Buka
+                            </button>
+                        </td>
+                    `;
+                    filesTable.appendChild(tr);
+                });
+                
+                for (const itemRef of result.items) {
+                    const metadata = await itemRef.getMetadata();
+                    const name = itemRef.name;
+                    const size = formatBytes(metadata.size);
+                    const updated = new Date(metadata.updated).toLocaleString();
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'file-item';
+                    tr.innerHTML = `
+                        <td><i class="fas fa-file text-primary"></i></td>
+                        <td>${name}</td>
+                        <td>${size}</td>
+                        <td>${updated}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success me-1" onclick="editFile('${name}')">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFile('${name}')">
+                                Hapus
+                            </button>
+                        </td>
+                    `;
+                    filesTable.appendChild(tr);
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+                filesTable.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading files</td></tr>';
+            }
+        }
+
+        function getEditorMode(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const modes = {
+                'html': 'ace/mode/html',
+                'css': 'ace/mode/css',
+                'js': 'ace/mode/javascript',
+                'json': 'ace/mode/json',
+                'txt': 'ace/mode/text'
+            };
+            return modes[ext] || 'ace/mode/text';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
 
         // DOM Ready
         document.addEventListener('DOMContentLoaded', function() {
@@ -407,7 +748,6 @@
             document.getElementById('projectName').addEventListener('input', updateDomainPreview);
         });
 
-        // Functions
         function showWelcome() {
             document.getElementById('welcomeSection').classList.remove('d-none');
             document.getElementById('dashboard').classList.add('d-none');
@@ -432,6 +772,8 @@
             `;
             loadProjects();
         }
+    }); // ← TAMBAHKAN INI
+}); // ← DAN INI
 
         function showAuthModal() {
             new bootstrap.Modal(document.getElementById('authModal')).show();
