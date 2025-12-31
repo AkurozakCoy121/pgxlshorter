@@ -5,785 +5,187 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGXL - Modern Web Platform</title>
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        /* ===== MODERN WHITE-BLUE THEME ===== */
+        /* MODERN WHITE-BLUE THEME */
         :root {
-            --primary-blue: #1a73e8;
+            --primary: #1a73e8;
             --primary-dark: #0d47a1;
-            --primary-light: #4285f4;
-            --secondary-blue: #e8f0fe;
-            --accent-blue: #00bcd4;
+            --accent: #00bcd4;
             --white: #ffffff;
-            --light-gray: #f8f9fa;
-            --medium-gray: #dadce0;
-            --dark-gray: #5f6368;
-            --text-dark: #202124;
-            --success: #34a853;
-            --warning: #fbbc04;
-            --danger: #ea4335;
-            
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
-            --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --light: #f8f9fa;
+            --dark: #202124;
+            --gray: #5f6368;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* ===== TYPOGRAPHY ===== */
-        h1, h2, h3, h4 {
-            font-weight: 600;
-            line-height: 1.2;
-            color: var(--primary-dark);
-        }
-        
-        h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        p {
-            color: var(--dark-gray);
-            margin-bottom: 1rem;
-        }
-        
-        /* ===== HEADER ===== */
-        header {
-            background: var(--white);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            text-decoration: none;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 1.25rem;
-        }
-        
-        /* ===== BUTTONS ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.75rem;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary-blue);
-            color: var(--primary-blue);
-        }
-        
-        .btn-outline:hover {
-            background: var(--primary-blue);
-            color: var(--white);
-        }
-        
-        .btn-ghost {
-            background: transparent;
-            color: var(--primary-blue);
-            box-shadow: none;
-            padding: 0.5rem 1rem;
-        }
-        
-        .btn-ghost:hover {
-            background: var(--secondary-blue);
-            transform: none;
-        }
-        
-        /* ===== HERO SECTION ===== */
-        .hero {
-            padding: 8rem 0 6rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, rgba(26, 115, 232, 0.1) 0%, rgba(0, 188, 212, 0.05) 100%);
-            border-radius: 50%;
-            z-index: -1;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--dark-gray);
-            max-width: 600px;
-            margin: 1.5rem auto 2.5rem;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-        
-        /* ===== FEATURES ===== */
-        .features {
-            padding: 6rem 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .section-subtitle {
-            text-align: center;
-            color: var(--dark-gray);
-            max-width: 600px;
-            margin: 0 auto 3rem;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .feature-card {
-            background: var(--white);
-            padding: 2.5rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
-            transition: var(--transition);
-            border: 1px solid var(--medium-gray);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-blue);
-        }
-        
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: var(--white);
-            font-size: 1.5rem;
-        }
-        
-        /* ===== AUTH FORMS ===== */
-        .auth-section {
-            padding: 6rem 0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
         
-        .auth-container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 3rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--medium-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background: var(--light-gray);
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            background: var(--white);
-            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
-        }
-        
-        .auth-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--dark-gray);
-        }
-        
-        .auth-link {
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .auth-link:hover {
-            text-decoration: underline;
-        }
-        
-        /* ===== DASHBOARD ===== */
-        .dashboard {
-            padding: 3rem 0;
-            min-height: 60vh;
-        }
-        
-        .dashboard-header {
-            margin-bottom: 3rem;
-        }
-        
-        .welcome-text {
-            color: var(--dark-gray);
-            margin-top: 0.5rem;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .stat-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            color: var(--dark-gray);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        /* ===== NOTIFICATION ===== */
-        .notification {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius);
-            color: var(--white);
-            z-index: 2000;
-            display: none;
-            max-width: 300px;
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease;
-        }
-        
-        .notification.show {
-            display: block;
-        }
-        
-        .notification.success {
-            background: var(--success);
-        }
-        
-        .notification.error {
-            background: var(--danger);
-        }
-        
-        .notification.warning {
-            background: var(--warning);
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+        /* Header */
+        header { background: var(--white); padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-dark); }
         
-        /* ===== FOOTER ===== */
-        footer {
-            background: var(--primary-dark);
-            color: var(--white);
-            padding: 4rem 0 2rem;
-            margin-top: 4rem;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-        
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-text {
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 1rem;
-        }
+        /* Hero */
+        .hero { text-align: center; padding: 6rem 20px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
         
-        .footer-heading {
-            font-size: 1.125rem;
-            margin-bottom: 1.5rem;
-            color: var(--white);
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
+        /* Buttons */
+        .btn { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; border: none; cursor: pointer; font-weight: 600; }
+        .btn:hover { background: var(--primary-dark); }
         
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-        }
+        /* Features */
+        .features { padding: 4rem 20px; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
-        .footer-links a:hover {
-            color: var(--white);
-            padding-left: 0.5rem;
-        }
+        /* Auth */
+        .auth-container { max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 1rem; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.875rem;
-        }
+        /* Footer */
+        footer { background: var(--dark); color: white; padding: 3rem 20px; margin-top: 4rem; }
         
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            h2 {
-                font-size: 2rem;
-            }
-            
-            .hero {
-                padding: 6rem 0 4rem;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem 0;
-            }
-            
-            .auth-container {
-                padding: 2rem 1.5rem;
-            }
-            
-            .features, .auth-section {
-                padding: 4rem 0;
-            }
+            .hero h1 { font-size: 2.2rem; }
         }
-        
-        /* ===== UTILITY CLASSES ===== */
-        .text-center { text-align: center; }
-        .mt-1 { margin-top: 0.5rem; }
-        .mt-2 { margin-top: 1rem; }
-        .mt-3 { margin-top: 1.5rem; }
-        .mt-4 { margin-top: 2rem; }
-        .mb-1 { margin-bottom: 0.5rem; }
-        .mb-2 { margin-bottom: 1rem; }
-        .mb-3 { margin-bottom: 1.5rem; }
-        .mb-4 { margin-bottom: 2rem; }
     </style>
 </head>
 <body>
-    <!-- NOTIFICATION -->
-    <div id="notification" class="notification"></div>
-
-    <!-- HEADER -->
+    <!-- Header -->
     <header>
-        <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <span>PGXL</span>
-                </a>
-                <div id="navButtons"></div>
-            </nav>
+        <div class="navbar">
+            <div class="logo">🚀 PGXL</div>
+            <div id="navButtons">
+                <!-- Buttons akan diisi JS -->
+            </div>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
+    <!-- Main Content -->
     <main id="mainContent">
-        <!-- Content will be injected by JavaScript -->
+        <!-- Content akan diisi JS -->
     </main>
 
-    <!-- FOOTER -->
+    <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div>
-                    <div class="footer-logo">
-                        <div class="logo-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <span>PGXL</span>
-                    </div>
-                    <p class="footer-text">
-                        Premium Growth Expansion Lab<br>
-                        Modern web platform with Firebase backend
-                    </p>
-                </div>
-                
-                <div>
-                    <h4 class="footer-heading">Platform</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">API Reference</a></li>
-                        <li><a href="#">Changelog</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="footer-heading">Resources</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="footer-heading">Legal</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Cookie Policy</a></li>
-                        <li><a href="#">GDPR</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; <span id="currentYear"></span> PGXL Platform. All rights reserved.</p>
-                <p class="mt-1">Built with <i class="fas fa-heart" style="color: #ea4335;"></i> and Firebase</p>
-            </div>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; <span id="currentYear"></span> PGXL - Premium Growth Expansion Lab</p>
         </div>
     </footer>
 
-    <!-- FIREBASE & APP JS -->
+    <!-- Firebase Config (External) -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- App Logic -->
     <script>
-        // ======================
-        // FIREBASE CONFIGURATION
-        // ======================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
-            authDomain: "pgxl-4567a.firebaseapp.com",
-            projectId: "pgxl-4567a",
-            storageBucket: "pgxl-4567a.firebasestorage.app",
-            messagingSenderId: "545920930826",
-            appId: "1:545920930826:web:18458fd3382a83f17abbf3",
-            measurementId: "G-1Y4E635M4R"
-        };
-
-        // ======================
-        // GLOBAL VARIABLES
-        // ======================
+        // Inisialisasi Firebase dari config external
         let db, auth, currentUser = null;
-
-        // ======================
-        // INITIALIZATION
-        // ======================
+        
         document.addEventListener('DOMContentLoaded', function() {
             try {
-                // Initialize Firebase
-                firebase.initializeApp(firebaseConfig);
+                // Initialize Firebase dengan config dari file terpisah
+                const app = firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
                 auth = firebase.auth();
                 
-                console.log("✅ Firebase initialized successfully");
+                console.log("✅ Firebase initialized");
                 
                 // Auth state listener
                 auth.onAuthStateChanged((user) => {
                     currentUser = user;
                     renderApp();
-                    if (user) {
-                        showNotification(`Welcome back, ${user.email}!`, 'success');
-                        updateUserLastLogin(user.uid);
-                    }
                 });
                 
-                // Initial render
+                // Render awal
                 renderApp();
-                updateCopyrightYear();
+                
+                // Update copyright year
+                document.getElementById('currentYear').textContent = new Date().getFullYear();
                 
             } catch (error) {
-                console.error("❌ Firebase init error:", error);
-                showNotification("Firebase initialization failed", 'error');
+                console.error("❌ Firebase error:", error);
                 renderFallbackUI();
             }
         });
-
-        // ======================
-        // RENDER FUNCTIONS
-        // ======================
+        
         function renderApp() {
             const mainContent = document.getElementById('mainContent');
             const navButtons = document.getElementById('navButtons');
             
             if (currentUser) {
-                // User is logged in
+                // User logged in
                 navButtons.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem;">
-                                ${currentUser.email.charAt(0).toUpperCase()}
-                            </div>
-                            <span style="font-weight: 500; color: var(--primary-dark);">${currentUser.email.split('@')[0]}</span>
-                        </div>
-                        <button class="btn-ghost" onclick="showDashboard()">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </button>
-                        <button class="btn-outline" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="color: var(--primary);">${currentUser.email}</span>
+                        <button class="btn" onclick="logout()">Logout</button>
                     </div>
                 `;
                 
                 mainContent.innerHTML = `
                     <section class="hero">
-                        <div class="container">
-                            <h1>Welcome to PGXL</h1>
-                            <p class="hero-subtitle">Hi ${currentUser.email}, your modern web platform is ready!</p>
-                            <div class="hero-buttons">
-                                <button class="btn" onclick="showDashboard()">
-                                    <i class="fas fa-tachometer-alt"></i> Go to Dashboard
-                                </button>
-                                <button class="btn-outline" onclick="testFirestore()">
-                                    <i class="fas fa-database"></i> Test Database
-                                </button>
-                            </div>
-                        </div>
+                        <h1>Welcome to PGXL!</h1>
+                        <p>Hi ${currentUser.email}, you're logged in successfully.</p>
+                        <button class="btn" onclick="showDashboard()" style="margin-top: 20px;">Go to Dashboard</button>
                     </section>
                     
                     <section class="features">
-                        <div class="container">
-                            <h2 class="section-title">Your Dashboard Features</h2>
-                            <p class="section-subtitle">Access powerful tools and manage your data securely</p>
-                            <div class="features-grid">
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-database"></i>
-                                    </div>
-                                    <h3>Real-time Database</h3>
-                                    <p>Store and sync data instantly with Firebase Firestore. Perfect for collaborative apps.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-shield-alt"></i>
-                                    </div>
-                                    <h3>Secure Authentication</h3>
-                                    <p>Enterprise-grade security with email/password and social login options.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-chart-line"></i>
-                                    </div>
-                                    <h3>Analytics Dashboard</h3>
-                                    <p>Monitor your app's performance with real-time analytics and insights.</p>
-                                </div>
+                        <h2 style="text-align: center; margin-bottom: 2rem;">Your Dashboard</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>📊 Analytics</h3>
+                                <p>View your usage statistics and performance metrics.</p>
+                            </div>
+                            <div class="card">
+                                <h3>⚙️ Settings</h3>
+                                <p>Manage your account preferences and security settings.</p>
+                            </div>
+                            <div class="card">
+                                <h3>📈 Reports</h3>
+                                <p>Generate detailed reports and export your data.</p>
                             </div>
                         </div>
                     </section>
                 `;
                 
             } else {
-                // User is not logged in
+                // User not logged in
                 navButtons.innerHTML = `
-                    <div style="display: flex; gap: 0.75rem;">
-                        <button class="btn-ghost" onclick="showLogin()">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
-                        <button class="btn" onclick="showRegister()">
-                            <i class="fas fa-user-plus"></i> Get Started
-                        </button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="showLogin()">Login</button>
+                        <button class="btn" onclick="showRegister()" style="background: white; color: var(--primary); border: 2px solid var(--primary);">Register</button>
                     </div>
                 `;
                 
                 mainContent.innerHTML = `
                     <section class="hero">
-                        <div class="container">
-                            <h1>Modern Web Platform</h1>
-                            <p class="hero-subtitle">Build scalable applications with Firebase backend, authentication, and real-time database.</p>
-                            <div class="hero-buttons">
-                                <button class="btn" onclick="showRegister()">
-                                    <i class="fas fa-rocket"></i> Start Free Trial
-                                </button>
-                                <button class="btn-outline" onclick="showLogin()">
-                                    <i class="fas fa-sign-in-alt"></i> Sign In
-                                </button>
-                            </div>
-                        </div>
+                        <h1>Modern Web Platform</h1>
+                        <p>Build scalable applications with Firebase backend and modern architecture.</p>
+                        <button class="btn" onclick="showRegister()" style="margin-top: 20px;">Get Started Free</button>
                     </section>
                     
                     <section class="features">
-                        <div class="container">
-                            <h2 class="section-title">Why Choose PGXL?</h2>
-                            <p class="section-subtitle">Everything you need to build modern web applications</p>
-                            <div class="features-grid">
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-bolt"></i>
-                                    </div>
-                                    <h3>Fast Development</h3>
-                                    <p>Build full-stack apps in hours, not weeks. Focus on features, not infrastructure.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-expand-arrows-alt"></i>
-                                    </div>
-                                    <h3>Auto Scaling</h3>
-                                    <p>Handle from 10 to 10 million users without worrying about server management.</p>
-                                </div>
-                                <div class="feature-card">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-lock"></i>
-                                    </div>
-                                    <h3>Enterprise Security</h3>
-                                    <p>Google-grade security with automatic SSL, DDoS protection, and compliance.</p>
-                                </div>
+                        <h2 style="text-align: center; margin-bottom: 2rem;">Why PGXL?</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>🚀 Fast Development</h3>
+                                <p>Build full-stack apps in hours, not weeks with our pre-built components.</p>
+                            </div>
+                            <div class="card">
+                                <h3>🔒 Secure by Default</h3>
+                                <p>Enterprise-grade security with automatic SSL and DDoS protection.</p>
+                            </div>
+                            <div class="card">
+                                <h3>📈 Auto Scaling</h3>
+                                <p>Handle from 10 to 10 million users without server management.</p>
                             </div>
                         </div>
                     </section>
@@ -795,51 +197,29 @@
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
                 <section class="hero">
-                    <div class="container">
-                        <h1>PGXL Platform</h1>
-                        <p class="hero-subtitle">Firebase is currently undergoing maintenance. Please check back soon.</p>
-                        <div class="hero-buttons">
-                            <button class="btn" onclick="location.reload()">
-                                <i class="fas fa-redo"></i> Retry Connection
-                            </button>
-                        </div>
-                    </div>
+                    <h1>PGXL Platform</h1>
+                    <p>Firebase configuration is required. Please check firebase-config.js</p>
+                    <button class="btn" onclick="location.reload()" style="margin-top: 20px;">Reload Page</button>
                 </section>
             `;
         }
-
-        // ======================
-        // AUTHENTICATION
-        // ======================
+        
         function showLogin() {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <section class="auth-section">
-                    <div class="container">
-                        <div class="auth-container">
-                            <h2 class="text-center mb-3">Welcome Back</h2>
-                            <p class="text-center mb-4" style="color: var(--dark-gray);">Sign in to your PGXL account</p>
-                            
-                            <form id="loginForm" onsubmit="handleLogin(event)">
-                                <div class="form-group">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Password</label>
-                                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
-                                </div>
-                                
-                                <button type="submit" class="btn" style="width: 100%;">
-                                    <i class="fas fa-sign-in-alt"></i> Sign In
-                                </button>
-                            </form>
-                            
-                            <div class="auth-footer">
-                                <p>Don't have an account? <a href="#" onclick="showRegister()" class="auth-link">Create one</a></p>
+                <section style="padding: 4rem 20px;">
+                    <div class="auth-container">
+                        <h2 style="text-align: center; margin-bottom: 1.5rem;">Login</h2>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <input type="email" id="loginEmail" class="form-control" placeholder="Email" required>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Login</button>
+                        </form>
+                        <p style="text-align: center; margin-top: 1rem;">Don't have an account? <a href="#" onclick="showRegister()" style="color: var(--primary);">Register</a></p>
                     </div>
                 </section>
             `;
@@ -848,42 +228,22 @@
         function showRegister() {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <section class="auth-section">
-                    <div class="container">
-                        <div class="auth-container">
-                            <h2 class="text-center mb-3">Create Account</h2>
-                            <p class="text-center mb-4" style="color: var(--dark-gray);">Start your journey with PGXL</p>
-                            
-                            <form id="registerForm" onsubmit="handleRegister(event)">
-                                <div class="form-group">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" id="registerName" class="form-control" placeholder="John Doe" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" id="registerEmail" class="form-control" placeholder="you@example.com" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Password</label>
-                                    <input type="password" id="registerPassword" class="form-control" placeholder="Minimum 6 characters" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="form-label">Confirm Password</label>
-                                    <input type="password" id="registerConfirm" class="form-control" placeholder="Confirm your password" required>
-                                </div>
-                                
-                                <button type="submit" class="btn" style="width: 100%;">
-                                    <i class="fas fa-user-plus"></i> Create Account
-                                </button>
-                            </form>
-                            
-                            <div class="auth-footer">
-                                <p>Already have an account? <a href="#" onclick="showLogin()" class="auth-link">Sign in</a></p>
+                <section style="padding: 4rem 20px;">
+                    <div class="auth-container">
+                        <h2 style="text-align: center; margin-bottom: 1.5rem;">Register</h2>
+                        <form onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <input type="email" id="registerEmail" class="form-control" placeholder="Email" required>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <input type="password" id="registerPassword" class="form-control" placeholder="Password (min 6 chars)" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="registerConfirm" class="form-control" placeholder="Confirm Password" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+                        </form>
+                        <p style="text-align: center; margin-top: 1rem;">Already have an account? <a href="#" onclick="showLogin()" style="color: var(--primary);">Login</a></p>
                     </div>
                 </section>
             `;
@@ -896,262 +256,111 @@
             
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                showNotification('Successfully signed in!', 'success');
+                alert('Login successful!');
             } catch (error) {
-                showNotification(getAuthErrorMessage(error.code), 'error');
+                alert('Login error: ' + error.message);
             }
         }
         
         async function handleRegister(e) {
             e.preventDefault();
-            const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             const confirm = document.getElementById('registerConfirm').value;
             
             if (password !== confirm) {
-                showNotification('Passwords do not match!', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showNotification('Password must be at least 6 characters', 'error');
+                alert('Passwords do not match!');
                 return;
             }
             
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 
-                // Update profile
-                await userCredential.user.updateProfile({
-                    displayName: name
-                });
-                
-                // Save to Firestore
+                // Save user data to Firestore
                 await db.collection('users').doc(userCredential.user.uid).set({
-                    name: name,
                     email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    plan: 'free'
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                showNotification('Account created successfully!', 'success');
-                
+                alert('Registration successful!');
             } catch (error) {
-                showNotification(getAuthErrorMessage(error.code), 'error');
+                alert('Registration error: ' + error.message);
             }
         }
         
         async function logout() {
             try {
                 await auth.signOut();
-                showNotification('Signed out successfully', 'success');
+                alert('Logged out successfully!');
             } catch (error) {
-                showNotification('Error signing out', 'error');
+                alert('Logout error: ' + error.message);
             }
         }
-
-        // ======================
-        // DASHBOARD
-        // ======================
+        
         function showDashboard() {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <section class="dashboard">
-                    <div class="container">
-                        <div class="dashboard-header">
-                            <h2>Dashboard</h2>
-                            <p class="welcome-text">Welcome back, ${currentUser.email}</p>
-                        </div>
-                        
-                        <div class="dashboard-grid">
-                            <div class="stat-card">
-                                <div class="stat-number" id="userCount">0</div>
-                                <div class="stat-label">Total Users</div>
+                <section style="padding: 4rem 20px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <h2 style="text-align: center; margin-bottom: 2rem;">Dashboard</h2>
+                        <div class="grid">
+                            <div class="card">
+                                <h3>User Info</h3>
+                                <p>Email: ${currentUser.email}</p>
+                                <p>UID: ${currentUser.uid.substring(0, 12)}...</p>
                             </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-number" id="storageUsed">0 MB</div>
-                                <div class="stat-label">Storage Used</div>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-number" id="apiCalls">0</div>
-                                <div class="stat-label">API Calls</div>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-number">100%</div>
-                                <div class="stat-label">Uptime</div>
+                            <div class="card">
+                                <h3>Quick Actions</h3>
+                                <button class="btn" onclick="testFirestore()" style="margin: 10px 0; width: 100%;">Test Database</button>
+                                <button class="btn" onclick="logout()" style="margin: 10px 0; width: 100%;">Logout</button>
                             </div>
                         </div>
-                        
-                        <div class="quick-actions">
-                            <button class="btn" onclick="testFirestore()">
-                                <i class="fas fa-database"></i> Test Database
-                            </button>
-                            <button class="btn-outline" onclick="showUserProfile()">
-                                <i class="fas fa-user-cog"></i> Profile Settings
-                            </button>
-                            <button class="btn-outline" onclick="logout()">
-                                <i class="fas fa-sign-out-alt"></i> Sign Out
-                            </button>
-                        </div>
-                        
-                        <div id="dashboardContent" class="mt-4"></div>
+                        <div id="testResult" style="margin-top: 2rem;"></div>
                     </div>
                 </section>
             `;
-            
-            loadDashboardStats();
-        }
-        
-        async function loadDashboardStats() {
-            try {
-                // Simulate loading stats
-                document.getElementById('userCount').textContent = '124';
-                document.getElementById('storageUsed').textContent = '45.2 MB';
-                document.getElementById('apiCalls').textContent = '1,234';
-                
-                // Get user's Firestore data
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    const contentDiv = document.getElementById('dashboardContent');
-                    
-                    contentDiv.innerHTML = `
-                        <div class="feature-card mt-4">
-                            <h3>Your Account Information</h3>
-                            <p><strong>Email:</strong> ${userData.email}</p>
-                            <p><strong>Plan:</strong> ${userData.plan || 'Free'}</p>
-                            <p><strong>Member since:</strong> ${userData.createdAt ? userData.createdAt.toDate().toLocaleDateString() : 'Recently'}</p>
-                        </div>
-                    `;
-                }
-                
-            } catch (error) {
-                console.error("Error loading dashboard stats:", error);
-            }
         }
         
         async function testFirestore() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<p>Testing Firestore connection...</p>';
+            
             try {
-                // Create test document
-                await db.collection('test_operations').add({
+                // Test Firestore write
+                await db.collection('test').add({
                     userId: currentUser.uid,
-                    action: 'firestore_test',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    message: 'Firestore connection successful!'
+                    message: 'Firestore test successful!'
                 });
                 
-                // Read test documents
-                const snapshot = await db.collection('test_operations')
+                // Test Firestore read
+                const snapshot = await db.collection('test')
                     .where('userId', '==', currentUser.uid)
                     .orderBy('timestamp', 'desc')
                     .limit(3)
                     .get();
                 
-                let results = '<h3 class="mt-4">Recent Test Operations:</h3>';
+                let html = '<h3>Test Results:</h3>';
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    results += `
-                        <div class="feature-card mt-2">
-                            <p><strong>${data.timestamp?.toDate().toLocaleString()}</strong></p>
-                            <p>${data.message}</p>
-                        </div>
-                    `;
+                    html += `<p>${data.timestamp?.toDate().toLocaleTimeString()} - ${data.message}</p>`;
                 });
                 
-                const contentDiv = document.getElementById('dashboardContent') || document.getElementById('mainContent');
-                contentDiv.innerHTML = results;
-                
-                showNotification('Firestore test successful!', 'success');
+                resultDiv.innerHTML = html;
+                alert('Firestore test successful!');
                 
             } catch (error) {
-                showNotification('Firestore test failed: ' + error.message, 'error');
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                alert('Firestore test failed: ' + error.message);
             }
         }
         
-        function showUserProfile() {
-            const mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = `
-                <section class="auth-section">
-                    <div class="container">
-                        <div class="auth-container">
-                            <h2 class="text-center mb-3">Profile Settings</h2>
-                            <p class="text-center mb-4" style="color: var(--dark-gray);">Manage your account information</p>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" value="${currentUser.email}" readonly>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">User ID</label>
-                                <input type="text" class="form-control" value="${currentUser.uid.substring(0, 20)}..." readonly>
-                            </div>
-                            
-                            <button class="btn" onclick="showDashboard()" style="width: 100%;">
-                                <i class="fas fa-arrow-left"></i> Back to Dashboard
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            `;
-        }
-
-        // ======================
-        // HELPER FUNCTIONS
-        // ======================
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type} show`;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        function getAuthErrorMessage(errorCode) {
-            const messages = {
-                'auth/invalid-email': 'Invalid email address',
-                'auth/user-disabled': 'Account disabled',
-                'auth/user-not-found': 'Account not found',
-                'auth/wrong-password': 'Incorrect password',
-                'auth/email-already-in-use': 'Email already registered',
-                'auth/weak-password': 'Password too weak',
-                'auth/operation-not-allowed': 'Operation not allowed',
-                'auth/too-many-requests': 'Too many attempts, try later',
-                'auth/network-request-failed': 'Network error'
-            };
-            return messages[errorCode] || errorCode;
-        }
-        
-        function updateCopyrightYear() {
-            document.getElementById('currentYear').textContent = new Date().getFullYear();
-        }
-        
-        async function updateUserLastLogin(uid) {
-            try {
-                await db.collection('users').doc(uid).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch (error) {
-                console.error("Error updating last login:", error);
-            }
-        }
-
-        // ======================
-        // GLOBAL FUNCTION EXPORTS
-        // ======================
+        // Export functions to global scope
         window.showLogin = showLogin;
         window.showRegister = showRegister;
-        window.showDashboard = showDashboard;
         window.logout = logout;
+        window.showDashboard = showDashboard;
         window.testFirestore = testFirestore;
-        window.showUserProfile = showUserProfile;
         window.handleLogin = handleLogin;
         window.handleRegister = handleRegister;
     </script>
