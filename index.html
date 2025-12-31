@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #667eea;
@@ -14,6 +15,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #3b82f6;
             --light: #f8fafc;
             --dark: #1e293b;
         }
@@ -52,6 +54,14 @@
         
         .btn-primary:hover {
             background: #5a67d8;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 500;
         }
         
         .btn-danger {
@@ -140,28 +150,82 @@
             z-index: 10000;
         }
         
-        .delete-btn {
-            background: transparent;
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .delete-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .terms-content {
-            max-height: 400px;
-            overflow-y: auto;
+        .upload-progress {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             padding: 20px;
+            z-index: 10000;
+            max-width: 300px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .live-preview {
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .changelog-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .changelog-badge {
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            margin-right: 10px;
+        }
+        
+        .file-explorer {
             background: var(--light);
             border-radius: 10px;
-            margin: 20px 0;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-item:hover {
+            background: white;
+            transform: translateX(5px);
+        }
+        
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
         }
         
         .not-found {
@@ -174,6 +238,24 @@
             color: var(--danger);
             margin-bottom: 20px;
         }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -182,6 +264,24 @@
         <div id="projectViewer"></div>
     </div>
 
+    <!-- Upload Progress (Hidden by default) -->
+    <div id="uploadProgress" class="upload-progress d-none">
+        <h6><i class="fas fa-upload me-2"></i>Uploading...</h6>
+        <div class="mb-2">
+            <small id="uploadFileName"></small>
+            <small id="uploadPercent" class="float-end">0%</small>
+        </div>
+        <div class="progress" style="height: 6px;">
+            <div id="uploadProgressBar" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <small id="uploadStatus" class="text-muted">Preparing...</small>
+    </div>
+
+    <!-- Refresh Button -->
+    <button class="refresh-btn d-none" id="refreshBtn" onclick="refreshPage()">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+
     <!-- Main App Content -->
     <div id="mainAppContent">
         <!-- Navbar -->
@@ -189,6 +289,7 @@
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary" href="#">
                     <i class="fas fa-server me-2"></i>PGXL.WEB.ID
+                    <span class="badge bg-success ms-2">v2.0</span>
                 </a>
                 <div id="authButtons"></div>
             </div>
@@ -198,7 +299,7 @@
             <!-- Welcome Section -->
             <div class="row mb-5" id="welcomeSection">
                 <div class="col-12 text-center">
-                    <h1 class="display-5 fw-bold mb-3">🚀 Hosting Website Statis Gratis 100%</h1>
+                    <h1 class="display-5 fw-bold mb-3">🚀 Hosting Website Statis 100% Gratis</h1>
                     <p class="lead text-muted mb-4">Upload file HTML/CSS/JS dan dapatkan subdomain instan</p>
                     
                     <div class="project-domain d-inline-block mb-4">
@@ -209,8 +310,8 @@
                         <button class="btn btn-primary btn-lg" onclick="showAuthModal()">
                             <i class="fas fa-rocket me-2"></i>Mulai Gratis
                         </button>
-                        <a href="#features" class="btn btn-outline-secondary btn-lg">
-                            <i class="fas fa-info-circle me-2"></i>Pelajari Fitur
+                        <a href="#changelog" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-history me-2"></i>Changelog
                         </a>
                     </div>
                     
@@ -218,22 +319,26 @@
                     <div class="mt-5">
                         <div class="row justify-content-center">
                             <div class="col-md-8">
-                                <div class="card border-warning">
+                                <div class="card border-success">
                                     <div class="card-body text-center">
-                                        <h5 class="card-title text-warning">
-                                            <i class="fas fa-gift me-2"></i>Free Plan Limits
+                                        <h5 class="card-title text-success">
+                                            <i class="fas fa-gift me-2"></i>Free Plan - No Limits!
                                         </h5>
                                         <div class="row mt-3">
                                             <div class="col-md-6 mb-3">
-                                                <i class="fas fa-globe text-success fa-2x mb-2"></i>
-                                                <h6>Max 5 Website</h6>
+                                                <i class="fas fa-globe text-primary fa-2x mb-2"></i>
+                                                <h6>5 Website</h6>
                                                 <small class="text-muted">Per akun</small>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <i class="fas fa-infinity text-primary fa-2x mb-2"></i>
                                                 <h6>Unlimited Traffic</h6>
-                                                <small class="text-muted">100% free forever</small>
+                                                <small class="text-muted">No ads, 100% free</small>
                                             </div>
+                                        </div>
+                                        <div class="alert alert-success mt-3">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            <strong>NO ADS!</strong> Tidak ada iklan sama sekali dari PGXL
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +368,7 @@
                                 <i class="fas fa-code"></i>
                             </div>
                             <h5 class="fw-bold">File Manager</h5>
-                            <p class="text-muted">Edit file langsung di browser. Support HTML, CSS, JavaScript.</p>
+                            <p class="text-muted">Edit file langsung di browser dengan live preview.</p>
                         </div>
                     </div>
                 </div>
@@ -271,10 +376,47 @@
                     <div class="card h-100 border-0">
                         <div class="card-body text-center p-4">
                             <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
-                            <h5 class="fw-bold">100% Gratis</h5>
-                            <p class="text-muted">Tidak ada biaya tersembunyi. Selamanya gratis untuk website statis.</p>
+                            <h5 class="fw-bold">Live Statistics</h5>
+                            <p class="text-muted">Pantau traffic website Anda dengan statistik real-time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Changelog -->
+            <div class="row mb-5" id="changelog">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h4 class="mb-0"><i class="fas fa-history me-2"></i>Changelog v2.0</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="changelog-item">
+                                <span class="changelog-badge">NEW</span>
+                                <strong>Live Preview & Statistics</strong>
+                                <p class="text-muted mb-1">Tambahan live preview website dan statistik traffic real-time</p>
+                                <small class="text-muted">26 Des 2024</small>
+                            </div>
+                            <div class="changelog-item">
+                                <span class="changelog-badge">IMPROVED</span>
+                                <strong>File Upload System</strong>
+                                <p class="text-muted mb-1">Upload file dengan progress bar dan auto-refresh</p>
+                                <small class="text-muted">25 Des 2024</small>
+                            </div>
+                            <div class="changelog-item">
+                                <span class="changelog-badge">FIXED</span>
+                                <strong>Subdomain Routing</strong>
+                                <p class="text-muted mb-1">Perbaikan sistem routing untuk semua subdomain</p>
+                                <small class="text-muted">24 Des 2024</small>
+                            </div>
+                            <div class="changelog-item">
+                                <span class="changelog-badge">REMOVED</span>
+                                <strong>All Ads Removed</strong>
+                                <p class="text-muted mb-1">Tidak ada iklan sama sekali dari PGXL - 100% clean</p>
+                                <small class="text-muted">23 Des 2024</small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -309,7 +451,7 @@
                     </div>
 
                     <!-- Project List -->
-                    <div class="card">
+                    <div class="card mb-4">
                         <div class="card-header bg-light">
                             <i class="fas fa-globe me-2"></i>Website Saya
                         </div>
@@ -320,19 +462,29 @@
                         </div>
                     </div>
                     
-                    <!-- Support Section -->
-                    <div class="card mt-4">
+                    <!-- Quick Stats -->
+                    <div class="card">
                         <div class="card-header bg-light">
-                            <i class="fas fa-heart me-2"></i>Support Us
+                            <i class="fas fa-chart-bar me-2"></i>Quick Stats
                         </div>
-                        <div class="card-body text-center">
-                            <p class="small text-muted mb-3">Bantu kami tetap gratis</p>
-                            <a href="https://saweria.co/omedonation" target="_blank" class="btn btn-warning btn-sm w-100 mb-2">
-                                <i class="fas fa-donate me-1"></i> Donate
-                            </a>
-                            <a href="mailto:spctacularstudio@gmail.com" class="btn btn-outline-primary btn-sm w-100">
-                                <i class="fas fa-envelope me-1"></i> Contact
-                            </a>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <canvas id="quickStatsChart" width="200" height="200"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="text-center">
+                                    <h5 class="mb-0" id="totalProjects">0</h5>
+                                    <small class="text-muted">Projects</small>
+                                </div>
+                                <div class="text-center">
+                                    <h5 class="mb-0" id="totalFiles">0</h5>
+                                    <small class="text-muted">Files</small>
+                                </div>
+                                <div class="text-center">
+                                    <h5 class="mb-0" id="totalTraffic">0</h5>
+                                    <small class="text-muted">Visits</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -348,39 +500,90 @@
                                 <small class="text-muted ms-2" id="currentProjectUrl"></small>
                             </div>
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-success" onclick="showAddFileModal()">
-                                    <i class="fas fa-plus"></i> File Baru
+                                <button class="btn btn-sm btn-success" onclick="showUploadModal()">
+                                    <i class="fas fa-upload me-1"></i> Upload
                                 </button>
                                 <button class="btn btn-sm btn-outline-primary" onclick="showNewFolderModal()">
                                     <i class="fas fa-folder-plus"></i> Folder
                                 </button>
                                 <button class="btn btn-sm btn-danger" onclick="showDeleteProjectModal()">
-                                    <i class="fas fa-trash"></i> Hapus Website
+                                    <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb" id="breadcrumb">
-                                    <li class="breadcrumb-item active">/</li>
-                                </ol>
-                            </nav>
+                            <!-- File Explorer -->
+                            <div class="file-explorer mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-folder-open text-warning me-2"></i>
+                                    <h6 class="mb-0">File Explorer</h6>
+                                    <button class="btn btn-sm btn-outline-primary ms-auto" onclick="refreshFileList()">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                                <div id="fileTree">
+                                    <!-- File tree will be loaded here -->
+                                </div>
+                            </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th width="50px"></th>
-                                            <th>Nama</th>
-                                            <th>Ukuran</th>
-                                            <th>Terakhir diubah</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="filesTable">
-                                        <!-- Files loaded here -->
-                                    </tbody>
-                                </table>
+                            <!-- Live Preview -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-eye me-2"></i>Live Preview
+                                    <button class="btn btn-sm btn-outline-primary float-end" onclick="refreshPreview()">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <iframe id="livePreviewFrame" src="about:blank" style="width: 100%; height: 400px; border: none;"></iframe>
+                                </div>
+                            </div>
+
+                            <!-- Statistics -->
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <i class="fas fa-chart-line me-2"></i>Statistics
+                                    <select class="form-select form-select-sm float-end" style="width: auto;" id="statsPeriod" onchange="loadStatistics()">
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                    </select>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <div class="stats-card">
+                                                <h6><i class="fas fa-eye me-2"></i>Views</h6>
+                                                <h3 id="statViews">0</h3>
+                                                <small>Today</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="stats-card">
+                                                <h6><i class="fas fa-users me-2"></i>Visitors</h6>
+                                                <h3 id="statVisitors">0</h3>
+                                                <small>Unique</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="stats-card">
+                                                <h6><i class="fas fa-file me-2"></i>Files</h6>
+                                                <h3 id="statFiles">0</h3>
+                                                <small>Total</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="stats-card">
+                                                <h6><i class="fas fa-database me-2"></i>Storage</h6>
+                                                <h3 id="statStorage">0 KB</h3>
+                                                <small>Used</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <canvas id="trafficChart" height="100"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -409,20 +612,42 @@
                             <div class="mb-4">
                                 <i class="fas fa-cloud-upload-alt fa-4x text-muted"></i>
                             </div>
-                            <h3 class="mb-3">Selamat Datang di PGXL</h3>
+                            <h3 class="mb-3">Selamat Datang di PGXL v2.0</h3>
                             <p class="text-muted mb-4">Pilih website dari sidebar atau buat website baru</p>
                             <div class="row text-start">
                                 <div class="col-md-6 mb-2">
-                                    <i class="fas fa-check text-success me-2"></i> Upload file HTML, CSS, JS
+                                    <i class="fas fa-check text-success me-2"></i> Upload file dengan progress bar
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <i class="fas fa-check text-success me-2"></i> Dapatkan subdomain gratis
+                                    <i class="fas fa-check text-success me-2"></i> Live preview website
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <i class="fas fa-check text-success me-2"></i> Edit file langsung di browser
+                                    <i class="fas fa-check text-success me-2"></i> Statistics real-time
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <i class="fas fa-check text-success me-2"></i> Auto deploy dalam hitungan detik
+                                    <i class="fas fa-check text-success me-2"></i> No ads, 100% free
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Start Guide -->
+                            <div class="mt-5">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-primary">
+                                                    <i class="fas fa-play-circle me-2"></i>Quick Start
+                                                </h5>
+                                                <ol class="text-start">
+                                                    <li class="mb-2">Klik "Website Baru" di sidebar</li>
+                                                    <li class="mb-2">Beri nama project Anda</li>
+                                                    <li class="mb-2">Upload file HTML/CSS/JS</li>
+                                                    <li class="mb-2">Akses website di subdomain Anda</li>
+                                                    <li>Pantau statistik di dashboard</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -548,10 +773,10 @@
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <h5 class="mb-3">
-                            <i class="fas fa-server me-2 text-primary"></i>PGXL.WEB.ID
+                            <i class="fas fa-server me-2 text-primary"></i>PGXL.WEB.ID v2.0
                         </h5>
                         <p class="mb-2">Free static hosting untuk developer dan creator.</p>
-                        <p class="mb-2"><strong>100% Free Forever</strong></p>
+                        <p class="mb-2"><strong>100% Free Forever - No Ads!</strong></p>
                         <div class="mt-3">
                             <a href="mailto:spctacularstudio@gmail.com" class="text-decoration-none text-muted me-3">
                                 <i class="fas fa-envelope me-1"></i> Contact
@@ -568,13 +793,13 @@
                                 <a href="#features" class="text-decoration-none text-muted">Fitur</a>
                             </li>
                             <li class="mb-2">
-                                <a href="#" onclick="showLegal('tos')" class="text-decoration-none text-muted">Terms of Service</a>
+                                <a href="#changelog" class="text-decoration-none text-muted">Changelog</a>
                             </li>
                             <li class="mb-2">
-                                <a href="#" onclick="showLegal('privacy')" class="text-decoration-none text-muted">Privacy Policy</a>
+                                <a href="#" onclick="showLegal('tos')" class="text-decoration-none text-muted">Terms</a>
                             </li>
                             <li>
-                                <a href="#dashboard" class="text-decoration-none text-muted">Dashboard</a>
+                                <a href="#" onclick="showLegal('privacy')" class="text-decoration-none text-muted">Privacy</a>
                             </li>
                         </ul>
                     </div>
@@ -585,7 +810,7 @@
                             All rights reserved.
                         </p>
                         <p class="small text-muted">
-                            <strong>Disclaimer:</strong> Layanan ini disediakan "as is" tanpa garansi apapun.
+                            <strong>100% No Ads Policy:</strong> Kami tidak menampilkan iklan sama sekali.
                         </p>
                     </div>
                 </div>
@@ -593,7 +818,7 @@
                 <div class="row mt-4">
                     <div class="col-12 text-center">
                         <p class="mb-0 text-muted">
-                            🚀 Powered by PGXL.WEB.ID | Made with ❤️ for the developer community
+                            🚀 Powered by PGXL.WEB.ID v2.0 | Made with ❤️ for the developer community
                         </p>
                     </div>
                 </div>
@@ -652,6 +877,34 @@
                     <div class="modal-footer border-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="button" class="btn btn-primary" onclick="createProject()">Buat Website</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Modal -->
+        <div class="modal fade" id="uploadModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Upload File</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Pilih File</label>
+                            <input type="file" class="form-control" id="fileInput" multiple>
+                            <small class="text-muted">Max file size: 5MB. Support: HTML, CSS, JS, Images, ZIP</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Upload ke Folder</label>
+                            <input type="text" class="form-control" id="uploadPath" value="/" placeholder="/images/">
+                        </div>
+                        <div id="fileList" class="mb-3"></div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary" onclick="startUpload()">Upload Files</button>
                     </div>
                 </div>
             </div>
@@ -779,7 +1032,7 @@
                     </style>
                     <div class="loading-spinner"></div>
                     <h3 style="color: #333; margin-bottom: 10px;">Loading ${projectId}.pgxl.web.id</h3>
-                    <p style="color: #666; font-size: 14px;">Powered by PGXL.WEB.ID</p>
+                    <p style="color: #666; font-size: 14px;">Powered by PGXL.WEB.ID - No Ads!</p>
                 </div>
             `;
             
@@ -833,10 +1086,10 @@
             htmlContent = htmlContent.replace('</head>', allCSS + '</head>');
             htmlContent = htmlContent.replace('</body>', allJS + '</body>');
             
-            // Add PGXL branding banner
+            // Add PGXL branding banner (NO ADS VERSION)
             const pgxlBanner = `
                 <div class="pgxl-banner" id="pgxlBanner">
-                    🚀 Hosted for FREE on <a href="https://pgxl.web.id" target="_blank" style="color: white; text-decoration: underline;">PGXL.WEB.ID</a>
+                    🚀 Hosted for FREE on <a href="https://pgxl.web.id" target="_blank" style="color: white; text-decoration: underline;">PGXL.WEB.ID</a> - No Ads!
                     <button onclick="this.parentElement.style.display='none'" style="
                         position: absolute;
                         right: 15px;
@@ -980,7 +1233,7 @@
                     </button>
                     
                     <p style="margin-top: 30px; color: #94a3b8; font-size: 14px;">
-                        🚀 Powered by <a href="https://pgxl.web.id" style="color: #667eea;">PGXL.WEB.ID</a>
+                        🚀 Powered by <a href="https://pgxl.web.id" style="color: #667eea;">PGXL.WEB.ID</a> - No Ads!
                     </p>
                 </div>
             </body>
@@ -1019,6 +1272,8 @@
     let currentPath = '/';
     let editor = null;
     let originalContent = '';
+    let trafficChart = null;
+    let statsChart = null;
     
     function initMainApp() {
         // Your existing app initialization code
@@ -1036,18 +1291,35 @@
             document.getElementById('deleteConfirmBtn').disabled = !this.checked;
         });
         
+        // File input change handler
+        document.getElementById('fileInput')?.addEventListener('change', function() {
+            showFileList(this.files);
+        });
+        
         // Initialize Ace Editor
         ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/');
         
         // Start auth listener
         auth.onAuthStateChanged((user) => {
             if (user) {
+                if (currentUser && currentUser.uid !== user.uid) {
+                    // Different user logged in, show refresh button
+                    document.getElementById('refreshBtn').classList.remove('d-none');
+                }
                 currentUser = user;
                 showDashboard();
             } else {
+                currentUser = null;
                 showWelcome();
             }
         });
+        
+        // Auto-refresh every 30 seconds for live updates
+        setInterval(() => {
+            if (currentProject && document.getElementById('fileManager').classList.contains('d-none') === false) {
+                refreshStatistics();
+            }
+        }, 30000);
     }
     
     // 🔥 FUNCTIONS
@@ -1244,7 +1516,7 @@
         
         <div style="text-align: center;">
             <a href="https://pgxl.web.id" target="_blank" class="pgxl-badge">
-                🚀 Powered by PGXL.WEB.ID - Free Hosting
+                🚀 Powered by PGXL.WEB.ID - No Ads!
             </a>
         </div>
         
@@ -1324,6 +1596,14 @@ h1, h2, h3, h4 {
             owner: currentUser.uid,
             ownerEmail: currentUser.email,
             files: {},
+            traffic: {},
+            stats: {
+                views: 0,
+                visitors: 0,
+                files: 0,
+                storage: 0,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            },
             updated: firebase.firestore.FieldValue.serverTimestamp()
         };
     
@@ -1331,7 +1611,13 @@ h1, h2, h3, h4 {
         Object.keys(defaultFiles).forEach(key => {
             const escapedKey = key.replace(/\//g, '___');
             projectData.files[escapedKey] = defaultFiles[key];
+            projectData.stats.files++;
+            projectData.stats.storage += defaultFiles[key].content.length;
         });
+    
+        // Initialize traffic data for today
+        const today = new Date().toISOString().split('T')[0];
+        projectData.traffic[today] = { views: 0, visitors: 0 };
     
         try {
             await db.collection('projects').doc(projectId).set(projectData);
@@ -1361,9 +1647,17 @@ h1, h2, h3, h4 {
             
             document.getElementById('projectLimitBar').style.width = `${limitPercentage}%`;
             document.getElementById('projectLimitText').textContent = `${totalProjects}/5 website`;
+            document.getElementById('totalProjects').textContent = totalProjects;
+            
+            let totalFiles = 0;
+            let totalTraffic = 0;
             
             snapshot.forEach(doc => {
                 const project = doc.data();
+                const stats = project.stats || {};
+                totalFiles += stats.files || 0;
+                totalTraffic += stats.views || 0;
+                
                 const li = document.createElement('li');
                 li.className = 'list-group-item list-group-item-action';
                 li.innerHTML = '<div class="d-flex justify-content-between align-items-center">' +
@@ -1380,6 +1674,12 @@ h1, h2, h3, h4 {
                 projectList.appendChild(li);
             });
             
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalTraffic').textContent = totalTraffic;
+            
+            // Update quick stats chart
+            updateQuickStatsChart(totalProjects, totalFiles, totalTraffic);
+            
             if (snapshot.empty) {
                 projectList.innerHTML = '<li class="list-group-item text-center text-muted py-4">' +
                     '<i class="fas fa-folder-open fa-2x mb-3"></i>' +
@@ -1393,6 +1693,46 @@ h1, h2, h3, h4 {
             console.error('Error loading projects:', error);
         }
     };
+    
+    function updateQuickStatsChart(projects, files, traffic) {
+        const ctx = document.getElementById('quickStatsChart').getContext('2d');
+        
+        if (statsChart) {
+            statsChart.destroy();
+        }
+        
+        statsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Projects', 'Files', 'Visits'],
+                datasets: [{
+                    data: [projects, files, traffic],
+                    backgroundColor: [
+                        '#667eea',
+                        '#10b981',
+                        '#f59e0b'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
     
     window.openProject = function(projectId) {
         currentProject = projectId;
@@ -1408,131 +1748,385 @@ h1, h2, h3, h4 {
             document.getElementById('currentProjectUrl').innerHTML = 
                 ' → <a href="https://' + project.domain + '" target="_blank" class="text-decoration-none">' + 
                 project.domain + ' <i class="fas fa-external-link-alt fa-xs"></i></a>';
+            
+            // Update live preview
+            updateLivePreview(projectId);
+            
+            // Load statistics
+            loadStatistics();
+            
+            // Load file tree
+            loadFileTree(project.files || {});
         });
-        
-        window.loadFiles('/');
     };
     
-    window.loadFiles = async function(path) {
-        currentPath = path;
+    function loadFileTree(files) {
+        const fileTree = document.getElementById('fileTree');
+        fileTree.innerHTML = '';
         
-        // Update breadcrumb
-        const breadcrumb = document.getElementById('breadcrumb');
-        const parts = path.split('/').filter(p => p);
-        breadcrumb.innerHTML = '<li class="breadcrumb-item active">/</li>';
+        const tree = {};
         
-        let currentBreadcrumbPath = '';
-        parts.forEach(part => {
-            currentBreadcrumbPath += part + '/';
-            const li = document.createElement('li');
-            li.className = 'breadcrumb-item';
-            li.innerHTML = '<a href="#" onclick="loadFiles(\'' + currentBreadcrumbPath + '\')">' + part + '</a>';
-            breadcrumb.appendChild(li);
+        // Build tree structure
+        Object.keys(files).forEach(key => {
+            const path = key.replace(/___/g, '/');
+            const parts = path.split('/');
+            let current = tree;
+            
+            parts.forEach((part, index) => {
+                if (!current[part]) {
+                    current[part] = {};
+                }
+                if (index === parts.length - 1) {
+                    current[part].__file__ = files[key];
+                }
+                current = current[part];
+            });
         });
         
-        const filesTable = document.getElementById('filesTable');
-        filesTable.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>';
+        // Render tree
+        renderTreeItem(tree, '', fileTree, 0);
+    }
+    
+    function renderTreeItem(tree, name, container, level) {
+        Object.keys(tree).forEach(key => {
+            if (key === '__file__') return;
+            
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.style.paddingLeft = (level * 20) + 'px';
+            
+            const isFolder = Object.keys(tree[key]).length > (tree[key].__file__ ? 1 : 0);
+            
+            if (isFolder) {
+                item.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="file-icon">
+                            <i class="fas fa-folder text-warning"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">${key}</div>
+                            <small class="text-muted">Folder</small>
+                        </div>
+                    </div>
+                `;
+                
+                const subContainer = document.createElement('div');
+                subContainer.className = 'file-tree-sub';
+                item.appendChild(subContainer);
+                
+                renderTreeItem(tree[key], key, subContainer, level + 1);
+            } else {
+                const file = tree[key].__file__;
+                item.innerHTML = `
+                    <div class="d-flex align-items-center" onclick="openFileFromTree('${name}/${key}')">
+                        <div class="file-icon">
+                            <i class="fas fa-file text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">${key}</div>
+                            <small class="text-muted">${formatBytes(file.size || 0)} • ${file.type || 'file'}</small>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.appendChild(item);
+        });
+    }
+    
+    window.openFileFromTree = function(path) {
+        // Remove leading slash if exists
+        if (path.startsWith('/')) {
+            path = path.substring(1);
+        }
+        
+        const fileName = path.split('/').pop();
+        editFile(fileName);
+    };
+    
+    window.showUploadModal = function() {
+        document.getElementById('fileInput').value = '';
+        document.getElementById('uploadPath').value = currentPath;
+        document.getElementById('fileList').innerHTML = '';
+        new bootstrap.Modal(document.getElementById('uploadModal')).show();
+    };
+    
+    function showFileList(files) {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        
+        Array.from(files).forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'd-flex align-items-center mb-2';
+            div.innerHTML = `
+                <div class="file-icon me-2">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">${file.name}</div>
+                    <small class="text-muted">${formatBytes(file.size)} • ${file.type || 'Unknown'}</small>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            fileList.appendChild(div);
+        });
+    }
+    
+    window.removeFile = function(index) {
+        // This would need a more complex implementation
+        alert('Fitur remove file dari list belum diimplementasi');
+    };
+    
+    window.startUpload = async function() {
+        const files = document.getElementById('fileInput').files;
+        const uploadPath = document.getElementById('uploadPath').value;
+        
+        if (files.length === 0) {
+            alert('Pilih file terlebih dahulu!');
+            return;
+        }
+        
+        // Show upload progress
+        const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+        uploadModal.hide();
+        
+        document.getElementById('uploadProgress').classList.remove('d-none');
+        
+        let uploadedCount = 0;
+        const totalFiles = files.length;
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            // Update progress UI
+            document.getElementById('uploadFileName').textContent = file.name;
+            document.getElementById('uploadPercent').textContent = Math.round(((i + 1) / totalFiles) * 100) + '%';
+            document.getElementById('uploadProgressBar').style.width = ((i + 1) / totalFiles) * 100 + '%';
+            document.getElementById('uploadStatus').textContent = `Uploading ${i + 1} of ${totalFiles}...`;
+            
+            try {
+                await uploadSingleFile(file, uploadPath);
+                uploadedCount++;
+                
+                // Simulate delay for progress visualization
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                document.getElementById('uploadStatus').innerHTML = `<span class="text-danger">Error uploading ${file.name}: ${error.message}</span>`;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+        
+        // Complete
+        document.getElementById('uploadStatus').innerHTML = `<span class="text-success">✅ ${uploadedCount} file berhasil diupload!</span>`;
+        
+        // Hide progress after 3 seconds
+        setTimeout(() => {
+            document.getElementById('uploadProgress').classList.add('d-none');
+            
+            // Refresh file list
+            if (currentProject) {
+                db.collection('projects').doc(currentProject).get().then(doc => {
+                    const project = doc.data();
+                    loadFileTree(project.files || {});
+                    refreshStatistics();
+                });
+            }
+        }, 3000);
+    };
+    
+    async function uploadSingleFile(file, path) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                try {
+                    const content = e.target.result;
+                    
+                    // Validate file size (5MB limit)
+                    if (content.length > 5 * 1024 * 1024) {
+                        reject(new Error('File size exceeds 5MB limit'));
+                        return;
+                    }
+                    
+                    // Handle binary files (images, etc.)
+                    let fileContent;
+                    let fileType = file.type;
+                    
+                    if (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/zip') {
+                        // Store binary files as Base64
+                        fileContent = content.split(',')[1] || content;
+                    } else {
+                        // Text files
+                        fileContent = content;
+                    }
+                    
+                    // Determine file path
+                    let filePath = path.endsWith('/') ? path + file.name : path + '/' + file.name;
+                    if (filePath.startsWith('//')) filePath = filePath.substring(1);
+                    
+                    const escapedPath = filePath.replace(/\//g, '___');
+                    
+                    // Update Firestore
+                    const updateData = {};
+                    updateData['files.' + escapedPath] = {
+                        content: fileContent,
+                        type: fileType || file.name.split('.').pop().toLowerCase(),
+                        size: content.length,
+                        isBinary: file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/zip',
+                        updated: firebase.firestore.FieldValue.serverTimestamp(),
+                        created: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    // Update stats
+                    const projectRef = db.collection('projects').doc(currentProject);
+                    const projectDoc = await projectRef.get();
+                    const project = projectDoc.data();
+                    const stats = project.stats || { files: 0, storage: 0 };
+                    
+                    updateData['stats.files'] = (stats.files || 0) + 1;
+                    updateData['stats.storage'] = (stats.storage || 0) + content.length;
+                    updateData['stats.lastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    await projectRef.update(updateData);
+                    resolve();
+                    
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            
+            reader.onerror = function() {
+                reject(new Error('Failed to read file'));
+            };
+            
+            // Read file based on type
+            if (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/zip') {
+                reader.readAsDataURL(file);
+            } else {
+                reader.readAsText(file);
+            }
+        });
+    }
+    
+    function updateLivePreview(projectId) {
+        const iframe = document.getElementById('livePreviewFrame');
+        iframe.src = `https://${projectId}.pgxl.web.id?preview=${Date.now()}`;
+    }
+    
+    window.refreshPreview = function() {
+        if (currentProject) {
+            updateLivePreview(currentProject);
+        }
+    };
+    
+    async function loadStatistics() {
+        if (!currentProject) return;
         
         try {
             const doc = await db.collection('projects').doc(currentProject).get();
             const project = doc.data();
-            const files = project.files || {};
+            const stats = project.stats || {};
+            const traffic = project.traffic || {};
             
-            filesTable.innerHTML = '';
+            // Update basic stats
+            document.getElementById('statViews').textContent = stats.views || 0;
+            document.getElementById('statVisitors').textContent = stats.visitors || 0;
+            document.getElementById('statFiles').textContent = stats.files || 0;
+            document.getElementById('statStorage').textContent = formatBytes(stats.storage || 0);
             
-            // Decode escaped paths
-            const decodedFiles = {};
-            Object.keys(files).forEach(escapedPath => {
-                const decodedPath = escapedPath.replace(/___/g, '/');
-                decodedFiles[decodedPath] = files[escapedPath];
-            });
+            // Prepare traffic data for chart
+            const period = document.getElementById('statsPeriod').value;
+            const now = new Date();
+            const labels = [];
+            const viewsData = [];
+            const visitorsData = [];
             
-            // Filter files by current path
-            const filteredFiles = {};
-            Object.keys(decodedFiles).forEach(filePath => {
-                if (filePath.startsWith(path)) {
-                    filteredFiles[filePath] = decodedFiles[filePath];
-                }
-            });
+            let daysToShow = 7;
+            if (period === 'today') daysToShow = 1;
+            if (period === 'month') daysToShow = 30;
             
-            // Display folders and files
-            const folders = new Set();
-            const fileList = [];
-            
-            Object.keys(filteredFiles).forEach(filePath => {
-                const remainingPath = filePath.substring(path.length);
-                const parts = remainingPath.split('/');
+            for (let i = daysToShow - 1; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
                 
-                if (parts.length === 1) {
-                    // File directly in current path
-                    fileList.push({
-                        name: parts[0],
-                        type: 'file',
-                        data: filteredFiles[filePath],
-                        path: filePath
-                    });
-                } else if (parts.length > 1 && parts[0]) {
-                    // It's in a subfolder
-                    folders.add(parts[0]);
-                }
-            });
-            
-            // Display folders
-            Array.from(folders).sort().forEach(folderName => {
-                const tr = document.createElement('tr');
-                tr.className = 'file-item';
-                tr.innerHTML = '<td><i class="fas fa-folder text-warning"></i></td>' +
-                    '<td><strong>' + folderName + '</strong></td>' +
-                    '<td>-</td>' +
-                    '<td>-</td>' +
-                    '<td>' +
-                        '<button class="btn btn-sm btn-outline-primary" onclick="loadFiles(\'' + path + folderName + '/\')">' +
-                            'Buka' +
-                        '</button>' +
-                    '</td>';
-                filesTable.appendChild(tr);
-            });
-            
-            // Display files
-            fileList.sort((a, b) => a.name.localeCompare(b.name)).forEach(file => {
-                const fileData = file.data;
-                const size = fileData.content ? fileData.content.length + ' chars' : '0';
-                const updated = fileData.updated && fileData.updated.toDate ? 
-                    new Date(fileData.updated.toDate()).toLocaleString() : '-';
-                
-                const tr = document.createElement('tr');
-                tr.className = 'file-item';
-                tr.innerHTML = '<td><i class="fas fa-file text-primary"></i></td>' +
-                    '<td>' + file.name + '</td>' +
-                    '<td>' + size + '</td>' +
-                    '<td>' + updated + '</td>' +
-                    '<td>' +
-                        '<button class="btn btn-sm btn-outline-success me-1" onclick="editFile(\'' + file.name + '\')">' +
-                            'Edit' +
-                        '</button>' +
-                        '<button class="btn btn-sm btn-outline-danger" onclick="deleteFile(\'' + file.name + '\')">' +
-                            'Hapus' +
-                        '</button>' +
-                    '</td>';
-                filesTable.appendChild(tr);
-            });
-            
-            if (folders.size === 0 && fileList.length === 0) {
-                filesTable.innerHTML = '<tr>' +
-                    '<td colspan="5" class="text-center py-4 text-muted">' +
-                        '<i class="fas fa-folder-open fa-2x mb-3 d-block"></i>' +
-                        'Folder kosong' +
-                    '</td>' +
-                '</tr>';
+                labels.push(dateStr.substring(5)); // Format: MM-DD
+                const dayData = traffic[dateStr] || { views: 0, visitors: 0 };
+                viewsData.push(dayData.views || 0);
+                visitorsData.push(dayData.visitors || 0);
             }
+            
+            // Create or update chart
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            
+            if (trafficChart) {
+                trafficChart.data.labels = labels;
+                trafficChart.data.datasets[0].data = viewsData;
+                trafficChart.data.datasets[1].data = visitorsData;
+                trafficChart.update();
+            } else {
+                trafficChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Views',
+                                data: viewsData,
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Visitors',
+                                data: visitorsData,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
         } catch (error) {
-            console.error('Error loading files:', error);
-            filesTable.innerHTML = '<tr>' +
-                '<td colspan="5" class="text-center py-4 text-danger">' +
-                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
-                    'Error loading files: ' + error.message +
-                '</td>' +
-            '</tr>';
+            console.error('Error loading statistics:', error);
+        }
+    }
+    
+    window.refreshStatistics = function() {
+        loadStatistics();
+    };
+    
+    window.refreshFileList = function() {
+        if (currentProject) {
+            db.collection('projects').doc(currentProject).get().then(doc => {
+                const project = doc.data();
+                loadFileTree(project.files || {});
+            });
         }
     };
     
@@ -1575,6 +2169,12 @@ h1, h2, h3, h4 {
                 else if (ext === 'json') editor.session.setMode("ace/mode/json");
                 else editor.session.setMode("ace/mode/text");
                 
+                // Handle binary files
+                if (fileData.isBinary) {
+                    alert('File ini adalah file binary (gambar/dokumen) dan tidak dapat diedit di editor teks.');
+                    return;
+                }
+                
                 editor.setValue(fileData.content || '', -1);
                 originalContent = fileData.content || '';
                 editor.focus();
@@ -1606,14 +2206,23 @@ h1, h2, h3, h4 {
                 content: content,
                 updated: firebase.firestore.FieldValue.serverTimestamp(),
                 type: fileName.split('.').pop().toLowerCase(),
-                size: content.length
+                size: content.length,
+                isBinary: false
             };
             
             await db.collection('projects').doc(currentProject).update(updateData);
             
             alert('✅ File berhasil disimpan!');
             originalContent = content;
-            window.loadFiles(currentPath);
+            
+            // Update file tree
+            db.collection('projects').doc(currentProject).get().then(doc => {
+                const project = doc.data();
+                loadFileTree(project.files || {});
+                refreshStatistics();
+                updateLivePreview(currentProject);
+            });
+            
         } catch (error) {
             console.error('Error saving file:', error);
             alert('❌ Gagal menyimpan file: ' + error.message);
@@ -1632,127 +2241,33 @@ h1, h2, h3, h4 {
         }
     };
     
-    window.showAddFileModal = function() {
-        const name = prompt('Nama file baru (contoh: style.css, about.html):', 'newfile.html');
+    window.showNewFolderModal = function() {
+        const name = prompt('Nama folder baru:', 'new-folder');
         if (!name) return;
         
-        const defaultContent = getDefaultFileContent(name);
-        const filePath = currentPath + name;
-        const escapedPath = filePath.replace(/\//g, '___');
+        // Create empty folder by creating a placeholder file
+        const folderPath = currentPath + name + '/';
+        const placeholderPath = folderPath + '.placeholder';
+        const escapedPath = placeholderPath.replace(/\//g, '___');
         
         const updateData = {};
         updateData['files.' + escapedPath] = {
-            content: defaultContent,
-            type: name.split('.').pop().toLowerCase(),
-            size: defaultContent.length,
+            content: 'Folder placeholder',
+            type: 'txt',
+            size: 0,
+            isFolder: true,
             updated: firebase.firestore.FieldValue.serverTimestamp(),
             created: firebase.firestore.FieldValue.serverTimestamp()
         };
         
         db.collection('projects').doc(currentProject).update(updateData)
             .then(() => {
-                window.loadFiles(currentPath);
-                alert('✅ File berhasil dibuat: ' + name);
-                setTimeout(() => editFile(name), 300);
+                alert('✅ Folder berhasil dibuat!');
+                refreshFileList();
             })
             .catch(error => {
-                console.error('Error creating file:', error);
-                alert('❌ Gagal membuat file: ' + error.message);
+                alert('❌ Gagal membuat folder: ' + error.message);
             });
-    };
-    
-    function getDefaultFileContent(filename) {
-        const ext = filename.split('.').pop().toLowerCase();
-        
-        if (ext === 'html') {
-            return `<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Baru - PGXL.WEB.ID</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Selamat Datang di Halaman Baru</h1>
-        <p>Halaman ini dibuat dengan PGXL.WEB.ID - Free Static Hosting</p>
-        
-        <div class="pgxl-badge">
-            <p>🚀 <strong>Powered by PGXL.WEB.ID</strong></p>
-            <p>Free static hosting with custom subdomain</p>
-            <a href="https://pgxl.web.id">Create your own free website</a>
-        </div>
-    </div>
-</body>
-</html>`;
-        } else if (ext === 'css') {
-            return `/* ${filename} - Created with PGXL.WEB.ID */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    background-color: #f8fafc;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-    color: #667eea;
-}
-
-.pgxl-badge {
-    background: #f8f9fa;
-    border: 2px solid #667eea;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    margin: 30px 0;
-}`;
-        } else if (ext === 'js') {
-            return `// ${filename} - PGXL.WEB.ID JavaScript
-console.log('Hello from PGXL.WEB.ID! - Free Static Hosting');
-
-// Function to show PGXL branding
-function showPGXLBranding() {
-    const banner = document.createElement('div');
-    banner.innerHTML = '<div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:15px;text-align:center;border-radius:0 0 10px 10px;margin-top:30px;">' +
-        '<p style="margin:0 0 10px 0;">🚀 <strong>Powered by PGXL.WEB.ID</strong></p>' +
-        '<p style="margin:0;font-size:0.9em;">Free Static Hosting with Custom Subdomain</p>' +
-        '<a href="https://pgxl.web.id" target="_blank" style="color:white;text-decoration:underline;font-size:0.8em;">Create Your Free Website</a>' +
-        '</div>';
-    document.body.appendChild(banner);
-}
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Show PGXL branding
-    showPGXLBranding();
-    
-    // Console message
-    console.log('%c🚀 PGXL.WEB.ID - Free Static Hosting', 'color: #667eea; font-size: 16px; font-weight: bold;');
-    console.log('%cCreate your free website at https://pgxl.web.id', 'color: #666;');
-});`;
-        } else {
-            return `// ${filename}\n// Created with PGXL.WEB.ID - Free Static Hosting\n// https://pgxl.web.id\n\n` +
-                   `// Last updated: ${new Date().toLocaleString()}\n// File size: ${filename.length} characters\n\n` +
-                   `// Add your code below this line\nconsole.log("Welcome to PGXL.WEB.ID!");`;
-        }
-    }
-    
-    window.showNewFolderModal = function() {
-        const name = prompt('Nama folder baru:', 'new-folder');
-        if (!name) return;
-        
-        alert('Folder akan dibuat ketika Anda menambahkan file ke dalamnya.');
     };
     
     window.deleteFile = async function(fileName) {
@@ -1762,13 +2277,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const filePath = currentPath + fileName;
             const escapedPath = filePath.replace(/\//g, '___');
             
+            // Get file size before deleting for stats update
+            const projectRef = db.collection('projects').doc(currentProject);
+            const projectDoc = await projectRef.get();
+            const project = projectDoc.data();
+            const fileData = project.files[escapedPath];
+            const fileSize = fileData ? fileData.size || 0 : 0;
+            
             const updateData = {};
             updateData['files.' + escapedPath] = firebase.firestore.FieldValue.delete();
             
-            await db.collection('projects').doc(currentProject).update(updateData);
+            // Update stats
+            const stats = project.stats || { files: 0, storage: 0 };
+            updateData['stats.files'] = Math.max(0, (stats.files || 1) - 1);
+            updateData['stats.storage'] = Math.max(0, (stats.storage || 0) - fileSize);
+            updateData['stats.lastUpdated'] = firebase.firestore.FieldValue.serverTimestamp();
             
-            window.loadFiles(currentPath);
+            await projectRef.update(updateData);
+            
             alert('✅ File berhasil dihapus');
+            refreshFileList();
+            refreshStatistics();
+            
         } catch (error) {
             console.error('Error deleting file:', error);
             alert('❌ Gagal menghapus file: ' + error.message);
@@ -1800,6 +2330,10 @@ document.addEventListener('DOMContentLoaded', function() {
         currentProject = null;
     };
     
+    window.refreshPage = function() {
+        location.reload();
+    };
+    
     window.showLegal = function(type) {
         document.getElementById('welcomeSection').classList.add('d-none');
         document.getElementById('dashboard').classList.add('d-none');
@@ -1822,13 +2356,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    window.formatBytes = function(bytes) {
+    function formatBytes(bytes) {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
+    }
     
     function showWelcome() {
         document.getElementById('welcomeSection').classList.remove('d-none');
@@ -1858,7 +2392,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Global error:', e.error);
     });
     
-    console.log('🚀 PGXL.WEB.ID loaded successfully!');
+    console.log('🚀 PGXL.WEB.ID v2.0 loaded successfully!');
     console.log('Original hostname:', ORIGINAL_HOSTNAME);
     </script>
 </body>
