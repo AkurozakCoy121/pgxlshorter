@@ -1,1089 +1,359 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- META TAG VERIFIKASI IMPACT -->
-    <meta name='impact-site-verification' value='3a596a8b-08b0-48be-bd24-d2f394bb43b1'>
-    
-    <!-- BASIC META -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PGXL - Premium Domain & Web Solutions</title>
-    <meta name="description" content="PGXL: Premium Growth eXpansion Lab. Solusi domain premium dan tools digital untuk bisnis Indonesia.">
+    <title>PGXL - Premium Growth Expansion Lab</title>
     
-    <!-- FAVICON -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- FONT AWESOME -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CUSTOM CSS -->
     <style>
-        /*------------------------------------*\
-            RESET & BASE STYLES
-        \*------------------------------------*/
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         :root {
-            --primary-blue: #1a73e8;
+            --primary: #1a73e8;
             --primary-dark: #0d47a1;
-            --primary-light: #4285f4;
-            --secondary-blue: #e8f0fe;
-            --accent-blue: #00bcd4;
+            --accent: #00bcd4;
             --white: #ffffff;
-            --light-gray: #f8f9fa;
-            --medium-gray: #dadce0;
-            --dark-gray: #5f6368;
-            --text-dark: #202124;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
-            --transition: all 0.3s ease;
+            --light: #f8f9fa;
+            --dark: #202124;
         }
         
-        body {
-            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: var(--white);
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        section {
-            padding: 80px 0;
-        }
-        
-        h1, h2, h3, h4 {
-            font-weight: 600;
-            line-height: 1.3;
-            color: var(--primary-dark);
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-        
-        p {
-            margin-bottom: 1.5rem;
-            color: var(--dark-gray);
-        }
-        
-        a {
-            text-decoration: none;
-            color: var(--primary-blue);
-            transition: var(--transition);
-        }
-        
-        a:hover {
-            color: var(--primary-dark);
-        }
-        
-        .text-center {
-            text-align: center;
-        }
-        
-        /*------------------------------------*\
-            BUTTONS
-        \*------------------------------------*/
-        .btn {
-            display: inline-block;
-            padding: 14px 32px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.3);
-            color: var(--white);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary-blue);
-            color: var(--primary-blue);
-        }
-        
-        .btn-outline:hover {
-            background: var(--primary-blue);
-            color: var(--white);
-        }
-        
-        .btn-small {
-            padding: 10px 24px;
-            font-size: 0.9rem;
-        }
-        
-        /*------------------------------------*\
-            HEADER & NAVIGATION
-        \*------------------------------------*/
-        header {
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-        
-        .logo i {
-            margin-right: 10px;
-            color: var(--primary-blue);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 2rem;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-blue);
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            cursor: pointer;
-        }
-        
-        /*------------------------------------*\
-            HERO SECTION
-        \*------------------------------------*/
-        .hero {
-            background: linear-gradient(135deg, var(--secondary-blue) 0%, rgba(232, 240, 254, 0.8) 100%);
-            padding: 160px 0 100px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--primary-dark), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2.5rem;
-            color: var(--dark-gray);
-        }
-        
-        .hero-btns {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 2rem;
-        }
-        
-        /*------------------------------------*\
-            ABOUT PGXL SECTION
-        \*------------------------------------*/
-        .about-section {
-            background-color: var(--white);
-        }
-        
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-        
-        .about-text h2 {
-            text-align: left;
-        }
-        
-        .pgxl-meaning {
-            background: var(--light-gray);
-            padding: 25px;
-            border-radius: var(--radius);
-            margin-top: 30px;
-            border-left: 4px solid var(--primary-blue);
-        }
-        
-        .pgxl-meaning h4 {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-        }
-        
-        /*------------------------------------*\
-            SERVICES SECTION
-        \*------------------------------------*/
-        .services-section {
-            background-color: var(--light-gray);
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .service-card {
-            background: var(--white);
-            padding: 40px 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            text-align: center;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .service-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            color: var(--white);
-            font-size: 1.8rem;
-        }
-        
-        /*------------------------------------*\
-            DOMAIN COMPARISON SECTION
-        \*------------------------------------*/
-        .comparison-section {
-            background-color: var(--white);
-        }
-        
-        .comparison-table {
-            background: var(--white);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-top: 40px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
-            color: var(--white);
-        }
-        
-        th, td {
-            padding: 20px;
-            text-align: left;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-        
-        th {
-            font-weight: 600;
-        }
-        
-        tbody tr:hover {
-            background-color: var(--secondary-blue);
-        }
-        
-        .featured {
-            background-color: var(--secondary-blue);
-            border-left: 4px solid var(--primary-blue);
-        }
-        
-        .price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-        
-        /*------------------------------------*\
-            TOOLS SECTION
-        \*------------------------------------*/
-        .tools-section {
-            background-color: var(--light-gray);
-        }
-        
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-        
-        .tool-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            transition: var(--transition);
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .tool-icon {
-            font-size: 2.5rem;
-            color: var(--primary-blue);
-            margin-bottom: 20px;
-        }
-        
-        /*------------------------------------*\
-            PROGRESS BAR SECTION
-        \*------------------------------------*/
-        .progress-section {
-            background-color: var(--white);
-        }
-        
-        .progress-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .progress-item {
-            margin-bottom: 30px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
-        .progress-title {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background-color: var(--medium-gray);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
-            border-radius: 5px;
-            width: 0;
-            transition: width 1.5s ease;
-        }
-        
-        /*------------------------------------*\
-            CTA SECTION
-        \*------------------------------------*/
-        .cta-section {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-blue));
-            color: var(--white);
-            text-align: center;
-        }
-        
-        .cta-section h2 {
-            color: var(--white);
-        }
-        
-        .cta-section p {
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 700px;
-            margin: 0 auto 2rem;
-        }
-        
-        .cta-section .btn {
-            background: var(--white);
-            color: var(--primary-blue);
-        }
-        
-        .cta-section .btn:hover {
-            background: var(--secondary-blue);
-        }
-        
-        /*------------------------------------*\
-            FOOTER
-        \*------------------------------------*/
-        footer {
-            background-color: var(--primary-dark);
-            color: var(--white);
-            padding: 60px 0 30px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .footer-logo i {
-            margin-right: 10px;
-            color: var(--accent-blue);
-        }
-        
-        .footer-links h4 {
-            color: var(--white);
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links ul {
-            list-style: none;
-        }
+        /* Header */
+        header { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-dark); text-decoration: none; }
         
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .footer-links a:hover {
-            color: var(--accent-blue);
-        }
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--white); padding: 100px 0; text-align: center; }
+        .hero h1 { font-size: 3rem; margin-bottom: 20px; }
         
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
+        /* Features */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .feature-card { background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .feature-icon { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--white); font-size: 1.5rem; }
         
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-        }
+        /* Auth */
+        .auth-container { max-width: 400px; margin: 0 auto; background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         
-        .social-links a:hover {
-            background: var(--primary-blue);
-            transform: translateY(-3px);
-        }
+        /* Button */
+        .btn { display: inline-block; background: var(--primary); color: var(--white); padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; text-decoration: none; }
+        .btn:hover { background: var(--primary-dark); }
         
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
+        /* Dashboard */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 40px; }
+        .stat-card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
         
-        /*------------------------------------*\
-            RESPONSIVE STYLES
-        \*------------------------------------*/
-        @media (max-width: 992px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            h2 {
-                font-size: 2rem;
-            }
-            
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .about-text h2 {
-                text-align: center;
-            }
-        }
+        /* Footer */
+        footer { background: var(--dark); color: var(--white); padding: 40px 0 20px; margin-top: 50px; }
         
+        /* Responsive */
         @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 0;
-            }
-            
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--white);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            }
-            
-            .nav-links.active {
-                display: flex;
-            }
-            
-            .nav-links li {
-                margin: 10px 0;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-btns .btn {
-                width: 100%;
-                max-width: 300px;
-                margin-bottom: 10px;
-            }
-            
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-        
-        /*------------------------------------*\
-            ANIMATED PROGRESS BAR
-        \*------------------------------------*/
-        .ab-progress {
-            position: relative;
-            -webkit-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-        }
-        
-        .ab-progress * {
-            -webkit-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-        }
-        
-        .ab-progress+.ab-progress {
-            margin-top: 20px;
-        }
-        
-        .ab-progress .progress-title {
-            z-index: 100;
-            color: var(--clr-white);
-            font-family: var(--font-family);
-            font-size: 15px;
-            font-weight: 700;
-        }
-        
-        .ab-progress .progress-indicator {
-            padding-bottom: 7px;
-            position: relative;
-            margin: 5px 0;
-            font-family: var(--font-family);
-            font-size: 15px;
-            line-height: 15px;
-            font-weight: 400;
-            color: #2e2e2e;
-        }
-        
-        .ab-progress .progress-indicator-inner {
-            font-family: var(--font-family);
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 1;
-            padding: 8px 8px 7px;
-            border-radius: 3px;
-            color: var(--clr-white);
-            margin-bottom: 4px;
-            background: var(--clr-dark);
-            position: absolute;
-            bottom: 0;
-            transform: translateX(-50%);
-        }
-        
-        .ab-progress .progress-bar-wrap {
-            height: 6px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            border: 1px solid transparent;
-        }
-        
-        .ab-progress .down-arrow {
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 7px solid var(--clr-dark);
-            position: absolute;
-            left: 50%;
-            top: 100%;
-            transform: translateX(-50%);
-        }
-        
-        .ab-progress .ab-progress-bar {
-            height: 6px;
-            background: linear-gradient(to right, #785af0 0, #148cfa 100%);
-            width: 0;
-            border-radius: 6px;
+            .hero h1 { font-size: 2.2rem; }
+            .navbar { flex-direction: column; gap: 20px; }
+            .auth-container { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER & NAVIGATION -->
+    <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
-                <div class="logo">
-                    <i class="fas fa-rocket"></i>
-                    PGXL
-                </div>
-                
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About PGXL</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#comparison">Domain Comparison</a></li>
-                    <li><a href="#tools">Tools</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
+                <div class="logo">🚀 PGXL</div>
+                <div id="navButtons"></div>
             </nav>
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="hero" id="home" data-aos="fade-up">
-        <div class="container">
-            <h1>PGXL: Premium Growth eXpansion Lab</h1>
-            <p>Solusi lengkap untuk domain premium, web tools, dan ekspansi bisnis digital Anda. Temukan domain terbaik dengan harga kompetitif dan tools canggih untuk pertumbuhan bisnis.</p>
-            
-            <div class="hero-btns">
-                <a href="#comparison" class="btn">Bandingkan Harga Domain</a>
-                <a href="#tools" class="btn btn-outline">Coba Tools Gratis</a>
-            </div>
-        </div>
-    </section>
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Content akan diisi oleh JavaScript -->
+    </div>
 
-    <!-- ABOUT PGXL SECTION -->
-    <section class="about-section" id="about" data-aos="fade-up">
+    <!-- Footer -->
+    <footer>
         <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Apa Itu PGXL?</h2>
-                    <p><strong>PGXL</strong> adalah akronim dari <strong>Premium Growth eXpansion Lab</strong> - platform yang dirancang khusus untuk membantu bisnis Indonesia berkembang melalui solusi digital premium.</p>
-                    
-                    <div class="pgxl-meaning">
-                        <h4>Makna PGXL:</h4>
-                        <p><strong>P - Premium:</strong> Menyediakan domain dan tools berkualitas tinggi untuk bisnis serius.</p>
-                        <p><strong>G - Growth:</strong> Fokus pada pertumbuhan dan ekspansi bisnis digital Anda.</p>
-                        <p><strong>X - eXpansion:</strong> Membantu ekspansi bisnis ke pasar yang lebih luas.</p>
-                        <p><strong>L - Lab:</strong> Ruang eksperimen dan inovasi dengan tools terkini.</p>
-                    </div>
-                </div>
-                
-                <div class="about-image" data-aos="zoom-in">
-                    <div style="background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); padding: 40px; border-radius: var(--radius); color: white; text-align: center;">
-                        <i class="fas fa-chart-line" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                        <h3 style="color: white;">Visi PGXL</h3>
-                        <p style="color: rgba(255,255,255,0.9);">Menjadi platform utama di Indonesia untuk solusi domain premium dan tools digital yang mendorong pertumbuhan bisnis.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SERVICES SECTION -->
-    <section class="services-section" id="services" data-aos="fade-up">
-        <div class="container">
-            <h2>Layanan PGXL</h2>
-            <p class="text-center">Kami menyediakan berbagai layanan untuk mendukung kebutuhan digital bisnis Anda.</p>
-            
-            <div class="services-grid">
-                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3>Domain Premium</h3>
-                    <p>Pencarian dan pembelian domain premium dengan harga terbaik dari berbagai provider terkemuka.</p>
-                </div>
-                
-                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3>Digital Tools</h3>
-                    <p>Koleksi tools gratis untuk analisis domain, SEO, dan optimasi website bisnis Anda.</p>
-                </div>
-                
-                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3>Market Analysis</h3>
-                    <p>Analisis pasar dan kompetitor untuk menentukan strategi digital yang efektif.</p>
-                </div>
-                
-                <div class="service-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="service-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>Growth Consultation</h3>
-                    <p>Konsultasi ekspansi bisnis digital dengan tim ahli kami.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- DOMAIN COMPARISON SECTION -->
-    <section class="comparison-section" id="comparison" data-aos="fade-up">
-        <div class="container">
-            <h2>Perbandingan Harga Domain</h2>
-            <p class="text-center">Bandingkan harga domain dari berbagai provider terbaik di satu tempat.</p>
-            
-            <div class="comparison-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Domain .com</th>
-                            <th>WHOIS Privacy</th>
-                            <th>SSL Gratis</th>
-                            <th>Support</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="featured">
-                            <td><strong>Namecheap</strong></td>
-                            <td class="price">$8.88</td>
-                            <td><i class="fas fa-check" style="color: #34a853;"></i> Gratis</td>
-                            <td><i class="fas fa-check" style="color: #34a853;"></i> Ya</td>
-                            <td>24/7 Chat & Email</td>
-                            <td><a href="https://namecheap.com" class="btn btn-small" target="_blank">Beli</a></td>
-                        </tr>
-                        <tr>
-                            <td>GoDaddy</td>
-                            <td class="price">$12.99</td>
-                            <td><i class="fas fa-times" style="color: #ea4335;"></i> $9.99/tahun</td>
-                            <td><i class="fas fa-check" style="color: #34a853;"></i> Ya</td>
-                            <td>24/7 Phone & Chat</td>
-                            <td><a href="https://godaddy.com" class="btn btn-small btn-outline" target="_blank">Beli</a></td>
-                        </tr>
-                        <tr>
-                            <td>Hostinger</td>
-                            <td class="price">$9.99</td>
-                            <td><i class="fas fa-check" style="color: #34a853;"></i> Gratis</td>
-                            <td><i class="fas fa-check" style="color: #34a853;"></i> Ya</td>
-                            <td>24/7 Chat</td>
-                            <td><a href="https://hostinger.co.id" class="btn btn-small btn-outline" target="_blank">Beli</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- TOOLS SECTION -->
-    <section class="tools-section" id="tools" data-aos="fade-up">
-        <div class="container">
-            <h2>Tools Gratis PGXL</h2>
-            <p class="text-center">Manfaatkan berbagai tools digital gratis untuk mengembangkan bisnis Anda.</p>
-            
-            <div class="tools-grid">
-                <div class="tool-card" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="tool-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h3>Domain Checker</h3>
-                    <p>Cek ketersediaan domain secara real-time dengan satu klik.</p>
-                    <a href="#" class="btn btn-small">Coba Sekarang</a>
-                </div>
-                
-                <div class="tool-card" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="tool-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3>Business Name Generator</h3>
-                    <p>Generate nama bisnis kreatif berdasarkan kata kunci Anda.</p>
-                    <a href="#" class="btn btn-small">Generate</a>
-                </div>
-                
-                <div class="tool-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="tool-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>SEO Analyzer</h3>
-                    <p>Analisis SEO website dan dapatkan rekomendasi perbaikan.</p>
-                    <a href="#" class="btn btn-small">Analisis</a>
-                </div>
-                
-                <div class="tool-card" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="tool-icon">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <h3>Price Comparison</h3>
-                    <p>Bandingkan harga hosting dan domain dari berbagai provider.</p>
-                    <a href="#comparison" class="btn btn-small">Bandingkan</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PROGRESS BAR SECTION -->
-    <section class="progress-section" data-aos="fade-up">
-        <div class="container">
-            <h2>Statistik PGXL</h2>
-            <p class="text-center">Kinerja dan pencapaian platform PGXL dalam membantu bisnis Indonesia.</p>
-            
-            <div class="progress-container">
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Kepuasan Pengguna</span>
-                        <span>95%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="95"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Domain Terjual</span>
-                        <span>1200+</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="88"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Pengguna Aktif</span>
-                        <span>5000+</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="75"></div>
-                    </div>
-                </div>
-                
-                <div class="progress-item">
-                    <div class="progress-title">
-                        <span>Tools Tersedia</span>
-                        <span>15+</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" data-width="100"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="cta-section" data-aos="fade-up">
-        <div class="container">
-            <h2>Siap Mengembangkan Bisnis Anda?</h2>
-            <p>Bergabunglah dengan ribuan pebisnis Indonesia yang telah menggunakan PGXL untuk menemukan domain terbaik dan tools digital yang mendukung pertumbuhan.</p>
-            <a href="#contact" class="btn">Hubungi Kami</a>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer id="contact">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <div class="footer-logo">
-                        <i class="fas fa-rocket"></i>
-                        PGXL
-                    </div>
-                    <p>Premium Growth eXpansion Lab - Solusi lengkap untuk domain premium dan tools digital bisnis Indonesia.</p>
-                    
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Layanan</h4>
-                    <ul>
-                        <li><a href="#services">Domain Premium</a></li>
-                        <li><a href="#tools">Digital Tools</a></li>
-                        <li><a href="#comparison">Price Comparison</a></li>
-                        <li><a href="#">Market Analysis</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Blog & Artikel</a></li>
-                        <li><a href="#">Tutorial</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Affiliate Program</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>Kontak</h4>
-                    <ul>
-                        <li><i class="fas fa-envelope" style="margin-right: 10px;"></i> info@pgxl.id</li>
-                        <li><i class="fas fa-phone" style="margin-right: 10px;"></i> +62 812-3456-7890</li>
-                        <li><i class="fas fa-map-marker-alt" style="margin-right: 10px;"></i> Jakarta, Indonesia</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2024 PGXL - Premium Growth eXpansion Lab. All rights reserved.</p>
-                <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">Website ini berisi link affiliate. Kami mungkin menerima komisi jika Anda membeli melalui link kami.</p>
-            </div>
+            <p style="text-align: center; color: #94a3b8;">&copy; <span id="currentYear"></span> PGXL - Premium Growth Expansion Lab</p>
         </div>
     </footer>
 
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <!-- CUSTOM JS -->
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
+    <!-- Firebase Config -->
+    <script type="module">
+        // Import Firebase Config dari file terpisah
+        import firebaseConfig from './firebase-config.json' assert { type: 'json' };
         
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
         
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
-        });
+        // Variabel global
+        let currentUser = null;
         
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            });
-        });
-        
-        // Animate progress bars on scroll
-        function animateProgressBars() {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            
-            progressBars.forEach(bar => {
-                const width = bar.getAttribute('data-width');
-                bar.style.width = width + '%';
-            });
-        }
-        
-        // Trigger progress bars when section is in view
-        const progressSection = document.querySelector('.progress-section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateProgressBars();
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        if (progressSection) {
-            observer.observe(progressSection);
-        }
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Update copyright year
+        // Main App
         document.addEventListener('DOMContentLoaded', function() {
-            const yearSpan = document.querySelector('.footer-bottom p');
-            if (yearSpan) {
-                yearSpan.innerHTML = yearSpan.innerHTML.replace('2024', new Date().getFullYear());
-            }
+            // Auth State Listener
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                renderApp();
+            });
+            
+            // Render initial app
+            renderApp();
+            updateCopyrightYear();
         });
+        
+        // Render App berdasarkan auth state
+        function renderApp() {
+            const mainContent = document.getElementById('mainContent');
+            const navButtons = document.getElementById('navButtons');
+            
+            if (currentUser) {
+                // User logged in
+                navButtons.innerHTML = `
+                    <div style="display: flex; gap: 10px;">
+                        <span style="color: var(--primary); font-weight: 500;">${currentUser.email}</span>
+                        <button class="btn" onclick="logout()">Logout</button>
+                    </div>
+                `;
+                
+                mainContent.innerHTML = `
+                    <section class="hero">
+                        <div class="container">
+                            <h1>Welcome to PGXL Dashboard</h1>
+                            <p>Hi ${currentUser.email}, you're logged in!</p>
+                            <button class="btn" onclick="showDashboard()" style="margin-top: 20px;">Go to Dashboard</button>
+                        </div>
+                    </section>
+                `;
+            } else {
+                // User not logged in
+                navButtons.innerHTML = `
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="showLogin()">Login</button>
+                        <button class="btn" onclick="showRegister()" style="background: transparent; border: 2px solid var(--primary); color: var(--primary);">Register</button>
+                    </div>
+                `;
+                
+                mainContent.innerHTML = `
+                    <section class="hero">
+                        <div class="container">
+                            <h1>PGXL Platform</h1>
+                            <p>Premium Growth Expansion Lab with Firebase Backend</p>
+                            <button class="btn" onclick="showLogin()" style="margin-top: 20px;">Get Started</button>
+                        </div>
+                    </section>
+                    
+                    <section style="padding: 80px 0;">
+                        <div class="container">
+                            <h2 style="text-align: center; margin-bottom: 40px;">Features</h2>
+                            <div class="features-grid">
+                                <div class="feature-card">
+                                    <div class="feature-icon">🔥</div>
+                                    <h3>Firebase Auth</h3>
+                                    <p>Secure authentication with email/password and Google login.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">💾</div>
+                                    <h3>Firestore DB</h3>
+                                    <p>Real-time NoSQL database for your data storage needs.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <div class="feature-icon">⚡</div>
+                                    <h3>Fast & Secure</h3>
+                                    <p>Built with modern web technologies for optimal performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            }
+        }
+        
+        // Auth Functions
+        function showLogin() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <section style="padding: 80px 0;">
+                    <div class="container">
+                        <div class="auth-container">
+                            <h2 style="text-align: center; margin-bottom: 30px;">Login</h2>
+                            <form onsubmit="handleLogin(event)">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="loginEmail" class="form-control" placeholder="email@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+                                </div>
+                                <button type="submit" class="btn" style="width: 100%;">Login</button>
+                            </form>
+                            <p style="text-align: center; margin-top: 20px;">Don't have an account? <a href="#" onclick="showRegister()" style="color: var(--primary);">Register</a></p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+        
+        function showRegister() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <section style="padding: 80px 0;">
+                    <div class="container">
+                        <div class="auth-container">
+                            <h2 style="text-align: center; margin-bottom: 30px;">Register</h2>
+                            <form onsubmit="handleRegister(event)">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="registerEmail" class="form-control" placeholder="email@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" id="registerPassword" class="form-control" placeholder="Min 6 characters" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" id="registerConfirm" class="form-control" placeholder="Confirm password" required>
+                                </div>
+                                <button type="submit" class="btn" style="width: 100%;">Register</button>
+                            </form>
+                            <p style="text-align: center; margin-top: 20px;">Already have an account? <a href="#" onclick="showLogin()" style="color: var(--primary);">Login</a></p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                alert('Login successful!');
+            } catch (error) {
+                alert('Login error: ' + error.message);
+            }
+        }
+        
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+            
+            if (password !== confirm) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Save user data to Firestore
+                await db.collection('users').doc(userCredential.user.uid).set({
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Registration successful!');
+            } catch (error) {
+                alert('Registration error: ' + error.message);
+            }
+        }
+        
+        async function logout() {
+            try {
+                await auth.signOut();
+                alert('Logged out successfully!');
+            } catch (error) {
+                alert('Logout error: ' + error.message);
+            }
+        }
+        
+        function showDashboard() {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <section style="padding: 80px 0;">
+                    <div class="container">
+                        <h2 style="text-align: center; margin-bottom: 40px;">Dashboard</h2>
+                        <div class="dashboard-grid">
+                            <div class="stat-card">
+                                <h3>User Info</h3>
+                                <p>Email: ${currentUser.email}</p>
+                                <p>UID: ${currentUser.uid.substring(0, 10)}...</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Quick Actions</h3>
+                                <button class="btn" onclick="testFirestore()" style="margin: 10px 0; width: 100%;">Test Firestore</button>
+                                <button class="btn" onclick="logout()" style="margin: 10px 0; width: 100%;">Logout</button>
+                            </div>
+                        </div>
+                        <div id="firestoreResult" style="margin-top: 30px;"></div>
+                    </div>
+                </section>
+            `;
+        }
+        
+        async function testFirestore() {
+            const resultDiv = document.getElementById('firestoreResult');
+            resultDiv.innerHTML = '<p>Testing Firestore...</p>';
+            
+            try {
+                // Create test document
+                await db.collection('test').add({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    message: 'Hello from PGXL!',
+                    userId: currentUser.uid
+                });
+                
+                // Read documents
+                const snapshot = await db.collection('test')
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('timestamp', 'desc')
+                    .limit(5)
+                    .get();
+                
+                let html = '<h3>Firestore Test Results:</h3>';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    html += `<p>${data.timestamp?.toDate().toLocaleTimeString()} - ${data.message}</p>`;
+                });
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function updateCopyrightYear() {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        }
+        
+        // Global functions
+        window.showLogin = showLogin;
+        window.showRegister = showRegister;
+        window.logout = logout;
+        window.showDashboard = showDashboard;
+        window.testFirestore = testFirestore;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
     </script>
 </body>
 </html>
