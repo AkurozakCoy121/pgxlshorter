@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - PGXL.WEB.ID</title>
+    
+    <!-- Bootstrap 5.3 (Dark Mode Support) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-dark: #2563eb;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --secondary-dark: #7c3aed;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--darker-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--dark-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-brand span {
+            display: none;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar .nav-link {
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 0;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .sidebar .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 4px solid var(--primary);
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            width: 24px;
+            text-align: center;
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 25px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            background: rgba(30, 41, 59, 0.5);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            border-left: 4px solid;
+            padding: 20px;
+        }
+
+        .stat-card.users {
+            border-left-color: var(--primary);
+        }
+
+        .stat-card.websites {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.active {
+            border-left-color: var(--info);
+        }
+
+        .stat-card.deleted {
+            border-left-color: var(--danger);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-text {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--text-primary);
+            background: var(--card-bg);
+        }
+
+        .table th {
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .table td {
+            border-color: var(--border-color);
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 6px 10px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        /* Modal */
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            
+            .sidebar.show {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .topbar {
+                position: relative;
+            }
+        }
+
+        /* Custom Components */
+        .website-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .website-card:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .progress-thin {
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        .activity-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .activity-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--dark-bg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/2489/2489077.png" alt="PGXL Logo" class="me-2">
+            <span class="fs-4 fw-bold">PGXL Admin</span>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#users">
+                    <i class="bi bi-people"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#websites">
+                    <i class="bi bi-globe"></i>
+                    <span>Website Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#content">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Content Management</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#deleted">
+                    <i class="bi bi-trash"></i>
+                    <span>Deleted Websites</span>
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <div class="px-3 py-2">
+                    <small class="text-muted d-block mb-1">Admin</small>
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-person-circle fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <div class="fw-medium">Super Admin</div>
+                            <small class="text-muted">admin@pgxl.web.id</small>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <nav class="topbar d-flex justify-content-between align-items-center">
+            <div>
+                <button class="btn btn-outline-primary btn-sm me-2" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="h5 mb-0">Admin Dashboard</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-danger rounded-pill">3</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><a class="dropdown-item" href="#">New user registered</a></li>
+                        <li><a class="dropdown-item" href="#">Website limit warning</a></li>
+                        <li><a class="dropdown-item" href="#">System updated</a></li>
+                    </ul>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Container -->
+        <div class="container-fluid py-4">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="fade-in">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stat-card users">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="stat-text">TOTAL USERS</h6>
+                                        <h3 class="stat-number" id="totalUsers">0</h3>
+                                    </div>
+                                    <i class="bi bi-people fs-1 opacity-25"></i>
+                                </div>
+                                <div class="progress progress-thin mt-2">
+                                    <div class="progress-bar" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card websites">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="stat-text">ACTIVE WEBSITES</h6>
+                                        <h3 class="stat-number" id="totalWebsites">0</h3>
+                                    </div>
+                                    <i class="bi bi-globe fs-1 opacity-25"></i>
+                                </div>
+                                <div class="progress progress-thin mt-2">
+                                    <div class="progress-bar bg-success" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card active">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="stat-text">STORAGE USED</h6>
+                                        <h3 class="stat-number" id="storageUsed">0 GB</h3>
+                                    </div>
+                                    <i class="bi bi-hdd fs-1 opacity-25"></i>
+                                </div>
+                                <div class="progress progress-thin mt-2">
+                                    <div class="progress-bar bg-info" style="width: 45%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card deleted">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="stat-text">DELETED WEBSITES</h6>
+                                        <h3 class="stat-number" id="deletedWebsites">0</h3>
+                                    </div>
+                                    <i class="bi bi-trash fs-1 opacity-25"></i>
+                                </div>
+                                <div class="progress progress-thin mt-2">
+                                    <div class="progress-bar bg-danger" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">Website Activity Chart</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="activityChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-timeline">
+                                    <div class="activity-item">
+                                        <small class="text-muted">Just now</small>
+                                        <p class="mb-0">New website created: <strong>myportfolio</strong></p>
+                                    </div>
+                                    <div class="activity-item">
+                                        <small class="text-muted">30 min ago</small>
+                                        <p class="mb-0">User <strong>johndoe@gmail.com</strong> registered</p>
+                                    </div>
+                                    <div class="activity-item">
+                                        <small class="text-muted">2 hours ago</small>
+                                        <p class="mb-0">Website <strong>oldproject</strong> was deleted</p>
+                                    </div>
+                                    <div class="activity-item">
+                                        <small class="text-muted">5 hours ago</small>
+                                        <p class="mb-0">System maintenance completed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section id="users" class="fade-in d-none">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">User Management</h5>
+                        <button class="btn btn-primary btn-sm" onclick="addUser()">
+                            <i class="bi bi-plus"></i> Add User
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table id="usersTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Websites</th>
+                                    <th>Plan</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Website Management Section -->
+            <section id="websites" class="fade-in d-none">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Website Management</h5>
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" class="form-control form-control-sm" placeholder="Search websites..." id="websiteSearch">
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="filterStatus">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="suspended">Suspended</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm" id="filterOwner">
+                                    <option value="">All Owners</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table id="websitesTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Domain</th>
+                                    <th>Owner</th>
+                                    <th>Files</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="websitesTableBody">
+                                <!-- Websites will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Management Section -->
+            <section id="content" class="fade-in d-none">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">Website Files</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Website</label>
+                                    <select class="form-select" id="websiteSelect">
+                                        <option value="">Choose website...</option>
+                                    </select>
+                                </div>
+                                <div id="fileTree" class="mt-3">
+                                    <!-- File tree will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">File Editor</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">File Path</label>
+                                    <input type="text" class="form-control" id="filePath" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Content</label>
+                                    <textarea class="form-control" id="fileContent" rows="15" placeholder="Select a file to edit..."></textarea>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="saveFile()" id="saveFileBtn">
+                                        <i class="bi bi-save"></i> Save File
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="createNewFile()">
+                                        <i class="bi bi-file-earmark-plus"></i> New File
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="deleteFile()">
+                                        <i class="bi bi-trash"></i> Delete File
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deleted Websites Section -->
+            <section id="deleted" class="fade-in d-none">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Deleted Websites</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-warning me-2" onclick="restoreAll()">
+                                <i class="bi bi-arrow-clockwise"></i> Restore All
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="emptyTrash()">
+                                <i class="bi bi-trash3"></i> Empty Trash
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Website Name</th>
+                                    <th>Domain</th>
+                                    <th>Deleted Date</th>
+                                    <th>Owner</th>
+                                    <th>Files</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deletedWebsitesBody">
+                                <!-- Deleted websites will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Plan</label>
+                            <select class="form-select">
+                                <option value="free">Free (5 websites)</option>
+                                <option value="pro">Pro (Unlimited)</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Add User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Website Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <strong id="deleteWebsiteName"></strong>?</p>
+                    <p class="text-danger">
+                        This action cannot be undone. All website files and data will be permanently deleted.
+                    </p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="confirmDelete">
+                        <label class="form-check-label" for="confirmDelete">
+                            I understand this action is permanent
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        Delete Permanently
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCH5nmdOf3tL7HNjx9kqBmISgaylG8vvOU",
+        authDomain: "pgxl-4567a.firebaseapp.com",
+        projectId: "pgxl-4567a",
+        storageBucket: "pgxl-4567a.firebasestorage.app",
+        messagingSenderId: "545920930826",
+        appId: "1:545920930826:web:18458fd3382a83f17abbf3",
+        measurementId: "G-1Y4E635M4R"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Global Variables
+    let currentUser = null;
+    let websites = [];
+    let users = [];
+
+    // Initialize Admin Panel
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAdminPanel();
+        loadStatistics();
+        loadUsers();
+        loadWebsites();
+        initializeChart();
+    });
+
+    function initializeAdminPanel() {
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+
+        // Navigation
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.sidebar .nav-link').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Show corresponding section
+                const sectionId = this.getAttribute('href').substring(1);
+                document.querySelectorAll('section').forEach(section => {
+                    section.classList.add('d-none');
+                });
+                document.getElementById(sectionId).classList.remove('d-none');
+            });
+        });
+
+        // Confirm Delete Checkbox
+        document.getElementById('confirmDelete')?.addEventListener('change', function() {
+            document.getElementById('confirmDeleteBtn').disabled = !this.checked;
+        });
+    }
+
+    async function loadStatistics() {
+        try {
+            // Load users count
+            const usersSnapshot = await db.collection('users').get();
+            document.getElementById('totalUsers').textContent = usersSnapshot.size;
+            
+            // Load websites count
+            const websitesSnapshot = await db.collection('projects').get();
+            document.getElementById('totalWebsites').textContent = websitesSnapshot.size;
+            
+            // Calculate storage used
+            let totalSize = 0;
+            websitesSnapshot.forEach(doc => {
+                const project = doc.data();
+                if (project.files) {
+                    Object.values(project.files).forEach(file => {
+                        totalSize += file.content ? file.content.length : 0;
+                    });
+                }
+            });
+            
+            const storageGB = (totalSize / (1024 * 1024 * 1024)).toFixed(2);
+            document.getElementById('storageUsed').textContent = storageGB + ' GB';
+            
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const snapshot = await db.collection('users').get();
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                const row = `
+                    <tr>
+                        <td>${doc.id.substring(0, 8)}...</td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.displayName || 'N/A'}</td>
+                        <td><span class="badge bg-primary">${user.websiteCount || 0}/5</span></td>
+                        <td><span class="badge bg-secondary">Free</span></td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser('${doc.id}')">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="suspendUser('${doc.id}')">
+                                <i class="bi bi-pause"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Initialize DataTable
+            $('#usersTable').DataTable({
+                pageLength: 10,
+                ordering: true
+            });
+            
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    }
+
+    async function loadWebsites() {
+        try {
+            const snapshot = await db.collection('projects').get();
+            const tbody = document.getElementById('websitesTableBody');
+            tbody.innerHTML = '';
+            
+            websites = [];
+            
+            snapshot.forEach(doc => {
+                const website = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                websites.push(website);
+                
+                const filesCount = website.files ? Object.keys(website.files).length : 0;
+                
+                const row = `
+                    <tr>
+                        <td>${doc.id.substring(0, 8)}...</td>
+                        <td><strong>${website.name || 'Unnamed'}</strong></td>
+                        <td><code>${website.domain || doc.id + '.pgxl.web.id'}</code></td>
+                        <td>${website.ownerEmail || 'Unknown'}</td>
+                        <td><span class="badge bg-info">${filesCount} files</span></td>
+                        <td>${website.createdAt ? new Date(website.createdAt).toLocaleDateString() : 'N/A'}</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="viewWebsite('${doc.id}')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning me-1" onclick="editWebsite('${doc.id}')">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWebsite('${doc.id}', '${website.name || 'Website'}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Populate filter dropdowns
+            const ownerSelect = document.getElementById('filterOwner');
+            const uniqueOwners = [...new Set(websites.map(w => w.ownerEmail))];
+            uniqueOwners.forEach(owner => {
+                if (owner) {
+                    const option = document.createElement('option');
+                    option.value = owner;
+                    option.textContent = owner;
+                    ownerSelect.appendChild(option);
+                }
+            });
+            
+            // Initialize DataTable with filtering
+            const table = $('#websitesTable').DataTable({
+                pageLength: 10,
+                ordering: true
+            });
+            
+            // Search functionality
+            document.getElementById('websiteSearch').addEventListener('input', function() {
+                table.search(this.value).draw();
+            });
+            
+            document.getElementById('filterStatus').addEventListener('change', function() {
+                table.column(6).search(this.value).draw();
+            });
+            
+            document.getElementById('filterOwner').addEventListener('change', function() {
+                table.column(3).search(this.value).draw();
+            });
+            
+        } catch (error) {
+            console.error('Error loading websites:', error);
+        }
+    }
+
+    function initializeChart() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Websites Created',
+                    data: [12, 19, 15, 25, 22, 30, 28],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Users Registered',
+                    data: [8, 12, 10, 18, 15, 22, 20],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#cbd5e1'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: '#334155'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#334155'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function addUser() {
+        const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+        modal.show();
+    }
+
+    function editUser(userId) {
+        alert('Edit user: ' + userId);
+        // Implement edit user functionality
+    }
+
+    function suspendUser(userId) {
+        if (confirm('Are you sure you want to suspend this user?')) {
+            // Implement suspend functionality
+            alert('User suspended: ' + userId);
+        }
+    }
+
+    function viewWebsite(websiteId) {
+        const website = websites.find(w => w.id === websiteId);
+        if (website) {
+            window.open('https://' + website.domain, '_blank');
+        }
+    }
+
+    function editWebsite(websiteId) {
+        alert('Edit website: ' + websiteId);
+        // Implement edit website functionality
+    }
+
+    function deleteWebsite(websiteId, websiteName) {
+        document.getElementById('deleteWebsiteName').textContent = websiteName;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        
+        document.getElementById('confirmDeleteBtn').onclick = async function() {
+            try {
+                await db.collection('projects').doc(websiteId).delete();
+                
+                // Move to deleted collection
+                const website = websites.find(w => w.id === websiteId);
+                if (website) {
+                    website.deletedAt = new Date();
+                    await db.collection('deleted_projects').doc(websiteId).set(website);
+                }
+                
+                modal.hide();
+                loadWebsites();
+                loadStatistics();
+                
+                alert('Website deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting website:', error);
+                alert('Error deleting website: ' + error.message);
+            }
+        };
+        
+        modal.show();
+    }
+
+    function createNewFile() {
+        const path = prompt('Enter file path (e.g., css/style.css):');
+        if (path) {
+            document.getElementById('filePath').value = path;
+            document.getElementById('fileContent').value = `// New file: ${path}\n// Created: ${new Date().toLocaleString()}\n\n// Your content here...`;
+        }
+    }
+
+    function saveFile() {
+        const path = document.getElementById('filePath').value;
+        const content = document.getElementById('fileContent').value;
+        
+        if (!path) {
+            alert('Please select a file first');
+            return;
+        }
+        
+        // Implement file saving logic
+        alert('File saved: ' + path);
+    }
+
+    function deleteFile() {
+        const path = document.getElementById('filePath').value;
+        if (path && confirm('Delete file: ' + path + '?')) {
+            // Implement file deletion logic
+            document.getElementById('filePath').value = '';
+            document.getElementById('fileContent').value = '';
+            alert('File deleted: ' + path);
+        }
+    }
+
+    function restoreAll() {
+        if (confirm('Restore all deleted websites?')) {
+            // Implement restore functionality
+            alert('All websites restored');
+        }
+    }
+
+    function emptyTrash() {
+        if (confirm('Permanently delete all websites in trash?')) {
+            // Implement empty trash functionality
+            alert('Trash emptied');
+        }
+    }
+
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    }
+
+    // Theme Toggle (Dark/Light Mode - Optional)
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-bs-theme', newTheme);
+        
+        // Save preference to localStorage
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    </script>
+</body>
+</html>
