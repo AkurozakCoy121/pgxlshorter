@@ -3,198 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSSOG - SSOG 3D Engine Pro Max</title>
+    <title>MSSOG ENGINE v5.0 ULTRA - SSOG Professional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
         body {
             font-family: 'JetBrains+Mono', monospace;
-            background-color: #050505;
-            color: #e0e0e0;
+            background-color: #000;
+            color: #ccc;
             overflow: hidden;
+            user-select: none;
         }
-        .glass {
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 77, 0, 0.15);
+        .ui-glass {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 77, 0, 0.1);
         }
-        #viewport {
-            width: 100%;
-            height: 100vh;
-            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
-        }
-        .sidebar { width: 300px; height: 100vh; z-index: 10; }
-        .active-tool { background: #ff4d00 !important; color: white; border-color: #ff4d00; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #ff4d00; border-radius: 10px; }
+        .sidebar { width: 340px; height: 100vh; z-index: 50; transition: width 0.3s; }
+        .active-tool { background: #ff4d00 !important; color: white !important; box-shadow: 0 0 20px rgba(255, 77, 0, 0.3); }
         .input-dark {
-            background: #121212;
-            border: 1px solid #333;
+            background: #0d0d0d;
+            border: 1px solid #222;
             font-size: 10px;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 6px;
             outline: none;
-            color: #fff;
+            color: #eee;
+            width: 100%;
         }
         .input-dark:focus { border-color: #ff4d00; }
-        .tree-item:hover .item-actions { display: flex; }
-        .node-folder { color: #ffad00; font-weight: bold; }
-        .node-mesh { color: #00d2ff; }
+        .tree-item { 
+            padding: 8px 12px; 
+            font-size: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+        .tree-item:hover { background: rgba(255, 77, 0, 0.05); }
+        .tree-item.selected { background: rgba(255, 77, 0, 0.15); border-left: 3px solid #ff4d00; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff4d00; }
+        .kpi-label { font-size: 8px; color: #555; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .kpi-value { font-size: 11px; color: #aaa; font-weight: bold; }
+        #viewport { width: 100%; height: 100vh; }
+        .btn-icon { padding: 6px; border-radius: 4px; border: 1px solid #222; background: #0a0a0a; transition: all 0.2s; }
+        .btn-icon:hover { border-color: #ff4d00; color: #ff4d00; }
+        .badge { font-size: 7px; background: #ff4d00; color: white; padding: 1px 4px; border-radius: 3px; }
     </style>
 </head>
-<body class="flex overflow-hidden">
+<body class="flex">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black p-4">
-        <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md text-center border-orange-500/50">
-            <h1 class="text-5xl font-black mb-2 text-orange-500 tracking-tighter italic">MSSOG</h1>
-            <p class="text-zinc-500 text-[10px] mb-10 uppercase tracking-[0.3em]">Next-Gen Asset Management System</p>
-            <input type="password" id="password" placeholder="ACCESS CODE" class="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 focus:border-orange-500 outline-none mb-4 text-center tracking-[0.5em]">
-            <button onclick="checkAccess()" class="w-full p-4 rounded-xl font-bold bg-orange-600 hover:bg-orange-500 transition-all shadow-lg shadow-orange-900/20">INITIALIZE CORE</button>
-            <p id="error-msg" class="text-red-500 text-[10px] mt-6 hidden font-bold">WRONG CODE. TERMINATING...</p>
+    <!-- SPLASH/LOGIN -->
+    <div id="login-screen" class="fixed inset-0 z-[200] flex items-center justify-center bg-black">
+        <div class="ui-glass p-16 rounded-[50px] text-center border-orange-500/30 max-w-lg w-full mx-4 shadow-[0_0_100px_rgba(255,77,0,0.1)]">
+            <div class="mb-8 text-7xl animate-pulse">🛰️</div>
+            <h1 class="text-6xl font-black mb-4 tracking-tighter italic"><span class="text-orange-500">MS</span>SOG</h1>
+            <p class="text-zinc-600 text-[10px] mb-12 uppercase tracking-[0.5em]">Quantum Asset Intelligence Engine</p>
+            <input type="password" id="password" placeholder="SECURITY KEY" class="input-dark text-center tracking-[1em] mb-6 p-5 text-lg">
+            <button onclick="checkAccess()" class="w-full py-5 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-bold transition-all shadow-lg shadow-orange-900/40">INITIALIZE CORE</button>
         </div>
     </div>
 
-    <!-- MAIN EDITOR UI -->
-    <div id="editor-ui" class="hidden flex w-full">
+    <!-- MAIN UI -->
+    <div id="editor-ui" class="hidden flex w-full h-full">
         
-        <!-- LEFT: WORKSPACE / SCENE TREE -->
-        <aside class="sidebar glass border-r flex flex-col p-4 space-y-4">
-            <div class="border-b border-orange-500/30 pb-3 flex justify-between items-center">
-                <h2 class="text-[11px] font-bold text-orange-500 uppercase tracking-widest">Scene Outliner</h2>
-                <div class="flex gap-1">
-                    <button onclick="addFolder()" class="p-1 bg-zinc-800 rounded hover:bg-orange-600" title="Add Folder">📁</button>
-                    <button onclick="clearScene()" class="p-1 bg-zinc-800 rounded hover:bg-red-600" title="Clear All">🗑️</button>
+        <!-- LEFT: HIERARCHY & ASSETS -->
+        <aside class="sidebar ui-glass border-r border-zinc-900 flex flex-col">
+            <div class="p-4 border-b border-zinc-900 flex flex-col gap-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-[10px] font-bold text-orange-500 uppercase tracking-[0.2em]">Scene Tree</h2>
+                    <div class="flex gap-2">
+                        <button onclick="addFolder()" class="btn-icon" title="New Folder">📁</button>
+                        <button onclick="exportScene()" class="btn-icon" title="Save Project">💾</button>
+                        <button onclick="clearScene()" class="btn-icon" title="Reset Scene">🧹</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto space-y-1" id="scene-tree">
-                <!-- Dinamis -->
+                <input type="text" id="tree-search" placeholder="Search objects..." class="input-dark" oninput="updateSceneTree()">
             </div>
 
-            <div class="pt-4 border-t border-zinc-800 grid grid-cols-2 gap-2">
-                <button onclick="addPrimitive('cube')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD CUBE</button>
-                <button onclick="addPrimitive('sphere')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD SPHERE</button>
-                <button onclick="addPrimitive('plane')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD PLANE</button>
-                <button onclick="document.getElementById('file-input').click()" class="py-2 bg-orange-600/10 border border-orange-500/30 text-[9px] text-orange-500 rounded hover:bg-orange-600/20">IMPORT GLB</button>
-                <input type="file" id="file-input" accept=".glb,.gltf" class="hidden" onchange="handleUpload()">
+            <div id="scene-tree" class="flex-1 overflow-y-auto"></div>
+
+            <div class="p-4 border-t border-zinc-900 space-y-3">
+                <p class="kpi-label">Construct</p>
+                <div class="grid grid-cols-3 gap-1">
+                    <button onclick="addPrimitive('cube')" class="py-2 bg-zinc-900 text-[9px] rounded hover:border-orange-500 border border-zinc-800">CUBE</button>
+                    <button onclick="addPrimitive('sphere')" class="py-2 bg-zinc-900 text-[9px] rounded hover:border-orange-500 border border-zinc-800">SPHERE</button>
+                    <button onclick="addPrimitive('plane')" class="py-2 bg-zinc-900 text-[9px] rounded hover:border-orange-500 border border-zinc-800">PLANE</button>
+                </div>
+                <button onclick="document.getElementById('glb-input').click()" class="w-full py-3 bg-orange-600/10 text-orange-500 border border-orange-500/30 text-[9px] font-bold rounded-lg hover:bg-orange-600/20">UPLOAD GLB/GLTF</button>
+                <input type="file" id="glb-input" class="hidden" accept=".glb,.gltf" onchange="handleGlbUpload()">
             </div>
         </aside>
 
         <!-- CENTER: VIEWPORT -->
-        <main class="flex-1 relative">
-            <!-- TOOLBAR TOP -->
-            <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-1 glass p-1 rounded-xl shadow-2xl">
-                <button id="tool-translate" onclick="setToolMode('translate')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px] active-tool">MOVE</button>
-                <button id="tool-rotate" onclick="setToolMode('rotate')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px]">ROTATE</button>
-                <button id="tool-scale" onclick="setToolMode('scale')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px]">SCALE</button>
-                <div class="w-[1px] bg-zinc-800 mx-2"></div>
-                <button id="snap-toggle" onclick="toggleSnap()" class="px-3 py-2 rounded-lg hover:bg-zinc-800 text-[10px]">SNAP: OFF</button>
-                <div class="w-[1px] bg-zinc-800 mx-2"></div>
-                <button onclick="undo()" class="p-2 hover:text-orange-500">↩️</button>
-                <button onclick="redo()" class="p-2 hover:text-orange-500">↪️</button>
-                <div class="w-[1px] bg-zinc-800 mx-2"></div>
-                <button onclick="duplicateSelected()" class="px-3 py-2 rounded-lg hover:bg-zinc-800 text-[10px]">DUPLICATE</button>
+        <main class="flex-1 relative flex flex-col">
+            <!-- TOOLBAR -->
+            <div class="absolute top-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-1 ui-glass p-2 rounded-2xl shadow-2xl border-zinc-800">
+                <div class="flex gap-1 px-2 border-r border-zinc-800">
+                    <button id="tool-translate" onclick="setToolMode('translate')" class="px-4 py-2 rounded-xl text-[10px] active-tool">G</button>
+                    <button id="tool-rotate" onclick="setToolMode('rotate')" class="px-4 py-2 rounded-xl text-[10px] hover:bg-zinc-900">R</button>
+                    <button id="tool-scale" onclick="setToolMode('scale')" class="px-4 py-2 rounded-xl text-[10px] hover:bg-zinc-900">S</button>
+                </div>
+                <div class="flex gap-1 px-2">
+                    <button id="snap-btn" onclick="toggleSnap()" class="px-3 py-2 rounded-xl text-[9px] hover:bg-zinc-900">SNAP: OFF</button>
+                    <button onclick="undo()" class="p-2 hover:text-orange-400">↩</button>
+                    <button onclick="redo()" class="p-2 hover:text-orange-400">↪</button>
+                    <button onclick="duplicateObject()" class="px-3 py-2 rounded-xl text-[9px] hover:bg-zinc-900">CLONE</button>
+                </div>
             </div>
 
             <div id="viewport"></div>
-            
-            <!-- OVERLAY INFO -->
-            <div class="absolute bottom-6 left-6 text-[9px] text-zinc-600 pointer-events-none font-bold uppercase tracking-widest space-y-1">
-                <p class="text-orange-500/50">MSSOG ENGINE v3.0 | STABLE</p>
-                <p>Meshes: <span id="mesh-count" class="text-zinc-400">0</span> | Verts: <span id="vert-count" class="text-zinc-400">0</span></p>
+
+            <!-- FOOTER KPI -->
+            <div class="absolute bottom-6 left-6 z-50 pointer-events-none flex gap-8">
+                <div><p class="kpi-label">Performance</p><p class="kpi-value" id="fps-val">60 FPS</p></div>
+                <div><p class="kpi-label">Poly Count</p><p class="kpi-value" id="poly-val">0 Tris</p></div>
+                <div><p class="kpi-label">Entities</p><p class="kpi-value" id="obj-val">0</p></div>
+                <div><p class="kpi-label">Engine</p><p class="kpi-value text-orange-500">MSSOG v5.0 PRO</p></div>
+            </div>
+
+            <!-- WORLD SETTINGS SHORTCUT -->
+            <div class="absolute top-6 right-6 z-50 flex flex-col gap-2 ui-glass p-3 rounded-2xl">
+                <select id="sky-select" onchange="updateWorld()" class="input-dark text-[9px]">
+                    <option value="0x020202">VOID DARK</option>
+                    <option value="0x111122">DEEP SEA</option>
+                    <option value="0x221111">MARS RED</option>
+                    <option value="0x222222">STUDIO</option>
+                </select>
+                <button onclick="toggleGrid()" class="text-[9px] py-1 bg-zinc-900 rounded border border-zinc-800">GRID: ON</button>
+                <button onclick="screenshot()" class="text-[9px] py-1 bg-orange-600/20 text-orange-400 rounded border border-orange-500/20">CAPTURE</button>
             </div>
         </main>
 
         <!-- RIGHT: INSPECTOR -->
-        <aside class="sidebar glass border-l flex flex-col p-4 space-y-4">
-            <div class="border-b border-orange-500/30 pb-3">
-                <h2 class="text-[11px] font-bold text-orange-500 uppercase tracking-widest">Properties</h2>
-            </div>
-
-            <div id="inspector-panel" class="space-y-6 overflow-y-auto pr-2 pb-10">
-                <div class="text-center py-20 text-zinc-700 text-[10px] italic">No selection</div>
+        <aside class="sidebar ui-glass border-l border-zinc-900 flex flex-col p-4 space-y-6 overflow-y-auto">
+            <h2 class="text-[10px] font-bold text-orange-500 uppercase tracking-[0.2em] border-b border-zinc-900 pb-2">Inspector</h2>
+            <div id="inspector" class="space-y-6">
+                <div class="text-center py-20 text-zinc-800 text-[10px] italic italic">Select something to modify</div>
             </div>
         </aside>
     </div>
 
     <script>
-        const SECRET_PASS = "ssog123";
-        let scene, camera, renderer, orbit, transformControl, raycaster, mouse;
+        const ACCESS_PASS = "ssog123";
+        let scene, camera, renderer, orbit, transformControl, raycaster, mouse, gridHelper, selectionBox, clock;
         let selectedObject = null;
         let mainGroup = new THREE.Group();
+        let history = [], historyStep = -1;
         let snapEnabled = false;
-        
-        let history = [];
-        let historyStep = -1;
+        let isGridVisible = true;
 
+        // --- AUTH ---
         function checkAccess() {
-            if (document.getElementById('password').value === SECRET_PASS) {
-                document.getElementById('login-screen').classList.add('opacity-0');
-                setTimeout(() => {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('editor-ui').classList.remove('hidden');
-                    initEditor();
-                }, 500);
-            } else {
-                document.getElementById('error-msg').classList.remove('hidden');
+            if (document.getElementById('password').value === ACCESS_PASS) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('editor-ui').classList.remove('hidden');
+                initEngine();
             }
         }
 
-        function initEditor() {
+        // --- CORE ENGINE ---
+        function initEngine() {
             const container = document.getElementById('viewport');
+            clock = new THREE.Clock();
             
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x020202);
+            scene.fog = new THREE.Fog(0x020202, 100, 500);
             scene.add(mainGroup);
 
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
-            camera.position.set(10, 10, 10);
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 5000);
+            camera.position.set(20, 20, 20);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.shadowMap.enabled = true;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
-            // Studs/Grid
-            const grid = new THREE.GridHelper(100, 100, 0xff4d00, 0x111111);
-            grid.material.opacity = 0.2;
-            grid.material.transparent = true;
-            scene.add(grid);
+            gridHelper = new THREE.GridHelper(100, 50, 0xff4d00, 0x111111);
+            gridHelper.material.transparent = true;
+            gridHelper.material.opacity = 0.2;
+            scene.add(gridHelper);
 
             orbit = new THREE.OrbitControls(camera, renderer.domElement);
             orbit.enableDamping = true;
-            orbit.dampingFactor = 0.05;
 
             transformControl = new THREE.TransformControls(camera, renderer.domElement);
             transformControl.addEventListener('dragging-changed', (e) => {
                 orbit.enabled = !e.value;
-                if (!e.value) {
-                    saveHistory();
-                    updateInspector();
-                }
+                if (!e.value) { saveHistory(); updateInspector(); }
             });
             scene.add(transformControl);
 
+            selectionBox = new THREE.BoxHelper();
+            selectionBox.material.color.set(0xff4d00);
+            selectionBox.visible = false;
+            scene.add(selectionBox);
+
             // Lights
-            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-            const light = new THREE.DirectionalLight(0xffffff, 0.8);
-            light.position.set(20, 30, 10);
-            light.castShadow = true;
-            scene.add(light);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            const sun = new THREE.DirectionalLight(0xffffff, 1);
+            sun.position.set(50, 100, 50);
+            sun.castShadow = true;
+            scene.add(sun);
 
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
 
-            window.addEventListener('mousedown', onPointerDown);
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('mousedown', onSelect);
+            window.addEventListener('resize', onResize);
+            window.addEventListener('keydown', onKey);
 
             animate();
             saveHistory();
@@ -203,122 +230,106 @@
         function animate() {
             requestAnimationFrame(animate);
             orbit.update();
+            if (selectionBox.visible && selectedObject) selectionBox.update();
             renderer.render(scene, camera);
+            
+            // KPI Stats
+            document.getElementById('fps-val').innerText = Math.round(1 / clock.getDelta()) + " FPS";
+            updatePolyCount();
         }
 
-        // --- CORE FUNCTIONS ---
+        // --- HIERARCHY & ASSETS ---
+        function updateSceneTree() {
+            const tree = document.getElementById('scene-tree');
+            const search = document.getElementById('tree-search').value.toLowerCase();
+            tree.innerHTML = "";
 
+            const renderNode = (node, depth = 0) => {
+                if (node.name.toLowerCase().indexOf(search) === -1 && search !== "") return;
+                
+                const item = document.createElement('div');
+                item.className = `tree-item ${selectedObject === node ? 'selected' : ''}`;
+                item.style.paddingLeft = `${depth * 16 + 12}px`;
+                
+                const isFolder = node.userData.isFolder;
+                item.innerHTML = `
+                    <span>${isFolder ? '📁' : '🧊'}</span>
+                    <span class="flex-1 truncate">${node.name || 'Unnamed'}</span>
+                    ${node.visible ? '' : '<span class="text-[8px] opacity-40">HIDDEN</span>'}
+                `;
+                
+                item.onclick = (e) => { e.stopPropagation(); selectObject(node); };
+                tree.appendChild(item);
+
+                if (node.children) {
+                    node.children.forEach(c => {
+                        if (c !== transformControl && c !== selectionBox) renderNode(c, depth + 1);
+                    });
+                }
+            };
+
+            mainGroup.children.forEach(c => renderNode(c));
+        }
+
+        function selectObject(obj) {
+            selectedObject = obj;
+            if (obj && !obj.userData.isFolder) {
+                transformControl.attach(obj);
+                selectionBox.setFromObject(obj);
+                selectionBox.visible = true;
+            } else {
+                transformControl.detach();
+                selectionBox.visible = false;
+            }
+            updateSceneTree();
+            updateInspector();
+        }
+
+        // --- PRIMITIVES ---
         function addPrimitive(type) {
-            let geometry, material;
-            material = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.2, roughness: 0.8 });
-            
-            if (type === 'cube') geometry = new THREE.BoxGeometry(1, 1, 1);
-            if (type === 'sphere') geometry = new THREE.SphereGeometry(0.7, 32, 32);
-            if (type === 'plane') geometry = new THREE.PlaneGeometry(2, 2);
+            let geo;
+            if (type === 'cube') geo = new THREE.BoxGeometry(2, 2, 2);
+            if (type === 'sphere') geo = new THREE.SphereGeometry(1.5, 32, 32);
+            if (type === 'plane') geo = new THREE.PlaneGeometry(10, 10);
 
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.name = type.charAt(0).toUpperCase() + type.slice(1) + "_" + Math.floor(Math.random()*100);
+            const mat = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.2, roughness: 0.8 });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.name = type.toUpperCase() + "_" + Math.floor(Math.random() * 1000);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
             
             mainGroup.add(mesh);
             selectObject(mesh);
-            updateSceneTree();
-            updateStats();
             saveHistory();
         }
 
         function addFolder() {
-            const folder = new THREE.Group();
-            folder.name = "New Folder_" + Math.floor(Math.random()*100);
-            folder.userData.isFolder = true;
-            mainGroup.add(folder);
+            const g = new THREE.Group();
+            g.name = "FOLDER_" + Math.floor(Math.random() * 100);
+            g.userData.isFolder = true;
+            mainGroup.add(g);
             updateSceneTree();
             saveHistory();
         }
 
-        function handleUpload() {
-            const file = document.getElementById('file-input').files[0];
-            if (!file) return;
-
+        function handleGlbUpload() {
+            const f = document.getElementById('glb-input').files[0];
+            if (!f) return;
             const loader = new THREE.GLTFLoader();
-            const url = URL.createObjectURL(file);
-
-            loader.load(url, (gltf) => {
+            loader.load(URL.createObjectURL(f), (gltf) => {
                 const model = gltf.scene;
-                model.name = file.name.replace(/\.[^/.]+$/, "");
+                model.name = f.name.split('.')[0];
                 mainGroup.add(model);
                 updateSceneTree();
-                updateStats();
                 saveHistory();
             });
         }
 
-        function duplicateSelected() {
-            if (!selectedObject) return;
-            const clone = selectedObject.clone();
-            clone.position.x += 1;
-            clone.name += "_copy";
-            selectedObject.parent.add(clone);
-            selectObject(clone);
-            updateSceneTree();
-            saveHistory();
-        }
-
-        function clearScene() {
-            if (!confirm("Hapus semua objek?")) return;
-            while(mainGroup.children.length > 0) mainGroup.remove(mainGroup.children[0]);
-            transformControl.detach();
-            selectedObject = null;
-            updateSceneTree();
-            updateInspector();
-            updateStats();
-            saveHistory();
-        }
-
-        // --- UI & INSPECTOR ---
-
-        function updateSceneTree() {
-            const tree = document.getElementById('scene-tree');
-            tree.innerHTML = "";
-            
-            const renderNode = (node, depth = 0) => {
-                const div = document.createElement('div');
-                div.className = `tree-item group flex items-center justify-between p-2 rounded cursor-pointer hover:bg-zinc-900 ${selectedObject === node ? 'bg-orange-600/20 border-l-2 border-orange-500' : ''}`;
-                div.style.paddingLeft = `${depth * 12 + 8}px`;
-                
-                const isFolder = node.userData.isFolder || node.type === 'Group' || node.type === 'Scene';
-                const icon = isFolder ? "📁" : "🧊";
-                const typeClass = isFolder ? 'node-folder' : 'node-mesh';
-
-                div.innerHTML = `
-                    <div class="flex items-center gap-2 overflow-hidden">
-                        <span class="text-[9px]">${icon}</span>
-                        <span class="text-[10px] truncate ${typeClass}">${node.name || 'Unnamed'}</span>
-                    </div>
-                    <div class="item-actions hidden gap-1">
-                        <button onclick="toggleVisibility('${node.uuid}'); event.stopPropagation()" class="p-1 hover:text-white">${node.visible ? '👁️' : '🕶️'}</button>
-                        <button onclick="deleteObject('${node.uuid}'); event.stopPropagation()" class="p-1 hover:text-red-500">✕</button>
-                    </div>
-                `;
-                
-                div.onclick = () => selectObject(node);
-                tree.appendChild(div);
-
-                if (node.children && node.children.length > 0 && !node.isMesh) {
-                    node.children.forEach(child => {
-                        if (child !== transformControl) renderNode(child, depth + 1);
-                    });
-                }
-            };
-
-            mainGroup.children.forEach(child => renderNode(child));
-        }
-
+        // --- INSPECTOR ---
         function updateInspector() {
-            const panel = document.getElementById('inspector-panel');
+            const panel = document.getElementById('inspector');
             if (!selectedObject) {
-                panel.innerHTML = `<div class="text-center py-20 text-zinc-700 text-[10px] italic">No selection</div>`;
+                panel.innerHTML = `<div class="text-center py-20 text-zinc-800 text-[10px] italic">Select an entity</div>`;
                 return;
             }
 
@@ -326,115 +337,78 @@
             const mat = isMesh ? selectedObject.material : null;
 
             panel.innerHTML = `
-                <div class="space-y-4">
-                    <section class="space-y-2">
-                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Identity</label>
-                        <input type="text" value="${selectedObject.name}" onchange="renameObject(this.value)" class="input-dark w-full">
-                        <p class="text-[8px] text-zinc-600">UUID: ${selectedObject.uuid.slice(0, 8)}...</p>
+                <div class="space-y-4 animate-in fade-in">
+                    <section class="space-y-1">
+                        <label class="kpi-label">Entity Name</label>
+                        <input type="text" value="${selectedObject.name}" onchange="editProp('name', this.value)" class="input-dark">
                     </section>
 
-                    <section class="space-y-2 pt-2 border-t border-zinc-800">
-                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Transform</label>
-                        <div class="grid grid-cols-3 gap-1">
-                            <input type="number" step="0.1" value="${selectedObject.position.x.toFixed(2)}" onchange="updateTransform('pos','x',this.value)" class="input-dark" title="PosX">
-                            <input type="number" step="0.1" value="${selectedObject.position.y.toFixed(2)}" onchange="updateTransform('pos','y',this.value)" class="input-dark" title="PosY">
-                            <input type="number" step="0.1" value="${selectedObject.position.z.toFixed(2)}" onchange="updateTransform('pos','z',this.value)" class="input-dark" title="PosZ">
+                    <section class="space-y-2 border-t border-zinc-900 pt-3">
+                        <label class="kpi-label">Transform</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div><p class="text-[7px] text-zinc-600">POS X</p><input type="number" step="0.1" value="${selectedObject.position.x.toFixed(1)}" onchange="editProp('px', this.value)" class="input-dark"></div>
+                            <div><p class="text-[7px] text-zinc-600">POS Y</p><input type="number" step="0.1" value="${selectedObject.position.y.toFixed(1)}" onchange="editProp('py', this.value)" class="input-dark"></div>
+                            <div><p class="text-[7px] text-zinc-600">POS Z</p><input type="number" step="0.1" value="${selectedObject.position.z.toFixed(1)}" onchange="editProp('pz', this.value)" class="input-dark"></div>
                         </div>
                     </section>
 
                     ${isMesh ? `
-                    <section class="space-y-2 pt-2 border-t border-zinc-800">
-                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Material</label>
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-[8px] text-zinc-600 mb-1">ALBEDO COLOR</p>
-                                <input type="color" value="#${mat.color.getHexString()}" onchange="updateMat('color', this.value)" class="w-full h-8 bg-zinc-800 border-none rounded">
-                            </div>
-                            <div>
-                                <p class="text-[8px] text-zinc-600 mb-1">EMISSIVE (GLOW)</p>
-                                <input type="color" value="#${mat.emissive ? mat.emissive.getHexString() : '000000'}" onchange="updateMat('emissive', this.value)" class="w-full h-8 bg-zinc-800 border-none rounded">
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <p class="text-[8px] text-zinc-600">METAL</p>
-                                    <input type="range" min="0" max="1" step="0.01" value="${mat.metalness}" oninput="updateMat('metal', this.value)" class="w-full accent-orange-500">
-                                </div>
-                                <div>
-                                    <p class="text-[8px] text-zinc-600">ROUGH</p>
-                                    <input type="range" min="0" max="1" step="0.01" value="${mat.roughness}" oninput="updateMat('rough', this.value)" class="w-full accent-orange-500">
-                                </div>
-                            </div>
+                    <section class="space-y-3 border-t border-zinc-900 pt-3">
+                        <label class="kpi-label">Material & Shading</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" value="#${mat.color.getHexString()}" onchange="editProp('color', this.value)" class="w-10 h-10 bg-transparent border-none">
+                            <div class="flex-1 text-[8px] text-zinc-500">HEX: #${mat.color.getHexString().toUpperCase()}</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                             <div><p class="text-[7px] text-zinc-600">METAL</p><input type="range" min="0" max="1" step="0.01" value="${mat.metalness}" oninput="editProp('metal', this.value)" class="w-full"></div>
+                             <div><p class="text-[7px] text-zinc-600">ROUGH</p><input type="range" min="0" max="1" step="0.01" value="${mat.roughness}" oninput="editProp('rough', this.value)" class="w-full"></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editProp('wire', !${mat.wireframe})" class="flex-1 py-1 bg-zinc-900 text-[8px] rounded ${mat.wireframe ? 'text-orange-500 border border-orange-500' : ''}">WIREFRAME</button>
+                            <button onclick="editProp('visible', !${selectedObject.visible})" class="flex-1 py-1 bg-zinc-900 text-[8px] rounded">${selectedObject.visible ? 'HIDE' : 'SHOW'}</button>
                         </div>
                     </section>
-
-                    <section class="space-y-2 pt-2 border-t border-zinc-800">
-                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Texture (Diffuse/PNG)</label>
-                        <input type="file" id="tex-upload" accept="image/*" class="hidden" onchange="applyTexture()">
-                        <button onclick="document.getElementById('tex-upload').click()" class="w-full py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">UPLOAD TEXTURE</button>
-                        ${mat.map ? `
-                        <div class="flex items-center gap-2">
-                            <p class="text-[8px] text-zinc-600">TILING:</p>
-                            <input type="number" step="0.1" value="${mat.map.repeat.x}" onchange="updateTiling(this.value)" class="input-dark w-full">
-                        </div>
-                        ` : ''}
+                    
+                    <section class="space-y-2 border-t border-zinc-900 pt-3">
+                        <label class="kpi-label">Texture Mapping</label>
+                        <input type="file" id="tex-input" class="hidden" accept="image/*" onchange="uploadTexture()">
+                        <button onclick="document.getElementById('tex-input').click()" class="w-full py-2 bg-zinc-900 border border-zinc-800 text-[9px] hover:border-orange-500 rounded-lg">LOAD TEXTURE MAP</button>
                     </section>
                     ` : ''}
 
-                    <button onclick="deleteObject('${selectedObject.uuid}')" class="w-full py-2 bg-red-900/20 text-red-500 border border-red-900/50 text-[9px] rounded hover:bg-red-900/40">DELETE OBJECT</button>
+                    <section class="pt-6">
+                        <button onclick="deleteObject()" class="w-full py-3 bg-red-950/20 text-red-500 border border-red-950/30 text-[9px] font-bold rounded-xl hover:bg-red-600 hover:text-white transition-all">DELETE ENTITY</button>
+                    </section>
                 </div>
             `;
         }
 
-        // --- HANDLERS ---
-
-        function selectObject(obj) {
-            if (obj.userData.isFolder) {
-                transformControl.detach();
-                selectedObject = obj;
-            } else {
-                selectedObject = obj;
-                transformControl.attach(obj);
+        function editProp(prop, val) {
+            if (!selectedObject) return;
+            if (prop === 'name') selectedObject.name = val;
+            if (prop === 'px') selectedObject.position.x = parseFloat(val);
+            if (prop === 'py') selectedObject.position.y = parseFloat(val);
+            if (prop === 'pz') selectedObject.position.z = parseFloat(val);
+            
+            if (selectedObject.isMesh) {
+                const m = selectedObject.material;
+                if (prop === 'color') m.color.set(val);
+                if (prop === 'metal') m.metalness = parseFloat(val);
+                if (prop === 'rough') m.roughness = parseFloat(val);
+                if (prop === 'wire') m.wireframe = val;
             }
+            if (prop === 'visible') selectedObject.visible = val;
+
             updateSceneTree();
             updateInspector();
-        }
-
-        function renameObject(name) {
-            if (selectedObject) {
-                selectedObject.name = name;
-                updateSceneTree();
-                saveHistory();
-            }
-        }
-
-        function updateTransform(type, axis, val) {
-            if (!selectedObject) return;
-            const v = parseFloat(val);
-            if (type === 'pos') selectedObject.position[axis] = v;
             saveHistory();
         }
 
-        function updateMat(type, val) {
-            if (!selectedObject || !selectedObject.isMesh) return;
-            const m = selectedObject.material;
-            if (type === 'color') m.color.set(val);
-            if (type === 'emissive') {
-                if (!m.emissive) m.emissive = new THREE.Color(val);
-                else m.emissive.set(val);
-                m.emissiveIntensity = val === '#000000' ? 0 : 1;
-            }
-            if (type === 'metal') m.metalness = parseFloat(val);
-            if (type === 'rough') m.roughness = parseFloat(val);
-            saveHistory();
-        }
-
-        function applyTexture() {
-            const file = document.getElementById('tex-upload').files[0];
-            if (!file || !selectedObject || !selectedObject.isMesh) return;
-
+        function uploadTexture() {
+            const f = document.getElementById('tex-input').files[0];
+            if (!f || !selectedObject || !selectedObject.isMesh) return;
             const loader = new THREE.TextureLoader();
-            const url = URL.createObjectURL(file);
-            loader.load(url, (tex) => {
+            loader.load(URL.createObjectURL(f), (tex) => {
                 tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
                 selectedObject.material.map = tex;
                 selectedObject.material.needsUpdate = true;
@@ -443,129 +417,143 @@
             });
         }
 
-        function updateTiling(val) {
-            if (selectedObject && selectedObject.material.map) {
-                const r = parseFloat(val);
-                selectedObject.material.map.repeat.set(r, r);
-                saveHistory();
-            }
+        // --- ACTIONS & TOOLS ---
+        function deleteObject() {
+            if (!selectedObject) return;
+            const obj = selectedObject;
+            transformControl.detach();
+            obj.parent.remove(obj);
+            selectedObject = null;
+            selectionBox.visible = false;
+            updateSceneTree();
+            updateInspector();
+            saveHistory();
         }
 
-        function toggleVisibility(uuid) {
-            const obj = scene.getObjectByProperty('uuid', uuid);
-            if (obj) {
-                obj.visible = !obj.visible;
-                updateSceneTree();
-                saveHistory();
-            }
+        function duplicateObject() {
+            if (!selectedObject) return;
+            const clone = selectedObject.clone();
+            clone.position.x += 2;
+            clone.name += "_CLONE";
+            mainGroup.add(clone);
+            selectObject(clone);
+            saveHistory();
         }
 
-        function deleteObject(uuid) {
-            const obj = scene.getObjectByProperty('uuid', uuid);
-            if (obj) {
-                if (transformControl.object === obj) transformControl.detach();
-                obj.parent.remove(obj);
-                if (selectedObject === obj) selectedObject = null;
-                updateSceneTree();
-                updateInspector();
-                updateStats();
-                saveHistory();
-            }
+        function setToolMode(m) {
+            transformControl.setMode(m);
+            document.querySelectorAll('.absolute button').forEach(b => b.classList.remove('active-tool'));
+            document.getElementById('tool-' + m).classList.add('active-tool');
         }
 
         function toggleSnap() {
             snapEnabled = !snapEnabled;
-            const btn = document.getElementById('snap-toggle');
-            btn.innerText = snapEnabled ? "SNAP: ON" : "SNAP: OFF";
-            btn.classList.toggle('active-tool', snapEnabled);
             transformControl.setTranslationSnap(snapEnabled ? 1 : null);
-            transformControl.setRotationSnap(snapEnabled ? THREE.MathUtils.degToRad(15) : null);
-            transformControl.setScaleSnap(snapEnabled ? 0.25 : null);
+            document.getElementById('snap-btn').innerText = snapEnabled ? "SNAP: ON" : "SNAP: OFF";
+            document.getElementById('snap-btn').classList.toggle('active-tool', snapEnabled);
         }
 
-        function updateStats() {
-            let meshes = 0;
-            let verts = 0;
-            mainGroup.traverse(n => {
-                if (n.isMesh) {
-                    meshes++;
-                    verts += n.geometry.attributes.position.count;
-                }
-            });
-            document.getElementById('mesh-count').innerText = meshes;
-            document.getElementById('vert-count').innerText = verts;
+        function toggleGrid() {
+            isGridVisible = !isGridVisible;
+            gridHelper.visible = isGridVisible;
+        }
+
+        function updateWorld() {
+            const color = document.getElementById('sky-select').value;
+            scene.background.set(parseInt(color));
+            scene.fog.color.set(parseInt(color));
+        }
+
+        function exportScene() {
+            const data = JSON.stringify(mainGroup.toJSON());
+            const blob = new Blob([data], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `MSSOG_Project_${Date.now()}.json`;
+            a.click();
+        }
+
+        function clearScene() {
+            if (!confirm("Clear all objects?")) return;
+            while(mainGroup.children.length > 0) mainGroup.remove(mainGroup.children[0]);
+            selectObject(null);
+            saveHistory();
+        }
+
+        function screenshot() {
+            const link = document.createElement('a');
+            link.download = 'MSSOG_Render.png';
+            link.href = renderer.domElement.toDataURL("image/png");
+            link.click();
         }
 
         // --- HISTORY ---
-
         function saveHistory() {
             if (historyStep < history.length - 1) history = history.slice(0, historyStep + 1);
-            const state = mainGroup.toJSON();
-            history.push(JSON.stringify(state));
-            if (history.length > 30) history.shift();
+            history.push(JSON.stringify(mainGroup.toJSON()));
+            if (history.length > 50) history.shift();
             historyStep = history.length - 1;
         }
 
         function undo() {
             if (historyStep > 0) {
                 historyStep--;
-                loadState(history[historyStep]);
+                applyState(history[historyStep]);
             }
         }
 
         function redo() {
             if (historyStep < history.length - 1) {
                 historyStep++;
-                loadState(history[historyStep]);
+                applyState(history[historyStep]);
             }
         }
 
-        function loadState(json) {
+        function applyState(json) {
             const loader = new THREE.ObjectLoader();
             const data = JSON.parse(json);
             while(mainGroup.children.length > 0) mainGroup.remove(mainGroup.children[0]);
-            
             loader.parse(data, (obj) => {
-                const children = [...obj.children];
-                children.forEach(c => mainGroup.add(c));
+                [...obj.children].forEach(c => mainGroup.add(c));
                 updateSceneTree();
-                updateStats();
-                if(selectedObject) transformControl.detach();
-                selectedObject = null;
-                updateInspector();
+                if(selectedObject) selectObject(null);
             });
         }
 
-        function setToolMode(mode) {
-            transformControl.setMode(mode);
-            document.querySelectorAll('.absolute button').forEach(b => b.classList.remove('active-tool'));
-            document.getElementById(`tool-${mode}`).classList.add('active-tool');
-        }
-
-        function onPointerDown(event) {
-            if (event.target.closest('aside') || event.target.closest('.absolute')) return;
-            const rect = document.getElementById('viewport').getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        // --- EVENT HANDLERS ---
+        function onSelect(e) {
+            if (e.target.closest('aside') || e.target.closest('.absolute')) return;
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(mainGroup.children, true);
-            if (intersects.length > 0) {
-                selectObject(intersects[0].object);
+            if (intersects.length > 0) selectObject(intersects[0].object);
+        }
+
+        function onKey(e) {
+            if (e.key === 'g') setToolMode('translate');
+            if (e.key === 'r') setToolMode('rotate');
+            if (e.key === 's') setToolMode('scale');
+            if (e.key === 'Delete') deleteObject();
+            if (e.ctrlKey && e.key === 'z') undo();
+            if (e.key === 'f' && selectedObject) {
+                orbit.target.copy(selectedObject.position);
+                camera.position.set(selectedObject.position.x + 10, selectedObject.position.y + 10, selectedObject.position.z + 10);
             }
         }
 
-        function onWindowResize() {
-            const container = document.getElementById('viewport');
-            camera.aspect = container.clientWidth / container.clientHeight;
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        function onKeyDown(event) {
-            if (event.ctrlKey && event.key === 'z') undo();
-            if (event.ctrlKey && event.key === 'y') redo();
-            if (event.key === 'Delete') { if(selectedObject) deleteObject(selectedObject.uuid); }
-            if (event.key === 'd' && event.shiftKey) { duplicateSelected(); event.preventDefault(); }
+        function updatePolyCount() {
+            let tris = 0; let objs = 0;
+            mainGroup.traverse(n => { if(n.isMesh) { tris += n.geometry.attributes.position.count / 3; objs++; } });
+            document.getElementById('poly-val').innerText = Math.round(tris).toLocaleString() + " Tris";
+            document.getElementById('obj-val').innerText = objs;
         }
     </script>
 </body>
