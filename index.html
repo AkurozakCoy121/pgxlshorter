@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSSOG - SSOG 3D Engine Pro</title>
+    <title>MSSOG - SSOG 3D Engine Pro Max</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -18,40 +18,44 @@
             overflow: hidden;
         }
         .glass {
-            background: rgba(15, 15, 15, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 77, 0, 0.2);
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 77, 0, 0.15);
         }
         #viewport {
             width: 100%;
             height: 100vh;
             background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
         }
-        .sidebar { width: 280px; height: 100vh; z-index: 10; }
+        .sidebar { width: 300px; height: 100vh; z-index: 10; }
         .active-tool { background: #ff4d00 !important; color: white; border-color: #ff4d00; }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #ff4d00; }
+        ::-webkit-scrollbar-thumb { background: #ff4d00; border-radius: 10px; }
         .input-dark {
             background: #121212;
             border: 1px solid #333;
             font-size: 10px;
-            padding: 4px;
+            padding: 4px 8px;
             border-radius: 4px;
             outline: none;
+            color: #fff;
         }
         .input-dark:focus { border-color: #ff4d00; }
+        .tree-item:hover .item-actions { display: flex; }
+        .node-folder { color: #ffad00; font-weight: bold; }
+        .node-mesh { color: #00d2ff; }
     </style>
 </head>
 <body class="flex overflow-hidden">
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black p-4">
-        <div class="glass p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
-            <h1 class="text-4xl font-bold mb-2 text-orange-500 tracking-tighter italic">MSSOG ENGINE</h1>
-            <p class="text-gray-500 text-xs mb-8 uppercase tracking-widest">Authorized Personnel Only</p>
-            <input type="password" id="password" placeholder="ENTER ACCESS CODE" class="w-full p-4 rounded bg-zinc-900 border border-zinc-700 focus:border-orange-500 outline-none mb-4 text-center">
-            <button onclick="checkAccess()" class="w-full p-4 rounded font-bold bg-orange-600 hover:bg-orange-500 transition-all">INITIALIZE</button>
-            <p id="error-msg" class="text-red-500 text-xs mt-4 hidden">ACCESS DENIED.</p>
+        <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md text-center border-orange-500/50">
+            <h1 class="text-5xl font-black mb-2 text-orange-500 tracking-tighter italic">MSSOG</h1>
+            <p class="text-zinc-500 text-[10px] mb-10 uppercase tracking-[0.3em]">Next-Gen Asset Management System</p>
+            <input type="password" id="password" placeholder="ACCESS CODE" class="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 focus:border-orange-500 outline-none mb-4 text-center tracking-[0.5em]">
+            <button onclick="checkAccess()" class="w-full p-4 rounded-xl font-bold bg-orange-600 hover:bg-orange-500 transition-all shadow-lg shadow-orange-900/20">INITIALIZE CORE</button>
+            <p id="error-msg" class="text-red-500 text-[10px] mt-6 hidden font-bold">WRONG CODE. TERMINATING...</p>
         </div>
     </div>
 
@@ -60,54 +64,60 @@
         
         <!-- LEFT: WORKSPACE / SCENE TREE -->
         <aside class="sidebar glass border-r flex flex-col p-4 space-y-4">
-            <div class="border-b border-orange-500/30 pb-2 flex justify-between items-center">
-                <h2 class="text-xs font-bold text-orange-500 uppercase tracking-widest">Workspace</h2>
-                <span id="obj-count" class="text-[9px] bg-zinc-800 px-2 py-1 rounded text-zinc-400">0</span>
+            <div class="border-b border-orange-500/30 pb-3 flex justify-between items-center">
+                <h2 class="text-[11px] font-bold text-orange-500 uppercase tracking-widest">Scene Outliner</h2>
+                <div class="flex gap-1">
+                    <button onclick="addFolder()" class="p-1 bg-zinc-800 rounded hover:bg-orange-600" title="Add Folder">📁</button>
+                    <button onclick="clearScene()" class="p-1 bg-zinc-800 rounded hover:bg-red-600" title="Clear All">🗑️</button>
+                </div>
             </div>
             
-            <div class="flex-1 overflow-y-auto" id="scene-tree">
-                <p class="text-[10px] text-zinc-600 italic">Import model untuk memulai...</p>
+            <div class="flex-1 overflow-y-auto space-y-1" id="scene-tree">
+                <!-- Dinamis -->
             </div>
 
-            <div class="pt-4 border-t border-zinc-800 space-y-2">
-                <button onclick="document.getElementById('file-input').click()" class="w-full py-2 bg-orange-600/20 text-orange-500 border border-orange-500/30 text-xs rounded hover:bg-orange-600/40 transition-all">+ IMPORT GLB</button>
+            <div class="pt-4 border-t border-zinc-800 grid grid-cols-2 gap-2">
+                <button onclick="addPrimitive('cube')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD CUBE</button>
+                <button onclick="addPrimitive('sphere')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD SPHERE</button>
+                <button onclick="addPrimitive('plane')" class="py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">ADD PLANE</button>
+                <button onclick="document.getElementById('file-input').click()" class="py-2 bg-orange-600/10 border border-orange-500/30 text-[9px] text-orange-500 rounded hover:bg-orange-600/20">IMPORT GLB</button>
                 <input type="file" id="file-input" accept=".glb,.gltf" class="hidden" onchange="handleUpload()">
-                <p class="text-[9px] text-zinc-500 text-center italic">Mendukung banyak model sekaligus</p>
             </div>
         </aside>
 
-        <!-- CENTER: VIEWPORT & TOOLS -->
+        <!-- CENTER: VIEWPORT -->
         <main class="flex-1 relative">
             <!-- TOOLBAR TOP -->
-            <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2 glass p-1 rounded-lg">
-                <button id="tool-translate" onclick="setToolMode('translate')" class="p-2 rounded border border-transparent hover:bg-zinc-800 text-xs active-tool">MOVE</button>
-                <button id="tool-rotate" onclick="setToolMode('rotate')" class="p-2 rounded border border-transparent hover:bg-zinc-800 text-xs">ROTATE</button>
-                <button id="tool-scale" onclick="setToolMode('scale')" class="p-2 rounded border border-transparent hover:bg-zinc-800 text-xs">SCALE</button>
-                <div class="w-[1px] bg-zinc-700 mx-1"></div>
-                <button onclick="undo()" class="p-2 rounded hover:bg-zinc-800 text-xs" title="Undo (Ctrl+Z)">UNDO</button>
-                <button onclick="redo()" class="p-2 rounded hover:bg-zinc-800 text-xs" title="Redo (Ctrl+Y)">REDO</button>
-                <div class="w-[1px] bg-zinc-700 mx-1"></div>
-                <button onclick="resetCamera()" class="p-2 rounded hover:bg-zinc-800 text-xs">FOCUS</button>
+            <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-1 glass p-1 rounded-xl shadow-2xl">
+                <button id="tool-translate" onclick="setToolMode('translate')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px] active-tool">MOVE</button>
+                <button id="tool-rotate" onclick="setToolMode('rotate')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px]">ROTATE</button>
+                <button id="tool-scale" onclick="setToolMode('scale')" class="px-3 py-2 rounded-lg border border-transparent hover:bg-zinc-800 text-[10px]">SCALE</button>
+                <div class="w-[1px] bg-zinc-800 mx-2"></div>
+                <button id="snap-toggle" onclick="toggleSnap()" class="px-3 py-2 rounded-lg hover:bg-zinc-800 text-[10px]">SNAP: OFF</button>
+                <div class="w-[1px] bg-zinc-800 mx-2"></div>
+                <button onclick="undo()" class="p-2 hover:text-orange-500">↩️</button>
+                <button onclick="redo()" class="p-2 hover:text-orange-500">↪️</button>
+                <div class="w-[1px] bg-zinc-800 mx-2"></div>
+                <button onclick="duplicateSelected()" class="px-3 py-2 rounded-lg hover:bg-zinc-800 text-[10px]">DUPLICATE</button>
             </div>
 
             <div id="viewport"></div>
             
-            <!-- STATS OVERLAY -->
-            <div class="absolute bottom-4 left-4 text-[10px] text-zinc-500 pointer-events-none space-y-1">
-                <p>MSSOG ENGINE PRO v2.5</p>
-                <p>FPS: <span id="fps">60</span></p>
-                <p>GRID: <span id="grid-status">STUDS ENABLED</span></p>
+            <!-- OVERLAY INFO -->
+            <div class="absolute bottom-6 left-6 text-[9px] text-zinc-600 pointer-events-none font-bold uppercase tracking-widest space-y-1">
+                <p class="text-orange-500/50">MSSOG ENGINE v3.0 | STABLE</p>
+                <p>Meshes: <span id="mesh-count" class="text-zinc-400">0</span> | Verts: <span id="vert-count" class="text-zinc-400">0</span></p>
             </div>
         </main>
 
-        <!-- RIGHT: MATERIAL LAB -->
+        <!-- RIGHT: INSPECTOR -->
         <aside class="sidebar glass border-l flex flex-col p-4 space-y-4">
-            <div class="border-b border-orange-500/30 pb-2">
-                <h2 class="text-xs font-bold text-orange-500 uppercase tracking-widest">Material & Texture</h2>
+            <div class="border-b border-orange-500/30 pb-3">
+                <h2 class="text-[11px] font-bold text-orange-500 uppercase tracking-widest">Properties</h2>
             </div>
 
-            <div id="material-editor" class="space-y-6 overflow-y-auto pr-2">
-                <div class="text-center py-10 text-zinc-600 text-[10px]">PILIH OBJEK UNTUK EDIT</div>
+            <div id="inspector-panel" class="space-y-6 overflow-y-auto pr-2 pb-10">
+                <div class="text-center py-20 text-zinc-700 text-[10px] italic">No selection</div>
             </div>
         </aside>
     </div>
@@ -117,17 +127,19 @@
         let scene, camera, renderer, orbit, transformControl, raycaster, mouse;
         let selectedObject = null;
         let mainGroup = new THREE.Group();
+        let snapEnabled = false;
         
-        // History for Undo/Redo
         let history = [];
         let historyStep = -1;
 
-        // Initialization
         function checkAccess() {
             if (document.getElementById('password').value === SECRET_PASS) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('editor-ui').classList.remove('hidden');
-                initEditor();
+                document.getElementById('login-screen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('editor-ui').classList.remove('hidden');
+                    initEditor();
+                }, 500);
             } else {
                 document.getElementById('error-msg').classList.remove('hidden');
             }
@@ -137,44 +149,46 @@
             const container = document.getElementById('viewport');
             
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x050505);
+            scene.background = new THREE.Color(0x020202);
             scene.add(mainGroup);
 
-            // Camera
-            camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(8, 8, 8);
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+            camera.position.set(10, 10, 10);
 
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
-            // Studs / Grid Helper
-            const grid = new THREE.GridHelper(50, 50, 0xff4d00, 0x222222);
-            grid.position.y = -0.01;
+            // Studs/Grid
+            const grid = new THREE.GridHelper(100, 100, 0xff4d00, 0x111111);
+            grid.material.opacity = 0.2;
+            grid.material.transparent = true;
             scene.add(grid);
 
-            // Controls
             orbit = new THREE.OrbitControls(camera, renderer.domElement);
             orbit.enableDamping = true;
+            orbit.dampingFactor = 0.05;
 
             transformControl = new THREE.TransformControls(camera, renderer.domElement);
             transformControl.addEventListener('dragging-changed', (e) => {
                 orbit.enabled = !e.value;
-                if (!e.value) saveHistory(); // Save after dragging finishes
+                if (!e.value) {
+                    saveHistory();
+                    updateInspector();
+                }
             });
             scene.add(transformControl);
 
-            // Lighting
-            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambient);
-            const sun = new THREE.DirectionalLight(0xffffff, 0.8);
-            sun.position.set(10, 10, 10);
-            scene.add(sun);
+            // Lights
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const light = new THREE.DirectionalLight(0xffffff, 0.8);
+            light.position.set(20, 30, 10);
+            light.castShadow = true;
+            scene.add(light);
 
-            // Raycaster
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
 
@@ -183,38 +197,44 @@
             window.addEventListener('keydown', onKeyDown);
 
             animate();
-            saveHistory(); // Initial state
+            saveHistory();
         }
 
-        function onKeyDown(event) {
-            if (event.ctrlKey && event.key === 'z') undo();
-            if (event.ctrlKey && event.key === 'y') redo();
-            if (event.key === 'w') setToolMode('translate');
-            if (event.key === 'e') setToolMode('rotate');
-            if (event.key === 'r') setToolMode('scale');
+        function animate() {
+            requestAnimationFrame(animate);
+            orbit.update();
+            renderer.render(scene, camera);
         }
 
-        function onPointerDown(event) {
-            if (event.target.closest('aside') || event.target.closest('.absolute')) return;
+        // --- CORE FUNCTIONS ---
 
-            const rect = document.getElementById('viewport').getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        function addPrimitive(type) {
+            let geometry, material;
+            material = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.2, roughness: 0.8 });
+            
+            if (type === 'cube') geometry = new THREE.BoxGeometry(1, 1, 1);
+            if (type === 'sphere') geometry = new THREE.SphereGeometry(0.7, 32, 32);
+            if (type === 'plane') geometry = new THREE.PlaneGeometry(2, 2);
 
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(mainGroup.children, true);
-
-            if (intersects.length > 0) {
-                let picked = intersects[0].object;
-                selectObject(picked);
-            }
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.name = type.charAt(0).toUpperCase() + type.slice(1) + "_" + Math.floor(Math.random()*100);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            
+            mainGroup.add(mesh);
+            selectObject(mesh);
+            updateSceneTree();
+            updateStats();
+            saveHistory();
         }
 
-        function selectObject(obj) {
-            selectedObject = obj;
-            transformControl.attach(obj);
-            updateMaterialPanel();
-            highlightInTree(obj.uuid);
+        function addFolder() {
+            const folder = new THREE.Group();
+            folder.name = "New Folder_" + Math.floor(Math.random()*100);
+            folder.userData.isFolder = true;
+            mainGroup.add(folder);
+            updateSceneTree();
+            saveHistory();
         }
 
         function handleUpload() {
@@ -226,194 +246,264 @@
 
             loader.load(url, (gltf) => {
                 const model = gltf.scene;
-                // Add unique name for identification
-                model.name = file.name.split('.')[0] + "_" + Math.floor(Math.random()*100);
+                model.name = file.name.replace(/\.[^/.]+$/, "");
                 mainGroup.add(model);
                 updateSceneTree();
+                updateStats();
                 saveHistory();
-                document.getElementById('obj-count').innerText = mainGroup.children.length;
             });
         }
+
+        function duplicateSelected() {
+            if (!selectedObject) return;
+            const clone = selectedObject.clone();
+            clone.position.x += 1;
+            clone.name += "_copy";
+            selectedObject.parent.add(clone);
+            selectObject(clone);
+            updateSceneTree();
+            saveHistory();
+        }
+
+        function clearScene() {
+            if (!confirm("Hapus semua objek?")) return;
+            while(mainGroup.children.length > 0) mainGroup.remove(mainGroup.children[0]);
+            transformControl.detach();
+            selectedObject = null;
+            updateSceneTree();
+            updateInspector();
+            updateStats();
+            saveHistory();
+        }
+
+        // --- UI & INSPECTOR ---
 
         function updateSceneTree() {
             const tree = document.getElementById('scene-tree');
             tree.innerHTML = "";
             
-            mainGroup.traverse((node) => {
-                if (node.isMesh) {
-                    const div = document.createElement('div');
-                    div.id = `tree-${node.uuid}`;
-                    div.className = "text-[10px] p-2 mb-1 bg-zinc-900 border border-zinc-800 cursor-pointer hover:border-orange-500 rounded flex justify-between items-center group";
-                    div.innerHTML = `
-                        <span class="truncate pr-2">${node.name || 'Unnamed Mesh'}</span> 
-                        <button onclick="deleteObject('${node.uuid}')" class="hidden group-hover:block text-red-500 hover:text-white">DEL</button>
-                    `;
-                    div.onclick = (e) => {
-                        if(e.target.tagName !== 'BUTTON') selectObject(node);
-                    }
-                    tree.appendChild(div);
+            const renderNode = (node, depth = 0) => {
+                const div = document.createElement('div');
+                div.className = `tree-item group flex items-center justify-between p-2 rounded cursor-pointer hover:bg-zinc-900 ${selectedObject === node ? 'bg-orange-600/20 border-l-2 border-orange-500' : ''}`;
+                div.style.paddingLeft = `${depth * 12 + 8}px`;
+                
+                const isFolder = node.userData.isFolder || node.type === 'Group' || node.type === 'Scene';
+                const icon = isFolder ? "📁" : "🧊";
+                const typeClass = isFolder ? 'node-folder' : 'node-mesh';
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="text-[9px]">${icon}</span>
+                        <span class="text-[10px] truncate ${typeClass}">${node.name || 'Unnamed'}</span>
+                    </div>
+                    <div class="item-actions hidden gap-1">
+                        <button onclick="toggleVisibility('${node.uuid}'); event.stopPropagation()" class="p-1 hover:text-white">${node.visible ? '👁️' : '🕶️'}</button>
+                        <button onclick="deleteObject('${node.uuid}'); event.stopPropagation()" class="p-1 hover:text-red-500">✕</button>
+                    </div>
+                `;
+                
+                div.onclick = () => selectObject(node);
+                tree.appendChild(div);
+
+                if (node.children && node.children.length > 0 && !node.isMesh) {
+                    node.children.forEach(child => {
+                        if (child !== transformControl) renderNode(child, depth + 1);
+                    });
                 }
-            });
+            };
+
+            mainGroup.children.forEach(child => renderNode(child));
         }
 
-        window.deleteObject = (uuid) => {
-            mainGroup.traverse((node) => {
-                if (node && node.uuid === uuid) {
-                    node.parent.remove(node);
-                    if(selectedObject && selectedObject.uuid === uuid) {
-                        transformControl.detach();
-                        selectedObject = null;
-                    }
-                }
-            });
-            updateSceneTree();
-            saveHistory();
-        }
-
-        function highlightInTree(uuid) {
-            document.querySelectorAll('#scene-tree div').forEach(d => d.classList.remove('border-orange-500', 'bg-orange-950/20'));
-            const active = document.getElementById(`tree-${uuid}`);
-            if (active) active.classList.add('border-orange-500', 'bg-orange-950/20');
-        }
-
-        function updateMaterialPanel() {
-            const panel = document.getElementById('material-editor');
+        function updateInspector() {
+            const panel = document.getElementById('inspector-panel');
             if (!selectedObject) {
-                panel.innerHTML = `<div class="text-center py-10 text-zinc-600 text-[10px]">PILIH OBJEK UNTUK EDIT</div>`;
+                panel.innerHTML = `<div class="text-center py-20 text-zinc-700 text-[10px] italic">No selection</div>`;
                 return;
             }
 
-            const mat = selectedObject.material;
-            const colorHex = "#" + mat.color.getHexString();
+            const isMesh = selectedObject.isMesh;
+            const mat = isMesh ? selectedObject.material : null;
 
             panel.innerHTML = `
                 <div class="space-y-4">
-                    <p class="text-[10px] font-bold text-orange-500 truncate">TARGET: ${selectedObject.name || 'Mesh'}</p>
-                    
-                    <div class="space-y-1">
-                        <label class="block text-[10px] text-zinc-500 uppercase">Warna Dasar</label>
-                        <input type="color" value="${colorHex}" onchange="updateColor(this.value)" class="w-full h-8 bg-zinc-800 border-none rounded cursor-pointer">
-                    </div>
+                    <section class="space-y-2">
+                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Identity</label>
+                        <input type="text" value="${selectedObject.name}" onchange="renameObject(this.value)" class="input-dark w-full">
+                        <p class="text-[8px] text-zinc-600">UUID: ${selectedObject.uuid.slice(0, 8)}...</p>
+                    </section>
 
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[9px] text-zinc-500">Metallic</label>
-                            <input type="range" min="0" max="1" step="0.01" value="${mat.metalness || 0}" oninput="updateMatProp('metalness', this.value)" class="w-full accent-orange-500">
+                    <section class="space-y-2 pt-2 border-t border-zinc-800">
+                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Transform</label>
+                        <div class="grid grid-cols-3 gap-1">
+                            <input type="number" step="0.1" value="${selectedObject.position.x.toFixed(2)}" onchange="updateTransform('pos','x',this.value)" class="input-dark" title="PosX">
+                            <input type="number" step="0.1" value="${selectedObject.position.y.toFixed(2)}" onchange="updateTransform('pos','y',this.value)" class="input-dark" title="PosY">
+                            <input type="number" step="0.1" value="${selectedObject.position.z.toFixed(2)}" onchange="updateTransform('pos','z',this.value)" class="input-dark" title="PosZ">
                         </div>
-                        <div>
-                            <label class="block text-[9px] text-zinc-500">Roughness</label>
-                            <input type="range" min="0" max="1" step="0.01" value="${mat.roughness || 0}" oninput="updateMatProp('roughness', this.value)" class="w-full accent-orange-500">
-                        </div>
-                    </div>
+                    </section>
 
-                    <div class="pt-2 border-t border-zinc-800">
-                        <label class="block text-[10px] text-orange-500 mb-2 font-bold uppercase tracking-wider">Custom Texture</label>
-                        <input type="file" id="tex-input" accept="image/*" class="hidden" onchange="uploadTexture()">
-                        <button onclick="document.getElementById('tex-input').click()" class="w-full py-2 bg-zinc-800 text-[10px] rounded border border-zinc-700 hover:border-orange-500">+ UPLOAD PNG/JPG</button>
-                        
-                        <div class="mt-3 space-y-2">
-                            <label class="block text-[9px] text-zinc-500">Texture Tiling (Triplanar Control)</label>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[9px]">Repeat:</span>
-                                <input type="number" step="0.1" value="${mat.map ? mat.map.repeat.x : 1}" onchange="updateTiling(this.value)" class="input-dark w-full">
+                    ${isMesh ? `
+                    <section class="space-y-2 pt-2 border-t border-zinc-800">
+                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Material</label>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-[8px] text-zinc-600 mb-1">ALBEDO COLOR</p>
+                                <input type="color" value="#${mat.color.getHexString()}" onchange="updateMat('color', this.value)" class="w-full h-8 bg-zinc-800 border-none rounded">
+                            </div>
+                            <div>
+                                <p class="text-[8px] text-zinc-600 mb-1">EMISSIVE (GLOW)</p>
+                                <input type="color" value="#${mat.emissive ? mat.emissive.getHexString() : '000000'}" onchange="updateMat('emissive', this.value)" class="w-full h-8 bg-zinc-800 border-none rounded">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <p class="text-[8px] text-zinc-600">METAL</p>
+                                    <input type="range" min="0" max="1" step="0.01" value="${mat.metalness}" oninput="updateMat('metal', this.value)" class="w-full accent-orange-500">
+                                </div>
+                                <div>
+                                    <p class="text-[8px] text-zinc-600">ROUGH</p>
+                                    <input type="range" min="0" max="1" step="0.01" value="${mat.roughness}" oninput="updateMat('rough', this.value)" class="w-full accent-orange-500">
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="pt-2 border-t border-zinc-800">
-                        <label class="block text-[10px] text-zinc-500 mb-2 uppercase">Presets</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="applyPreset('gold')" class="py-1 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">GOLD</button>
-                            <button onclick="applyPreset('neon')" class="py-1 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">NEON</button>
-                            <button onclick="applyPreset('matte')" class="py-1 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">MATTE</button>
-                            <button onclick="applyPreset('glass')" class="py-1 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">GLASS</button>
+                    <section class="space-y-2 pt-2 border-t border-zinc-800">
+                        <label class="text-[9px] text-zinc-500 uppercase font-bold">Texture (Diffuse/PNG)</label>
+                        <input type="file" id="tex-upload" accept="image/*" class="hidden" onchange="applyTexture()">
+                        <button onclick="document.getElementById('tex-upload').click()" class="w-full py-2 bg-zinc-900 border border-zinc-800 text-[9px] rounded hover:border-orange-500">UPLOAD TEXTURE</button>
+                        ${mat.map ? `
+                        <div class="flex items-center gap-2">
+                            <p class="text-[8px] text-zinc-600">TILING:</p>
+                            <input type="number" step="0.1" value="${mat.map.repeat.x}" onchange="updateTiling(this.value)" class="input-dark w-full">
                         </div>
-                    </div>
+                        ` : ''}
+                    </section>
+                    ` : ''}
+
+                    <button onclick="deleteObject('${selectedObject.uuid}')" class="w-full py-2 bg-red-900/20 text-red-500 border border-red-900/50 text-[9px] rounded hover:bg-red-900/40">DELETE OBJECT</button>
                 </div>
             `;
         }
 
-        // Texture Logic
-        window.uploadTexture = () => {
-            const file = document.getElementById('tex-input').files[0];
-            if (!file || !selectedObject) return;
+        // --- HANDLERS ---
 
-            const loader = new THREE.TextureLoader();
-            const url = URL.createObjectURL(file);
-
-            loader.load(url, (texture) => {
-                texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                selectedObject.material.map = texture;
-                selectedObject.material.needsUpdate = true;
-                updateMaterialPanel();
-                saveHistory();
-            });
-        };
-
-        window.updateTiling = (val) => {
-            if(selectedObject && selectedObject.material.map) {
-                const repeat = parseFloat(val);
-                selectedObject.material.map.repeat.set(repeat, repeat);
-                saveHistory();
+        function selectObject(obj) {
+            if (obj.userData.isFolder) {
+                transformControl.detach();
+                selectedObject = obj;
+            } else {
+                selectedObject = obj;
+                transformControl.attach(obj);
             }
-        };
-
-        // Material Updates
-        window.updateColor = (hex) => { 
-            if(selectedObject) {
-                selectedObject.material.color.set(hex);
-                saveHistory();
-            }
+            updateSceneTree();
+            updateInspector();
         }
-        window.updateMatProp = (prop, val) => { 
-            if(selectedObject) {
-                selectedObject.material[prop] = parseFloat(val);
+
+        function renameObject(name) {
+            if (selectedObject) {
+                selectedObject.name = name;
+                updateSceneTree();
                 saveHistory();
             }
         }
 
-        window.applyPreset = (type) => {
-            if(!selectedObject) return;
-            const m = selectedObject.material;
-            m.emissiveIntensity = 0; // reset
-            switch(type) {
-                case 'gold': m.color.set(0xffd700); m.metalness = 1; m.roughness = 0.1; break;
-                case 'neon': m.color.set(0x00ff00); m.emissive = new THREE.Color(0x00ff00); m.emissiveIntensity = 2; break;
-                case 'matte': m.metalness = 0; m.roughness = 1; break;
-                case 'glass': m.transparent = true; m.opacity = 0.5; m.metalness = 1; m.roughness = 0; break;
-            }
-            updateMaterialPanel();
+        function updateTransform(type, axis, val) {
+            if (!selectedObject) return;
+            const v = parseFloat(val);
+            if (type === 'pos') selectedObject.position[axis] = v;
             saveHistory();
         }
 
-        // Tools
-        window.setToolMode = (mode) => {
-            transformControl.setMode(mode);
-            document.querySelectorAll('.absolute button').forEach(b => b.classList.remove('active-tool'));
-            document.getElementById(`tool-${mode}`).classList.add('active-tool');
+        function updateMat(type, val) {
+            if (!selectedObject || !selectedObject.isMesh) return;
+            const m = selectedObject.material;
+            if (type === 'color') m.color.set(val);
+            if (type === 'emissive') {
+                if (!m.emissive) m.emissive = new THREE.Color(val);
+                else m.emissive.set(val);
+                m.emissiveIntensity = val === '#000000' ? 0 : 1;
+            }
+            if (type === 'metal') m.metalness = parseFloat(val);
+            if (type === 'rough') m.roughness = parseFloat(val);
+            saveHistory();
         }
 
-        function resetCamera() {
-            orbit.reset();
-            if(selectedObject) {
-                orbit.target.copy(selectedObject.position);
+        function applyTexture() {
+            const file = document.getElementById('tex-upload').files[0];
+            if (!file || !selectedObject || !selectedObject.isMesh) return;
+
+            const loader = new THREE.TextureLoader();
+            const url = URL.createObjectURL(file);
+            loader.load(url, (tex) => {
+                tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+                selectedObject.material.map = tex;
+                selectedObject.material.needsUpdate = true;
+                updateInspector();
+                saveHistory();
+            });
+        }
+
+        function updateTiling(val) {
+            if (selectedObject && selectedObject.material.map) {
+                const r = parseFloat(val);
+                selectedObject.material.map.repeat.set(r, r);
+                saveHistory();
             }
         }
 
-        // Undo Redo System
+        function toggleVisibility(uuid) {
+            const obj = scene.getObjectByProperty('uuid', uuid);
+            if (obj) {
+                obj.visible = !obj.visible;
+                updateSceneTree();
+                saveHistory();
+            }
+        }
+
+        function deleteObject(uuid) {
+            const obj = scene.getObjectByProperty('uuid', uuid);
+            if (obj) {
+                if (transformControl.object === obj) transformControl.detach();
+                obj.parent.remove(obj);
+                if (selectedObject === obj) selectedObject = null;
+                updateSceneTree();
+                updateInspector();
+                updateStats();
+                saveHistory();
+            }
+        }
+
+        function toggleSnap() {
+            snapEnabled = !snapEnabled;
+            const btn = document.getElementById('snap-toggle');
+            btn.innerText = snapEnabled ? "SNAP: ON" : "SNAP: OFF";
+            btn.classList.toggle('active-tool', snapEnabled);
+            transformControl.setTranslationSnap(snapEnabled ? 1 : null);
+            transformControl.setRotationSnap(snapEnabled ? THREE.MathUtils.degToRad(15) : null);
+            transformControl.setScaleSnap(snapEnabled ? 0.25 : null);
+        }
+
+        function updateStats() {
+            let meshes = 0;
+            let verts = 0;
+            mainGroup.traverse(n => {
+                if (n.isMesh) {
+                    meshes++;
+                    verts += n.geometry.attributes.position.count;
+                }
+            });
+            document.getElementById('mesh-count').innerText = meshes;
+            document.getElementById('vert-count').innerText = verts;
+        }
+
+        // --- HISTORY ---
+
         function saveHistory() {
-            // Cut off any "redo" steps if we're making a new change
-            if (historyStep < history.length - 1) {
-                history = history.slice(0, historyStep + 1);
-            }
-            
-            // Limit history size
-            if (history.length > 50) history.shift();
-
-            // Clone the current state of mainGroup
+            if (historyStep < history.length - 1) history = history.slice(0, historyStep + 1);
             const state = mainGroup.toJSON();
             history.push(JSON.stringify(state));
-            historyStep++;
+            if (history.length > 30) history.shift();
+            historyStep = history.length - 1;
         }
 
         function undo() {
@@ -430,25 +520,38 @@
             }
         }
 
-        function loadState(jsonStr) {
+        function loadState(json) {
             const loader = new THREE.ObjectLoader();
-            const sceneData = JSON.parse(jsonStr);
+            const data = JSON.parse(json);
+            while(mainGroup.children.length > 0) mainGroup.remove(mainGroup.children[0]);
             
-            // Clear current mainGroup
-            while(mainGroup.children.length > 0){ 
-                mainGroup.remove(mainGroup.children[0]); 
-            }
-
-            loader.parse(sceneData, (obj) => {
-                // Transfer children back to mainGroup
+            loader.parse(data, (obj) => {
                 const children = [...obj.children];
-                children.forEach(child => mainGroup.add(child));
+                children.forEach(c => mainGroup.add(c));
                 updateSceneTree();
-                document.getElementById('obj-count').innerText = mainGroup.children.length;
+                updateStats();
                 if(selectedObject) transformControl.detach();
                 selectedObject = null;
-                updateMaterialPanel();
+                updateInspector();
             });
+        }
+
+        function setToolMode(mode) {
+            transformControl.setMode(mode);
+            document.querySelectorAll('.absolute button').forEach(b => b.classList.remove('active-tool'));
+            document.getElementById(`tool-${mode}`).classList.add('active-tool');
+        }
+
+        function onPointerDown(event) {
+            if (event.target.closest('aside') || event.target.closest('.absolute')) return;
+            const rect = document.getElementById('viewport').getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(mainGroup.children, true);
+            if (intersects.length > 0) {
+                selectObject(intersects[0].object);
+            }
         }
 
         function onWindowResize() {
@@ -458,13 +561,11 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            orbit.update();
-            renderer.render(scene, camera);
-            
-            // Real FPS Calculation (simplified)
-            document.getElementById('fps').innerText = "60"; 
+        function onKeyDown(event) {
+            if (event.ctrlKey && event.key === 'z') undo();
+            if (event.ctrlKey && event.key === 'y') redo();
+            if (event.key === 'Delete') { if(selectedObject) deleteObject(selectedObject.uuid); }
+            if (event.key === 'd' && event.shiftKey) { duplicateSelected(); event.preventDefault(); }
         }
     </script>
 </body>
