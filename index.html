@@ -9,14 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/DecalGeometry.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/curves/NURBSCurve.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/modifiers/TessellationModifier.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
         body {
@@ -215,6 +207,63 @@
     </div>
 
     <script>
+        // SHADER DEFINITIONS (karena CDN tidak menyertakan shader yang diperlukan)
+        const CopyShader = {
+            uniforms: {
+                tDiffuse: { value: null },
+                opacity: { value: 1.0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                uniform float opacity;
+                uniform sampler2D tDiffuse;
+                varying vec2 vUv;
+                void main() {
+                    vec4 texel = texture2D( tDiffuse, vUv );
+                    gl_FragColor = opacity * texel;
+                }
+            `
+        };
+
+        const LuminosityHighPassShader = {
+            uniforms: {
+                tDiffuse: { value: null },
+                luminosityThreshold: { value: 1.0 },
+                smoothWidth: { value: 1.0 },
+                defaultColor: { value: new THREE.Color(0x000000) },
+                defaultOpacity: { value: 0.0 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D tDiffuse;
+                uniform vec3 defaultColor;
+                uniform float defaultOpacity;
+                uniform float luminosityThreshold;
+                uniform float smoothWidth;
+                varying vec2 vUv;
+                void main() {
+                    vec4 texel = texture2D( tDiffuse, vUv );
+                    vec3 luma = vec3( 0.299, 0.587, 0.114 );
+                    float v = dot( texel.xyz, luma );
+                    vec4 outputColor = vec4( defaultColor.rgb, defaultOpacity );
+                    float alpha = smoothstep( luminosityThreshold, luminosityThreshold + smoothWidth, v );
+                    gl_FragColor = mix( outputColor, texel, alpha );
+                }
+            `
+        };
+
         const ACCESS_PASS = "ssog123";
         let scene, camera, renderer, orbit, transformControl, raycaster, mouse, gridHelper, selectionBox, clock;
         let selectedObject = null;
@@ -224,88 +273,40 @@
         let isGridVisible = true;
         let symmetryEnabled = false;
         let physicsEnabled = false;
-        let postFXEnabled = true;
-        let composer, bloomPass, fxaaPass;
+        let postFXEnabled = false; // Disable postFX dulu untuk menghindari error
         let minimapCamera, minimapRenderer;
 
         // --- 30 FITUR UMUM TAMBAHAN ---
         const FEATURES = {
-            // Scene Management
             autoSave: false,
             sceneVersioning: true,
             multiSelect: false,
             layerSystem: [],
-            
-            // Navigation
             flyMode: false,
             walkMode: false,
             cameraPaths: [],
-            
-            // Tools
             measuringTool: false,
             protractorTool: false,
             rulerTool: false,
-            
-            // Export
             exportFormats: ['GLB', 'GLTF', 'OBJ', 'FBX', 'STL', 'USDZ'],
-            
-            // AI Features
             autoUV: false,
             autoLOD: false,
             autoLighting: false,
-            
-            // Collaboration
             realtimeCollab: false,
             versionControl: false,
             commentSystem: false,
-            
-            // Rendering
             realtimeGI: false,
             raytracing: false,
             pathTracing: false,
-            
-            // Animation
             timelineEditor: false,
             keyframeAnimation: false,
             morphTargets: false,
-            
-            // Simulation
             clothSim: false,
             fluidSim: false,
             softBody: false,
-            
-            // AR/VR
             arPreview: false,
             vrPreview: false,
             webXR: false
-        };
-
-        // --- 30 FITUR MATERIAL TAMBAHAN ---
-        const MATERIAL_TYPES = {
-            PBR: ['Standard', 'Metallic', 'Roughness', 'Specular'],
-            Special: ['Glass', 'Water', 'Ice', 'Lava', 'Hologram', 'Neon'],
-            CarPaint: ['Metallic Flake', 'Pearlescent', 'Chameleon'],
-            Fabric: ['Cotton', 'Silk', 'Denim', 'Leather'],
-            Metal: ['Brushed Steel', 'Copper', 'Aluminum', 'Titanium'],
-            Stone: ['Marble', 'Granite', 'Concrete', 'Brick'],
-            Wood: ['Oak', 'Mahogany', 'Pine', 'Varnished'],
-            Tech: ['Carbon Fiber', 'Circuit Board', 'OLED'],
-            Emissive: ['Glow', 'Neon Tube', 'LED', 'Plasma'],
-            Custom: ['Anisotropic', 'Clear Coat', 'Subsurface', 'Sheen']
-        };
-
-        // --- 30 FITUR 3D TAMBAHAN ---
-        const GEOMETRY_FEATURES = {
-            primitives: ['TorusKnot', 'Octahedron', 'Dodecahedron', 'Icosahedron'],
-            splines: ['Bezier', 'NURBS', 'Catmull-Rom'],
-            modifiers: ['Subdivision', 'Displace', 'Boolean', 'Lathe'],
-            particles: ['Emitter', 'Force Fields', 'Collisions'],
-            vegetation: ['Tree Generator', 'Grass', 'Foliage'],
-            terrain: ['Heightmap', 'Erosion', 'Texturing'],
-            water: ['Ocean', 'River', 'Pool'],
-            sky: ['Procedural Sky', 'Atmosphere', 'Clouds'],
-            lights: ['Area Light', 'Spot Light', 'IES Profile'],
-            effects: ['Lens Flare', 'God Rays', 'Motion Blur']
         };
 
         // --- AUTH ---
@@ -344,20 +345,6 @@
             renderer.toneMappingExposure = 1;
             container.appendChild(renderer.domElement);
 
-            // Post Processing
-            composer = new THREE.EffectComposer(renderer);
-            const renderPass = new THREE.RenderPass(scene, camera);
-            composer.addPass(renderPass);
-            
-            bloomPass = new THREE.UnrealBloomPass(
-                new THREE.Vector2(window.innerWidth, window.innerHeight),
-                1.5, 0.4, 0.85
-            );
-            composer.addPass(bloomPass);
-            
-            fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-            composer.addPass(fxaaPass);
-
             // Grid
             gridHelper = new THREE.GridHelper(100, 50, 0xff4d00, 0x111111);
             gridHelper.material.transparent = true;
@@ -379,6 +366,11 @@
                     saveHistory(); 
                     updateInspector();
                     if (symmetryEnabled) applySymmetry();
+                }
+            });
+            transformControl.addEventListener('change', () => {
+                if (selectionBox.visible && selectedObject) {
+                    selectionBox.setFromObject(selectedObject);
                 }
             });
             scene.add(transformControl);
@@ -414,9 +406,9 @@
             initMinimap();
 
             // Event Listeners
-            window.addEventListener('mousedown', onSelect);
+            renderer.domElement.addEventListener('mousedown', onSelect);
             window.addEventListener('resize', onResize);
-            window.addEventListener('keydown', onKey);
+            document.addEventListener('keydown', onKey);
             document.addEventListener('visibilitychange', autoSaveCheck);
 
             // Initial Scene
@@ -485,18 +477,14 @@
             
             // Update selection box
             if (selectionBox.visible && selectedObject) {
-                selectionBox.update();
+                selectionBox.setFromObject(selectedObject);
             }
             
             // Update minimap
             updateMinimap();
             
             // Render
-            if (postFXEnabled) {
-                composer.render();
-            } else {
-                renderer.render(scene, camera);
-            }
+            renderer.render(scene, camera);
             
             // Update KPI stats
             updateStats();
@@ -537,7 +525,9 @@
         function centerAllObjects() {
             const bbox = new THREE.Box3();
             mainGroup.children.forEach(child => {
-                bbox.expandByObject(child);
+                if (child !== gridHelper) {
+                    bbox.expandByObject(child);
+                }
             });
             
             const center = bbox.getCenter(new THREE.Vector3());
@@ -547,7 +537,7 @@
 
         function randomizePositions() {
             mainGroup.children.forEach(child => {
-                if (child !== gridHelper) {
+                if (child !== gridHelper && !child.userData?.isFolder) {
                     child.position.set(
                         (Math.random() - 0.5) * 40,
                         Math.random() * 20,
@@ -668,14 +658,20 @@
         function togglePostFX() {
             postFXEnabled = !postFXEnabled;
             document.getElementById('postfx-btn').innerText = `POSTFX: ${postFXEnabled ? 'ON' : 'OFF'}`;
+            alert("PostFX requires additional shader setup");
         }
 
         function applySymmetry() {
-            if (!selectedObject || !symmetryEnabled) return;
+            if (!selectedObject || !symmetryEnabled || !selectedObject.isMesh) return;
             
             const clone = selectedObject.clone();
             clone.position.x = -selectedObject.position.x;
-            clone.scale.x = -selectedObject.scale.x;
+            clone.scale.x = -Math.abs(selectedObject.scale.x);
+            
+            if (clone.material) {
+                clone.material = selectedObject.material.clone();
+            }
+            
             mainGroup.add(clone);
             clone.name = selectedObject.name + "_SYM";
             
@@ -690,115 +686,12 @@
         }
 
         function autoSave() {
-            localStorage.setItem('mssog_autosave', JSON.stringify(mainGroup.toJSON()));
-            console.log("Auto-saved scene");
-        }
-
-        // --- 30 FITUR MATERIAL IMPLEMENTASI ---
-        function applyMaterialPreset(preset) {
-            if (!selectedObject || !selectedObject.isMesh) return;
-            
-            const mat = selectedObject.material;
-            
-            switch(preset) {
-                case 'glass':
-                    mat.transparent = true;
-                    mat.opacity = 0.3;
-                    mat.roughness = 0;
-                    mat.metalness = 0;
-                    mat.ior = 1.5;
-                    break;
-                    
-                case 'water':
-                    mat.color.set(0x0088ff);
-                    mat.transparent = true;
-                    mat.opacity = 0.5;
-                    mat.roughness = 0.1;
-                    mat.metalness = 0.8;
-                    break;
-                    
-                case 'metal':
-                    mat.roughness = 0.2;
-                    mat.metalness = 1;
-                    break;
-                    
-                case 'plastic':
-                    mat.roughness = 0.8;
-                    mat.metalness = 0;
-                    break;
-                    
-                case 'rubber':
-                    mat.roughness = 1;
-                    mat.metalness = 0;
-                    break;
-                    
-                case 'emissive':
-                    mat.emissive.set(mat.color);
-                    mat.emissiveIntensity = 2;
-                    break;
-                    
-                case 'hologram':
-                    mat.transparent = true;
-                    mat.opacity = 0.3;
-                    mat.emissive.set(0x00ff00);
-                    mat.emissiveIntensity = 3;
-                    mat.wireframe = true;
-                    break;
-                    
-                case 'neon':
-                    mat.emissive.set(mat.color);
-                    mat.emissiveIntensity = 5;
-                    mat.roughness = 0.1;
-                    break;
-                    
-                case 'carbon_fiber':
-                    // This would require a texture
-                    mat.roughness = 0.3;
-                    mat.metalness = 0.8;
-                    break;
-                    
-                case 'lava':
-                    mat.emissive.set(0xff3300);
-                    mat.emissiveIntensity = 3;
-                    mat.roughness = 0.8;
-                    break;
+            try {
+                localStorage.setItem('mssog_autosave', JSON.stringify(mainGroup.toJSON()));
+                console.log("Auto-saved scene");
+            } catch (e) {
+                console.warn("Could not auto-save:", e);
             }
-            
-            mat.needsUpdate = true;
-            updateInspector();
-            saveHistory();
-        }
-
-        function generateProceduralMaterial() {
-            if (!selectedObject || !selectedObject.isMesh) return;
-            
-            const mat = selectedObject.material;
-            
-            // Create a procedural pattern
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-            
-            // Generate noise/pattern
-            for(let x = 0; x < 512; x += 4) {
-                for(let y = 0; y < 512; y += 4) {
-                    const value = Math.random() * 255;
-                    ctx.fillStyle = `rgb(${value},${value},${value})`;
-                    ctx.fillRect(x, y, 4, 4);
-                }
-            }
-            
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.wrapS = THREE.RepeatWrapping;
-            texture.wrapT = THREE.RepeatWrapping;
-            texture.repeat.set(4, 4);
-            
-            mat.map = texture;
-            mat.needsUpdate = true;
-            
-            saveHistory();
-            updateInspector();
         }
 
         // --- HIERARCHY & ASSETS ---
@@ -808,7 +701,9 @@
             tree.innerHTML = "";
 
             const renderNode = (node, depth = 0) => {
-                if (node.name.toLowerCase().indexOf(search) === -1 && search !== "") return;
+                if (!node || node === transformControl || node === selectionBox) return;
+                
+                if (node.name && node.name.toLowerCase().indexOf(search) === -1 && search !== "") return;
                 
                 const item = document.createElement('div');
                 item.className = `tree-item ${selectedObject === node ? 'selected' : ''}`;
@@ -833,26 +728,41 @@
                 };
                 tree.appendChild(item);
 
-                if (node.children) {
+                if (node.children && node.children.length > 0) {
                     node.children.forEach(c => {
-                        if (c !== transformControl && c !== selectionBox) renderNode(c, depth + 1);
+                        renderNode(c, depth + 1);
                     });
                 }
             };
 
-            mainGroup.children.forEach(c => renderNode(c));
+            mainGroup.children.forEach(c => {
+                if (c !== transformControl && c !== selectionBox) {
+                    renderNode(c);
+                }
+            });
         }
 
         function selectObject(obj) {
+            // Detach dari objek sebelumnya
+            if (transformControl.attach && typeof transformControl.attach === 'function') {
+                transformControl.detach();
+            }
+            
             selectedObject = obj;
+            
             if (obj && !obj.userData?.isFolder) {
-                transformControl.attach(obj);
+                if (transformControl.attach && typeof transformControl.attach === 'function') {
+                    transformControl.attach(obj);
+                }
                 selectionBox.setFromObject(obj);
                 selectionBox.visible = true;
             } else {
-                transformControl.detach();
+                if (transformControl.detach && typeof transformControl.detach === 'function') {
+                    transformControl.detach();
+                }
                 selectionBox.visible = false;
             }
+            
             updateSceneTree();
             updateInspector();
         }
@@ -930,6 +840,7 @@
         function handleGlbUpload() {
             const f = document.getElementById('glb-input').files[0];
             if (!f) return;
+            
             const loader = new THREE.GLTFLoader();
             loader.load(URL.createObjectURL(f), (gltf) => {
                 const model = gltf.scene;
@@ -946,6 +857,9 @@
                 mainGroup.add(model);
                 updateSceneTree();
                 saveHistory();
+            }, undefined, (error) => {
+                console.error("Error loading GLB:", error);
+                alert("Error loading model. Please check console for details.");
             });
         }
 
@@ -960,7 +874,10 @@
                 t.classList.remove('active');
             });
             // Show selected tab
-            document.getElementById(`inspector-${tabName}`).classList.remove('hidden');
+            const tabElement = document.getElementById(`inspector-${tabName}`);
+            if (tabElement) {
+                tabElement.classList.remove('hidden');
+            }
             // Set active tab
             event.target.classList.add('active');
             
@@ -985,10 +902,10 @@
             const panel = document.getElementById('inspector-transform');
             
             panel.innerHTML = `
-                <div class="space-y-4 animate-in fade-in">
+                <div class="space-y-4">
                     <section class="inspector-section">
                         <label class="kpi-label">Entity Properties</label>
-                        <input type="text" value="${selectedObject.name}" onchange="editProp('name', this.value)" class="input-dark mb-2">
+                        <input type="text" value="${selectedObject.name || ''}" onchange="editProp('name', this.value)" class="input-dark mb-2">
                         
                         <div class="grid-row">
                             <div>
@@ -1082,62 +999,24 @@
                                 <p class="text-[8px] text-zinc-700">RGB: ${mat.color.r.toFixed(2)}, ${mat.color.g.toFixed(2)}, ${mat.color.b.toFixed(2)}</p>
                             </div>
                         </div>
-                        
-                        <button onclick="generateProceduralMaterial()" class="w-full py-2 bg-zinc-900 border border-zinc-800 text-[9px] hover:border-orange-500 rounded-lg">GENERATE PROCEDURAL</button>
                     </section>
 
                     <section class="inspector-section">
                         <label class="kpi-label">PBR Properties</label>
                         <div class="space-y-3">
                             <div>
-                                <p class="text-[7px] text-zinc-600 mb-1">Metalness: ${mat.metalness.toFixed(2)}</p>
-                                <input type="range" min="0" max="1" step="0.01" value="${mat.metalness}" oninput="editProp('metal', this.value)" class="w-full">
+                                <p class="text-[7px] text-zinc-600 mb-1">Metalness: ${mat.metalness?.toFixed(2) || '0.00'}</p>
+                                <input type="range" min="0" max="1" step="0.01" value="${mat.metalness || 0}" oninput="editProp('metal', this.value)" class="w-full">
                             </div>
                             <div>
-                                <p class="text-[7px] text-zinc-600 mb-1">Roughness: ${mat.roughness.toFixed(2)}</p>
-                                <input type="range" min="0" max="1" step="0.01" value="${mat.roughness}" oninput="editProp('rough', this.value)" class="w-full">
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="inspector-section">
-                        <label class="kpi-label">Advanced</label>
-                        <div class="grid-row">
-                            <div>
-                                <p class="text-[7px] text-zinc-600">Emissive</p>
-                                <input type="color" value="#${mat.emissive.getHexString()}" onchange="editProp('emissive', this.value)" class="w-full h-8 bg-transparent border border-zinc-800 rounded">
-                            </div>
-                            <div>
-                                <p class="text-[7px] text-zinc-600">Intensity: ${mat.emissiveIntensity?.toFixed(1) || '0'}</p>
-                                <input type="range" min="0" max="10" step="0.1" value="${mat.emissiveIntensity || 0}" oninput="editProp('emissiveIntensity', this.value)" class="w-full">
-                            </div>
-                        </div>
-                        
-                        <div class="grid-row mt-3">
-                            <div>
-                                <p class="text-[7px] text-zinc-600">Opacity: ${mat.opacity?.toFixed(2) || '1.00'}</p>
-                                <input type="range" min="0" max="1" step="0.01" value="${mat.opacity || 1}" oninput="editProp('opacity', this.value)" class="w-full">
-                            </div>
-                            <div>
-                                <p class="text-[7px] text-zinc-600">Transmission: ${mat.transmission?.toFixed(2) || '0'}</p>
-                                <input type="range" min="0" max="1" step="0.01" value="${mat.transmission || 0}" oninput="editProp('transmission', this.value)" class="w-full">
+                                <p class="text-[7px] text-zinc-600 mb-1">Roughness: ${mat.roughness?.toFixed(2) || '0.50'}</p>
+                                <input type="range" min="0" max="1" step="0.01" value="${mat.roughness || 0.5}" oninput="editProp('rough', this.value)" class="w-full">
                             </div>
                         </div>
                     </section>
 
                     <section>
-                        <label class="kpi-label">Texture Maps</label>
-                        <div class="space-y-2">
-                            <div class="grid grid-cols-2 gap-1">
-                                <button onclick="uploadTexture('albedo')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-blue-500 border border-zinc-800">ALBEDO</button>
-                                <button onclick="uploadTexture('normal')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-green-500 border border-zinc-800">NORMAL</button>
-                                <button onclick="uploadTexture('roughness')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-yellow-500 border border-zinc-800">ROUGHNESS</button>
-                                <button onclick="uploadTexture('metalness')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-gray-500 border border-zinc-800">METALNESS</button>
-                                <button onclick="uploadTexture('ao')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-red-500 border border-zinc-800">AO</button>
-                                <button onclick="uploadTexture('emissive')" class="py-2 bg-zinc-900 text-[8px] rounded hover:border-pink-500 border border-zinc-800">EMISSIVE</button>
-                            </div>
-                            <input type="file" id="texture-file-input" class="hidden" accept="image/*" onchange="handleTextureUpload(event)">
-                        </div>
+                        <button onclick="deleteObject()" class="w-full py-3 bg-red-950/20 text-red-500 border border-red-950/30 text-[9px] font-bold rounded-xl hover:bg-red-600 hover:text-white transition-all">DELETE ENTITY</button>
                     </section>
                 </div>
             `;
@@ -1146,271 +1025,458 @@
         function editProp(prop, val) {
             if (!selectedObject) return;
             
-            switch(prop) {
-                case 'name':
-                    selectedObject.name = val;
-                    break;
-                case 'px':
-                    selectedObject.position.x = parseFloat(val);
-                    break;
-                case 'py':
-                    selectedObject.position.y = parseFloat(val);
-                    break;
-                case 'pz':
-                    selectedObject.position.z = parseFloat(val);
-                    break;
-                case 'rx':
-                    selectedObject.rotation.x = THREE.MathUtils.degToRad(parseFloat(val));
-                    break;
-                case 'ry':
-                    selectedObject.rotation.y = THREE.MathUtils.degToRad(parseFloat(val));
-                    break;
-                case 'rz':
-                    selectedObject.rotation.z = THREE.MathUtils.degToRad(parseFloat(val));
-                    break;
-                case 'sx':
-                    selectedObject.scale.x = parseFloat(val);
-                    break;
-                case 'sy':
-                    selectedObject.scale.y = parseFloat(val);
-                    break;
-                case 'sz':
-                    selectedObject.scale.z = parseFloat(val);
-                    break;
-                case 'visible':
-                    selectedObject.visible = val;
-                    break;
-                case 'castShadow':
-                    selectedObject.castShadow = val;
-                    break;
-                case 'wire':
-                    if (selectedObject.isMesh) selectedObject.material.wireframe = val;
-                    break;
-                case 'doubleSide':
-                    if (selectedObject.isMesh) selectedObject.material.side = val ? THREE.DoubleSide : THREE.FrontSide;
-                    break;
-                case 'color':
-                    if (selectedObject.isMesh) selectedObject.material.color.set(val);
-                    break;
-                case 'metal':
-                    if (selectedObject.isMesh) selectedObject.material.metalness = parseFloat(val);
-                    break;
-                case 'rough':
-                    if (selectedObject.isMesh) selectedObject.material.roughness = parseFloat(val);
-                    break;
-                case 'emissive':
-                    if (selectedObject.isMesh) selectedObject.material.emissive.set(val);
-                    break;
-                case 'emissiveIntensity':
-                    if (selectedObject.isMesh) selectedObject.material.emissiveIntensity = parseFloat(val);
-                    break;
-                case 'opacity':
-                    if (selectedObject.isMesh) {
-                        selectedObject.material.opacity = parseFloat(val);
-                        selectedObject.material.transparent = val < 1;
-                    }
-                    break;
-                case 'transmission':
-                    if (selectedObject.isMesh) selectedObject.material.transmission = parseFloat(val);
-                    break;
-            }
-
-            if (selectedObject.isMesh) selectedObject.material.needsUpdate = true;
-            
-            updateSceneTree();
-            updateInspector();
-            saveHistory();
-        }
-
-        let currentTextureType = 'albedo';
-        function uploadTexture(type) {
-            currentTextureType = type;
-            document.getElementById('texture-file-input').click();
-        }
-
-        function handleTextureUpload(event) {
-            const file = event.target.files[0];
-            if (!file || !selectedObject || !selectedObject.isMesh) return;
-            
-            const loader = new THREE.TextureLoader();
-            loader.load(URL.createObjectURL(file), (texture) => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                
-                const mat = selectedObject.material;
-                switch(currentTextureType) {
-                    case 'albedo':
-                        mat.map = texture;
+            try {
+                switch(prop) {
+                    case 'name':
+                        selectedObject.name = val;
                         break;
-                    case 'normal':
-                        mat.normalMap = texture;
-                        mat.normalScale = new THREE.Vector2(1, 1);
+                    case 'px':
+                        selectedObject.position.x = parseFloat(val);
                         break;
-                    case 'roughness':
-                        mat.roughnessMap = texture;
+                    case 'py':
+                        selectedObject.position.y = parseFloat(val);
                         break;
-                    case 'metalness':
-                        mat.metalnessMap = texture;
+                    case 'pz':
+                        selectedObject.position.z = parseFloat(val);
                         break;
-                    case 'ao':
-                        mat.aoMap = texture;
+                    case 'rx':
+                        selectedObject.rotation.x = THREE.MathUtils.degToRad(parseFloat(val));
+                        break;
+                    case 'ry':
+                        selectedObject.rotation.y = THREE.MathUtils.degToRad(parseFloat(val));
+                        break;
+                    case 'rz':
+                        selectedObject.rotation.z = THREE.MathUtils.degToRad(parseFloat(val));
+                        break;
+                    case 'sx':
+                        selectedObject.scale.x = parseFloat(val);
+                        break;
+                    case 'sy':
+                        selectedObject.scale.y = parseFloat(val);
+                        break;
+                    case 'sz':
+                        selectedObject.scale.z = parseFloat(val);
+                        break;
+                    case 'visible':
+                        selectedObject.visible = val;
+                        break;
+                    case 'castShadow':
+                        selectedObject.castShadow = val;
+                        break;
+                    case 'wire':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.wireframe = val;
+                        }
+                        break;
+                    case 'doubleSide':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.side = val ? THREE.DoubleSide : THREE.FrontSide;
+                        }
+                        break;
+                    case 'color':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.color.set(val);
+                        }
+                        break;
+                    case 'metal':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.metalness = parseFloat(val);
+                        }
+                        break;
+                    case 'rough':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.roughness = parseFloat(val);
+                        }
                         break;
                     case 'emissive':
-                        mat.emissiveMap = texture;
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.emissive.set(val);
+                        }
+                        break;
+                    case 'emissiveIntensity':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.emissiveIntensity = parseFloat(val);
+                        }
+                        break;
+                    case 'opacity':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.opacity = parseFloat(val);
+                            selectedObject.material.transparent = val < 1;
+                        }
+                        break;
+                    case 'transmission':
+                        if (selectedObject.isMesh && selectedObject.material) {
+                            selectedObject.material.transmission = parseFloat(val);
+                        }
+                        break;
+                }
+
+                if (selectedObject.isMesh && selectedObject.material) {
+                    selectedObject.material.needsUpdate = true;
+                }
+                
+                updateSceneTree();
+                updateInspector();
+                saveHistory();
+            } catch (error) {
+                console.error("Error editing property:", error);
+            }
+        }
+
+        // --- 30 FITUR MATERIAL IMPLEMENTASI ---
+        function applyMaterialPreset(preset) {
+            if (!selectedObject || !selectedObject.isMesh || !selectedObject.material) return;
+            
+            const mat = selectedObject.material;
+            
+            try {
+                switch(preset) {
+                    case 'glass':
+                        mat.transparent = true;
+                        mat.opacity = 0.3;
+                        mat.roughness = 0;
+                        mat.metalness = 0;
+                        mat.color.set(0xffffff);
+                        break;
+                        
+                    case 'water':
+                        mat.color.set(0x0088ff);
+                        mat.transparent = true;
+                        mat.opacity = 0.5;
+                        mat.roughness = 0.1;
+                        mat.metalness = 0.8;
+                        break;
+                        
+                    case 'metal':
+                        mat.roughness = 0.2;
+                        mat.metalness = 1;
+                        mat.color.set(0x888888);
+                        break;
+                        
+                    case 'plastic':
+                        mat.roughness = 0.8;
+                        mat.metalness = 0;
+                        mat.color.set(0xff4444);
+                        break;
+                        
+                    case 'rubber':
+                        mat.roughness = 1;
+                        mat.metalness = 0;
+                        mat.color.set(0x333333);
+                        break;
+                        
+                    case 'emissive':
+                        mat.emissive.set(mat.color);
+                        mat.emissiveIntensity = 2;
+                        break;
+                        
+                    case 'hologram':
+                        mat.transparent = true;
+                        mat.opacity = 0.3;
+                        mat.emissive.set(0x00ff00);
+                        mat.emissiveIntensity = 3;
+                        mat.wireframe = true;
+                        break;
+                        
+                    case 'neon':
+                        mat.emissive.set(0xff00ff);
+                        mat.emissiveIntensity = 5;
+                        mat.roughness = 0.1;
+                        mat.color.set(0xff00ff);
+                        break;
+                        
+                    case 'carbon_fiber':
+                        mat.roughness = 0.3;
+                        mat.metalness = 0.8;
+                        mat.color.set(0x222222);
+                        break;
+                        
+                    case 'lava':
+                        mat.emissive.set(0xff3300);
+                        mat.emissiveIntensity = 3;
+                        mat.roughness = 0.8;
+                        mat.color.set(0xff5500);
                         break;
                 }
                 
                 mat.needsUpdate = true;
                 updateInspector();
                 saveHistory();
-            });
+            } catch (error) {
+                console.error("Error applying material preset:", error);
+            }
+        }
+
+        function generateProceduralMaterial() {
+            if (!selectedObject || !selectedObject.isMesh) return;
+            
+            try {
+                const mat = selectedObject.material;
+                
+                // Create a procedural pattern
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+                
+                // Generate noise/pattern
+                for(let x = 0; x < 512; x += 4) {
+                    for(let y = 0; y < 512; y += 4) {
+                        const value = Math.random() * 255;
+                        ctx.fillStyle = `rgb(${value},${value},${value})`;
+                        ctx.fillRect(x, y, 4, 4);
+                    }
+                }
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(4, 4);
+                
+                mat.map = texture;
+                mat.needsUpdate = true;
+                
+                saveHistory();
+                updateInspector();
+            } catch (error) {
+                console.error("Error generating procedural material:", error);
+            }
         }
 
         // --- ACTIONS & TOOLS ---
         function deleteObject() {
-            if (!selectedObject || selectedObject === gridHelper) return;
+            if (!selectedObject || selectedObject === gridHelper || selectedObject === transformControl || selectedObject === selectionBox) return;
             
-            if (confirm(`Delete "${selectedObject.name}"?`)) {
-                const obj = selectedObject;
-                transformControl.detach();
-                obj.parent.remove(obj);
-                selectedObject = null;
-                selectionBox.visible = false;
-                updateSceneTree();
-                updateInspector();
-                saveHistory();
+            if (confirm(`Delete "${selectedObject.name || 'selected object'}"?`)) {
+                try {
+                    const obj = selectedObject;
+                    
+                    if (transformControl && typeof transformControl.detach === 'function') {
+                        transformControl.detach();
+                    }
+                    
+                    if (obj.parent) {
+                        obj.parent.remove(obj);
+                    }
+                    
+                    selectedObject = null;
+                    selectionBox.visible = false;
+                    updateSceneTree();
+                    updateInspector();
+                    saveHistory();
+                } catch (error) {
+                    console.error("Error deleting object:", error);
+                }
             }
         }
 
         function duplicateObject() {
             if (!selectedObject) return;
             
-            const clone = selectedObject.clone();
-            
-            // Clone materials if mesh
-            if (clone.isMesh) {
-                clone.material = selectedObject.material.clone();
+            try {
+                const clone = selectedObject.clone();
+                
+                // Clone materials if mesh
+                if (clone.isMesh && selectedObject.material) {
+                    clone.material = selectedObject.material.clone();
+                }
+                
+                // Offset position
+                clone.position.x += 2;
+                clone.position.z += 2;
+                clone.name = (selectedObject.name || "Object") + "_COPY";
+                
+                mainGroup.add(clone);
+                selectObject(clone);
+                saveHistory();
+            } catch (error) {
+                console.error("Error duplicating object:", error);
             }
-            
-            // Offset position
-            clone.position.x += 2;
-            clone.position.z += 2;
-            clone.name = selectedObject.name + "_COPY";
-            
-            mainGroup.add(clone);
-            selectObject(clone);
-            saveHistory();
         }
 
         function setToolMode(mode) {
-            transformControl.setMode(mode);
+            if (transformControl && typeof transformControl.setMode === 'function') {
+                transformControl.setMode(mode);
+            }
+            
             document.querySelectorAll('#editor-ui button').forEach(btn => {
                 if (btn.id && btn.id.startsWith('tool-')) {
                     btn.classList.remove('active-tool');
                 }
             });
-            document.getElementById('tool-' + mode).classList.add('active-tool');
+            
+            const toolBtn = document.getElementById('tool-' + mode);
+            if (toolBtn) {
+                toolBtn.classList.add('active-tool');
+            }
         }
 
         function toggleSnap() {
             snapEnabled = !snapEnabled;
-            transformControl.setTranslationSnap(snapEnabled ? 1 : null);
-            transformControl.setRotationSnap(snapEnabled ? THREE.MathUtils.degToRad(15) : null);
-            transformControl.setScaleSnap(snapEnabled ? 0.25 : null);
+            
+            if (transformControl) {
+                if (typeof transformControl.setTranslationSnap === 'function') {
+                    transformControl.setTranslationSnap(snapEnabled ? 1 : null);
+                }
+                if (typeof transformControl.setRotationSnap === 'function') {
+                    transformControl.setRotationSnap(snapEnabled ? THREE.MathUtils.degToRad(15) : null);
+                }
+                if (typeof transformControl.setScaleSnap === 'function') {
+                    transformControl.setScaleSnap(snapEnabled ? 0.25 : null);
+                }
+            }
             
             const btn = document.getElementById('snap-btn');
-            btn.innerText = snapEnabled ? "SNAP: ON" : "SNAP: OFF";
-            btn.classList.toggle('active-tool', snapEnabled);
+            if (btn) {
+                btn.innerText = snapEnabled ? "SNAP: ON" : "SNAP: OFF";
+                btn.classList.toggle('active-tool', snapEnabled);
+            }
         }
 
         function toggleGrid() {
             isGridVisible = !isGridVisible;
-            gridHelper.visible = isGridVisible;
-            document.getElementById('grid-btn').innerText = `GRID: ${isGridVisible ? 'ON' : 'OFF'}`;
+            if (gridHelper) {
+                gridHelper.visible = isGridVisible;
+            }
+            const gridBtn = document.getElementById('grid-btn');
+            if (gridBtn) {
+                gridBtn.innerText = `GRID: ${isGridVisible ? 'ON' : 'OFF'}`;
+            }
         }
 
         function updateWorld() {
-            const color = document.getElementById('sky-select').value;
-            scene.background.set(parseInt(color));
-            scene.fog.color.set(parseInt(color));
+            const select = document.getElementById('sky-select');
+            if (!select) return;
+            
+            const color = select.value;
+            if (scene && scene.background && scene.fog) {
+                scene.background.set(parseInt(color));
+                scene.fog.color.set(parseInt(color));
+            }
         }
 
         function exportScene() {
-            const data = {
-                metadata: {
-                    version: 6.0,
-                    generator: "MSSOG Engine",
-                    date: new Date().toISOString()
-                },
-                scene: mainGroup.toJSON()
-            };
-            
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `MSSOG_Scene_${Date.now()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            try {
+                const data = {
+                    metadata: {
+                        version: 6.0,
+                        generator: "MSSOG Engine",
+                        date: new Date().toISOString()
+                    },
+                    scene: mainGroup.toJSON()
+                };
+                
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `MSSOG_Scene_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error("Error exporting scene:", error);
+                alert("Error exporting scene. Please check console.");
+            }
         }
 
         function clearScene() {
             if (confirm("Clear entire scene? This cannot be undone.")) {
-                while(mainGroup.children.length > 0) {
-                    mainGroup.remove(mainGroup.children[0]);
+                try {
+                    // Detach transform control
+                    if (transformControl && typeof transformControl.detach === 'function') {
+                        transformControl.detach();
+                    }
+                    
+                    // Remove all children except essential helpers
+                    const childrenToRemove = [];
+                    mainGroup.children.forEach(child => {
+                        if (child !== gridHelper && child !== transformControl && child !== selectionBox) {
+                            childrenToRemove.push(child);
+                        }
+                    });
+                    
+                    childrenToRemove.forEach(child => {
+                        mainGroup.remove(child);
+                    });
+                    
+                    // Reset selection
+                    selectedObject = null;
+                    selectionBox.visible = false;
+                    
+                    // Create default scene
+                    createDefaultScene();
+                    
+                    updateSceneTree();
+                    updateInspector();
+                    saveHistory();
+                } catch (error) {
+                    console.error("Error clearing scene:", error);
                 }
-                createDefaultScene();
-                selectObject(null);
-                saveHistory();
             }
         }
 
         function screenshot() {
-            renderer.render(scene, camera);
-            const link = document.createElement('a');
-            link.download = `MSSOG_Render_${Date.now()}.png`;
-            link.href = renderer.domElement.toDataURL("image/png");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            try {
+                renderer.render(scene, camera);
+                const link = document.createElement('a');
+                link.download = `MSSOG_Render_${Date.now()}.png`;
+                link.href = renderer.domElement.toDataURL("image/png");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error("Error taking screenshot:", error);
+            }
         }
 
         // --- HISTORY ---
         function saveHistory() {
-            if (historyStep < history.length - 1) {
-                history = history.slice(0, historyStep + 1);
-            }
-            
-            const state = {
-                scene: mainGroup.toJSON(),
-                camera: {
-                    position: camera.position.toArray(),
-                    rotation: camera.rotation.toArray()
+            try {
+                if (historyStep < history.length - 1) {
+                    history = history.slice(0, historyStep + 1);
                 }
-            };
-            
-            history.push(JSON.stringify(state));
-            
-            // Limit history size
-            if (history.length > 100) {
-                history.shift();
+                
+                const state = {
+                    scene: mainGroup.toJSON(),
+                    camera: {
+                        position: camera.position.toArray(),
+                        rotation: camera.rotation.toArray()
+                    }
+                };
+                
+                history.push(JSON.stringify(state));
+                
+                // Limit history size
+                if (history.length > 50) {
+                    history.shift();
+                }
+                
+                historyStep = history.length - 1;
+            } catch (error) {
+                console.error("Error saving history:", error);
             }
-            
-            historyStep = history.length - 1;
         }
 
         function undo() {
-            if (historyStep > 0) {
-                historyStep--;
-                applyState(history[historyStep]);
+            try {
+                if (historyStep > 0) {
+                    historyStep--;
+                    applyState(history[historyStep]);
+                }
+            } catch (error) {
+                console.error("Error undoing:", error);
             }
         }
 
         function redo() {
-            if (historyStep < history.length - 1) {
-                historyStep++;
-                applyState(history[historyStep]);
+            try {
+                if (historyStep < history.length - 1) {
+                    historyStep++;
+                    applyState(history[historyStep]);
+                }
+            } catch (error) {
+                console.error("Error redoing:", error);
             }
         }
 
@@ -1419,10 +1485,19 @@
                 const state = JSON.parse(json);
                 const loader = new THREE.ObjectLoader();
                 
-                // Clear current scene
-                while(mainGroup.children.length > 0) {
-                    mainGroup.remove(mainGroup.children[0]);
-                }
+                // Clear current scene except essential helpers
+                const childrenToKeep = [gridHelper, transformControl, selectionBox];
+                const childrenToRemove = [];
+                
+                mainGroup.children.forEach(child => {
+                    if (!childrenToKeep.includes(child)) {
+                        childrenToRemove.push(child);
+                    }
+                });
+                
+                childrenToRemove.forEach(child => {
+                    mainGroup.remove(child);
+                });
                 
                 // Load new scene
                 loader.parse(state.scene, (obj) => {
@@ -1434,18 +1509,27 @@
                     if (state.camera) {
                         camera.position.fromArray(state.camera.position);
                         camera.rotation.fromArray(state.camera.rotation);
-                        orbit.update();
+                        if (orbit && typeof orbit.update === 'function') {
+                            orbit.update();
+                        }
                     }
                     
                     updateSceneTree();
-                    if (selectedObject) {
-                        // Try to reselect the object by name
+                    
+                    // Try to reselect the object by name
+                    if (selectedObject && selectedObject.name) {
                         const objName = selectedObject.name;
+                        let found = null;
                         mainGroup.traverse(node => {
                             if (node.name === objName) {
-                                selectObject(node);
+                                found = node;
                             }
                         });
+                        if (found) {
+                            selectObject(found);
+                        } else {
+                            selectObject(null);
+                        }
                     }
                 });
             } catch (error) {
@@ -1458,285 +1542,158 @@
             // Don't select if clicking on UI elements
             if (event.target.closest('aside') || 
                 event.target.closest('.absolute') || 
-                event.target.closest('#toolbar')) {
+                event.target.closest('#toolbar') ||
+                event.target.tagName.toLowerCase() === 'button' ||
+                event.target.tagName.toLowerCase() === 'input' ||
+                event.target.tagName.toLowerCase() === 'select') {
                 return;
             }
             
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-            
-            raycaster.setFromCamera(mouse, camera);
-            
-            // Filter objects that can be selected
-            const selectableObjects = [];
-            mainGroup.traverse(node => {
-                if (node.isMesh && node.visible) {
-                    selectableObjects.push(node);
+            try {
+                const rect = renderer.domElement.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                raycaster.setFromCamera(mouse, camera);
+                
+                // Filter objects that can be selected
+                const selectableObjects = [];
+                mainGroup.traverse(node => {
+                    if (node.isMesh && node.visible && node !== selectionBox) {
+                        selectableObjects.push(node);
+                    }
+                });
+                
+                const intersects = raycaster.intersectObjects(selectableObjects);
+                
+                if (intersects.length > 0) {
+                    selectObject(intersects[0].object);
+                } else {
+                    // Deselect if clicking empty space
+                    selectObject(null);
                 }
-            });
-            
-            const intersects = raycaster.intersectObjects(selectableObjects);
-            
-            if (intersects.length > 0) {
-                selectObject(intersects[0].object);
-            } else {
-                // Deselect if clicking empty space
-                selectObject(null);
+            } catch (error) {
+                console.error("Error in selection:", error);
             }
         }
 
         function onKey(event) {
-            // Tool shortcuts
-            if (event.key === 'g' || event.key === 'G') {
-                event.preventDefault();
-                setToolMode('translate');
-            }
-            if (event.key === 'r' || event.key === 'R') {
-                event.preventDefault();
-                setToolMode('rotate');
-            }
-            if (event.key === 's' || event.key === 'S') {
-                event.preventDefault();
-                setToolMode('scale');
-            }
-            
-            // Delete selected object
-            if (event.key === 'Delete' || event.key === 'Backspace') {
-                event.preventDefault();
-                deleteObject();
-            }
-            
-            // Undo/Redo
-            if (event.ctrlKey || event.metaKey) {
-                if (event.key === 'z') {
+            try {
+                // Tool shortcuts
+                if (event.key === 'g' || event.key === 'G') {
                     event.preventDefault();
-                    undo();
+                    setToolMode('translate');
                 }
-                if (event.key === 'y' || (event.shiftKey && event.key === 'Z')) {
+                if (event.key === 'r' || event.key === 'R') {
                     event.preventDefault();
-                    redo();
+                    setToolMode('rotate');
                 }
-                if (event.key === 'd') {
+                if (event.key === 's' || event.key === 'S') {
                     event.preventDefault();
-                    duplicateObject();
+                    setToolMode('scale');
                 }
-                if (event.key === 's') {
+                
+                // Delete selected object
+                if (event.key === 'Delete' || event.key === 'Backspace') {
                     event.preventDefault();
-                    exportScene();
+                    deleteObject();
                 }
-            }
-            
-            // Focus on selected object
-            if (event.key === 'f' || event.key === 'F') {
-                event.preventDefault();
-                if (selectedObject) {
-                    const box = new THREE.Box3().setFromObject(selectedObject);
-                    const center = box.getCenter(new THREE.Vector3());
-                    const size = box.getSize(new THREE.Vector3());
-                    
-                    orbit.target.copy(center);
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const fov = camera.fov * (Math.PI / 180);
-                    let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
-                    
-                    cameraZ *= 1.5; // Add some margin
-                    camera.position.copy(center);
-                    camera.position.z += cameraZ;
-                    orbit.update();
+                
+                // Undo/Redo
+                if (event.ctrlKey || event.metaKey) {
+                    if (event.key === 'z') {
+                        event.preventDefault();
+                        undo();
+                    }
+                    if (event.key === 'y' || (event.shiftKey && event.key === 'Z')) {
+                        event.preventDefault();
+                        redo();
+                    }
+                    if (event.key === 'd') {
+                        event.preventDefault();
+                        duplicateObject();
+                    }
+                    if (event.key === 's') {
+                        event.preventDefault();
+                        exportScene();
+                    }
                 }
-            }
-            
-            // Toggle grid
-            if (event.key === 'h' || event.key === 'H') {
-                event.preventDefault();
-                toggleGrid();
-            }
-            
-            // Toggle wireframe
-            if (event.key === 'w' || event.key === 'W') {
-                event.preventDefault();
-                if (selectedObject && selectedObject.isMesh) {
-                    editProp('wire', !selectedObject.material.wireframe);
+                
+                // Focus on selected object
+                if (event.key === 'f' || event.key === 'F') {
+                    event.preventDefault();
+                    if (selectedObject) {
+                        const box = new THREE.Box3().setFromObject(selectedObject);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        if (orbit && typeof orbit.target === 'object') {
+                            orbit.target.copy(center);
+                        }
+                        
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        const fov = camera.fov * (Math.PI / 180);
+                        let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
+                        
+                        cameraZ *= 1.5; // Add some margin
+                        camera.position.copy(center);
+                        camera.position.z += cameraZ;
+                        
+                        if (orbit && typeof orbit.update === 'function') {
+                            orbit.update();
+                        }
+                    }
                 }
+                
+                // Toggle grid
+                if (event.key === 'h' || event.key === 'H') {
+                    event.preventDefault();
+                    toggleGrid();
+                }
+                
+                // Toggle wireframe
+                if (event.key === 'w' || event.key === 'W') {
+                    event.preventDefault();
+                    if (selectedObject && selectedObject.isMesh && selectedObject.material) {
+                        editProp('wire', !selectedObject.material.wireframe);
+                    }
+                }
+            } catch (error) {
+                console.error("Error handling key event:", error);
             }
         }
 
         function onResize() {
-            const container = document.getElementById('viewport');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            composer.setSize(container.clientWidth, container.clientHeight);
-            
-            // Update minimap position
-            const minimap = document.getElementById('minimap');
-            minimap.style.right = '20px';
-            minimap.style.bottom = '20px';
-        }
-
-        // --- 30 FITUR 3D IMPLEMENTASI TAMBAHAN ---
-        // Note: Some features require additional libraries or complex implementations
-        // Here are simplified versions
-
-        function createSplinePath() {
-            const curve = new THREE.CatmullRomCurve3([
-                new THREE.Vector3(-10, 0, 0),
-                new THREE.Vector3(-5, 5, 0),
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(5, -5, 0),
-                new THREE.Vector3(10, 0, 0)
-            ]);
-            
-            const points = curve.getPoints(50);
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-            const material = new THREE.LineBasicMaterial({ color: 0xff4d00 });
-            const spline = new THREE.Line(geometry, material);
-            spline.name = "Spline_Path";
-            mainGroup.add(spline);
-            
-            saveHistory();
-            updateSceneTree();
-        }
-
-        function createAreaLight() {
-            const light = new THREE.RectAreaLight(0xffffff, 5, 10, 10);
-            light.position.set(0, 10, 0);
-            light.rotation.x = -Math.PI / 2;
-            light.name = "Area_Light";
-            mainGroup.add(light);
-            
-            saveHistory();
-            updateSceneTree();
-        }
-
-        function createLensFlare() {
-            const textureLoader = new THREE.TextureLoader();
-            const flareTexture = textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png');
-            
-            const flareSize = 100;
-            const flareColor = new THREE.Color(0xffffff);
-            
-            const lensFlare = new THREE.Sprite(
-                new THREE.SpriteMaterial({
-                    map: flareTexture,
-                    color: flareColor,
-                    transparent: true,
-                    opacity: 0.7
-                })
-            );
-            
-            lensFlare.scale.set(flareSize, flareSize, 1);
-            lensFlare.position.set(50, 50, 50);
-            lensFlare.name = "Lens_Flare";
-            mainGroup.add(lensFlare);
-            
-            saveHistory();
-            updateSceneTree();
-        }
-
-        function createAtmosphere() {
-            const skyGeo = new THREE.SphereGeometry(500, 32, 32);
-            const skyMat = new THREE.ShaderMaterial({
-                uniforms: {
-                    turbidity: { value: 10 },
-                    rayleigh: { value: 2 },
-                    mieCoefficient: { value: 0.005 },
-                    mieDirectionalG: { value: 0.8 },
-                    sunPosition: { value: new THREE.Vector3() }
-                },
-                vertexShader: `
-                    varying vec3 vWorldPosition;
-                    void main() {
-                        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-                        vWorldPosition = worldPosition.xyz;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    uniform float turbidity;
-                    uniform float rayleigh;
-                    uniform float mieCoefficient;
-                    uniform float mieDirectionalG;
-                    uniform vec3 sunPosition;
-                    varying vec3 vWorldPosition;
-                    void main() {
-                        float sunfade = 1.0 - clamp(1.0 - exp((sunPosition.y / 450000.0)), 0.0, 1.0);
-                        float rayleighCoefficient = rayleigh - (1.0 * (1.0 - sunfade));
-                        vec3 betaR = vec3(5.5e-6, 13.0e-6, 22.4e-6) * rayleighCoefficient;
-                        vec3 betaM = vec3(21e-6) * mieCoefficient;
-                        float zenithAngle = acos(max(0.0, dot(normalize(vWorldPosition), vec3(0.0, 1.0, 0.0))));
-                        float sR = rayleighCoefficient / (cos(zenithAngle) + 0.15 * pow(93.885 - degrees(zenithAngle), -1.253));
-                        float sM = mieCoefficient / (cos(zenithAngle) + 0.15 * pow(93.885 - degrees(zenithAngle), -1.253));
-                        vec3 Fex = exp(-(betaR * sR + betaM * sM));
-                        gl_FragColor = vec4(mix(vec3(1.0) - Fex, vec3(1.0), sunfade), 1.0);
-                    }
-                `,
-                side: THREE.BackSide
-            });
-            
-            const sky = new THREE.Mesh(skyGeo, skyMat);
-            sky.name = "Atmosphere";
-            scene.add(sky);
-            
-            saveHistory();
-            updateSceneTree();
-        }
-
-        function createOcean() {
-            const waterGeometry = new THREE.PlaneGeometry(1000, 1000, 128, 128);
-            
-            const waterMaterial = new THREE.ShaderMaterial({
-                uniforms: {
-                    time: { value: 0.0 }
-                },
-                vertexShader: `
-                    uniform float time;
-                    varying vec2 vUv;
-                    void main() {
-                        vUv = uv;
-                        vec3 pos = position;
-                        pos.y += sin(pos.x * 0.1 + time) * 0.5 + sin(pos.z * 0.1 + time) * 0.5;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    uniform float time;
-                    varying vec2 vUv;
-                    void main() {
-                        vec3 color = mix(vec3(0.0, 0.1, 0.3), vec3(0.0, 0.3, 0.6), vUv.y);
-                        gl_FragColor = vec4(color, 0.8);
-                    }
-                `,
-                transparent: true
-            });
-            
-            const water = new THREE.Mesh(waterGeometry, waterMaterial);
-            water.rotation.x = -Math.PI / 2;
-            water.position.y = -5;
-            water.name = "Ocean";
-            mainGroup.add(water);
-            
-            // Animate in render loop
-            const animateWater = () => {
-                if (water.material.uniforms.time) {
-                    water.material.uniforms.time.value += 0.01;
+            try {
+                const container = document.getElementById('viewport');
+                if (!container) return;
+                
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                
+                // Update minimap position
+                const minimap = document.getElementById('minimap');
+                if (minimap) {
+                    minimap.style.right = '20px';
+                    minimap.style.bottom = '20px';
                 }
-            };
-            // This would need to be integrated into the main animation loop
-            
-            saveHistory();
-            updateSceneTree();
+            } catch (error) {
+                console.error("Error on resize:", error);
+            }
         }
 
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', () => {
             // Set up password input to submit on Enter
-            document.getElementById('password').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    checkAccess();
-                }
-            });
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        checkAccess();
+                    }
+                });
+            }
         });
     </script>
 </body>
