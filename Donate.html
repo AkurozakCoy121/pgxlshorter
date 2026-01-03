@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Project | Edge Jump</title>
+    <style>
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #ce9e1b; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0a0a;
+            background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('background.jpeg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            font-family: 'Segoe UI', Impact, sans-serif; color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid #ce9e1b; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
+        }
+        header h1 { font-size: 24px; letter-spacing: 3px; color: #ce9e1b; margin: 0; font-weight: 900; cursor: pointer; }
+        
+        .nav-buttons { display: flex; gap: 15px; }
+        .btn-nav {
+            background-color: #ce9e1b; color: #000; font-weight: bold; border: none;
+            padding: 8px 20px; cursor: pointer; text-transform: uppercase;
+            font-size: 13px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: #fff; transform: translateY(-2px); }
+
+        /* MOBILE MENU TOGGLE */
+        .mobile-toggle {
+            display: none; flex-direction: column; gap: 4px; cursor: pointer;
+            background: none; border: none; padding: 10px; z-index: 2100;
+        }
+        .mobile-toggle span { width: 6px; height: 6px; background-color: #ce9e1b; border-radius: 50%; }
+
+        /* MOBILE OVERLAY MENU */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: rgba(0,0,0,0.98); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 25px;
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1); z-index: 2000;
+        }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a {
+            color: #ce9e1b; font-size: 24px; text-decoration: none; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        /* DONATE CONTENT */
+        .donate-container {
+            max-width: 900px; margin: 60px auto; padding: 0 5%; text-align: center;
+        }
+        .donate-header { margin-bottom: 50px; }
+        .donate-header h2 { font-size: 50px; color: #fff; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
+        .donate-header p { color: #ce9e1b; font-weight: bold; letter-spacing: 5px; }
+
+        /* SAWERIA BOX */
+        .saweria-card {
+            background: #faae2b; color: #000; padding: 40px;
+            clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+            margin-bottom: 40px; transition: 0.3s;
+        }
+        .saweria-card:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(250, 174, 43, 0.4); }
+        .saweria-card h3 { font-size: 30px; margin: 0 0 10px 0; font-weight: 900; }
+        .btn-saweria {
+            background: #000; color: #fff; border: none; padding: 15px 40px;
+            font-weight: 900; text-transform: uppercase; cursor: pointer; margin-top: 15px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+
+        /* WALLET GRID */
+        .wallet-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin-top: 40px;
+        }
+        .wallet-box {
+            background: rgba(255,255,255,0.05); border: 1px solid #333;
+            padding: 30px; position: relative; transition: 0.3s; cursor: pointer;
+        }
+        .wallet-box:hover { border-color: #ce9e1b; background: rgba(206, 158, 27, 0.05); }
+        .wallet-name { font-weight: 900; font-size: 18px; color: #ce9e1b; display: block; margin-bottom: 5px; }
+        .wallet-number { font-family: 'Courier New', monospace; font-size: 20px; color: #fff; }
+        
+        .copy-hint { font-size: 10px; color: #666; margin-top: 10px; display: block; text-transform: uppercase; }
+
+        footer { padding: 60px; text-align: center; background: #050505; color: #444; font-size: 11px; margin-top: 100px; }
+
+        @media (max-width: 768px) {
+            .nav-buttons { display: none; }
+            .mobile-toggle { display: flex; }
+            .donate-header h2 { font-size: 35px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" onclick="toggleMenu()">Home</a>
+        <a href="download.html" onclick="toggleMenu()">Download</a>
+        <a href="changelog.html" onclick="toggleMenu()">Changelog</a>
+        <a href="Donate.html" onclick="toggleMenu()">Donate</a>
+    </div>
+
+    <header>
+        <h1 onclick="location.href='index.html'">EDGE JUMP</h1>
+        <div class="nav-buttons">
+            <button class="btn-nav" onclick="location.href='index.html'">Home</button>
+            <button class="btn-nav" onclick="location.href='download.html'">Download</button>
+            <button class="btn-nav" onclick="location.href='Donate.html'">Support Project</button>
+        </div>
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <div class="donate-container">
+        <div class="donate-header">
+            <p>[ FUEL THE DEVELOPMENT ]</p>
+            <h2>PROJECT DONATION</h2>
+            <p style="letter-spacing: 2px; color: #888; font-size: 14px; margin-top: 10px;">Your contribution helps us speed up the development and maintain server costs.</p>
+        </div>
+
+        <div class="saweria-card">
+            <h3>SAWERIA</h3>
+            <p>Support us via Saweria overlay (Supports QRIS, E-Wallets, and more)</p>
+            <button class="btn-saweria" onclick="window.open('https://saweria.co/omedonation', '_blank')">OPEN SAWERIA</button>
+        </div>
+
+        <div style="margin: 40px 0; border-bottom: 1px solid #333; position: relative;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #0a0a0a; padding: 0 20px; color: #666; font-size: 12px; text-transform: uppercase;">Direct Transfer</span>
+        </div>
+
+        <div class="wallet-grid">
+            <div class="wallet-box" onclick="copyNumber('85282790834')">
+                <span class="wallet-name">DANA</span>
+                <span class="wallet-number">85282790834</span>
+                <span class="copy-hint">Click to copy number</span>
+            </div>
+
+            <div class="wallet-box" onclick="copyNumber('85282790834')">
+                <span class="wallet-name">OVO</span>
+                <span class="wallet-number">85282790834</span>
+                <span class="copy-hint">Click to copy number</span>
+            </div>
+
+            <div class="wallet-box" onclick="copyNumber('85282790834')">
+                <span class="wallet-name">GOPAY</span>
+                <span class="wallet-number">85282790834</span>
+                <span class="copy-hint">Click to copy number</span>
+            </div>
+        </div>
+
+        <p style="margin-top: 60px; font-size: 13px; color: #666;">
+            *After donating, you can confirm via <a href="https://discord.gg/RSRMvaBRsA" style="color: #ce9e1b; text-decoration: none;">Discord</a> to receive a special <b>Supporter Role</b>.
+        </p>
+    </div>
+
+    <footer>
+        &copy; 2026 EDGE JUMP PROJECT // TAKING PARKOUR TO THE EDGE.
+    </footer>
+
+    <script>
+        // Mobile Toggle Function
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Auto Copy Function
+        function copyNumber(number) {
+            navigator.clipboard.writeText(number).then(() => {
+                alert("Copied to clipboard: " + number);
+            });
+        }
+    </script>
+</body>
+</html>

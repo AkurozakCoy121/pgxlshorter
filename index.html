@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Jump | Tactical Parkour</title>
+    <style>
+        /* MODERN CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ce9e1b;
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fff;
+        }
+
+        /* RESET & BASE */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('background.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Impact, sans-serif;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* BANNER MENCENG (TOP) */
+        .top-banner-wrapper {
+            width: 100%; 
+            height: 45px; 
+            background: #ce9e1b;
+            position: relative; 
+            z-index: 1100;
+            overflow: hidden; 
+            display: flex; 
+            align-items: center;
+        }
+        .skew-banner {
+            background: #000; 
+            color: #fff;
+            padding: 10px 60px;
+            transform: skew(-25deg); 
+            margin-left: -30px;
+            border-right: 4px solid #fff;
+            white-space: nowrap;
+        }
+        .skew-banner span {
+            display: inline-block;
+            transform: skew(25deg);
+            font-weight: 900; 
+            letter-spacing: 1px; 
+            font-size: 13px;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid #ce9e1b;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky; 
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 24px;
+            letter-spacing: 3px;
+            color: #ce9e1b;
+            margin: 0;
+            font-weight: 900;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-nav {
+            background-color: #ce9e1b;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            padding: 8px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 13px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-nav:hover {
+            background-color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* MOBILE MENU TOGGLE (TITIK TIGA) */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+            z-index: 2100;
+        }
+        .mobile-toggle span {
+            width: 6px;
+            height: 6px;
+            background-color: #ce9e1b;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        /* MOBILE OVERLAY MENU */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 2000;
+        }
+        .mobile-menu.active {
+            right: 0;
+        }
+        .mobile-menu a {
+            color: #ce9e1b;
+            font-size: 24px;
+            text-decoration: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            transform: skew(-15deg);
+            transition: 0.3s;
+        }
+        .mobile-menu a:hover {
+            color: #fff;
+            letter-spacing: 8px;
+        }
+
+        /* MAIN HERO AREA */
+        main {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 60px;
+            border-left: 5px solid #ce9e1b;
+            backdrop-filter: blur(5px);
+            box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 700px;
+        }
+
+        .btn-start-full {
+            width: 100%;
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            background: #ce9e1b;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-top: 30px;
+            clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%);
+        }
+
+        .btn-start-full:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 30px rgba(255,255,255,0.4);
+            letter-spacing: 4px;
+        }
+
+        /* INFO CARDS SECTION */
+        .full-section {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 100px 0;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid #333;
+        }
+
+        .content-container {
+            max-width: 1100px;
+            width: 90%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .info-card {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.2));
+            padding: 30px;
+            border: 1px solid #444;
+            transition: 0.4s;
+            position: relative;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: #ce9e1b;
+            transform: scaleX(0);
+            transition: 0.4s;
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card h3 {
+            color: #ce9e1b;
+            margin-top: 0;
+            letter-spacing: 2px;
+        }
+
+        /* SLIDER MENCENG (ANCORED BACKGROUND) */
+        .slider-section {
+            width: 100%;
+            overflow: hidden;
+            padding: 120px 0;
+            background: #050505;
+        }
+
+        .slider-menceng-container {
+            width: 120%;
+            margin-left: -10%;
+            transform: skewY(-5deg); 
+            border-top: 4px solid #ce9e1b;
+            border-bottom: 4px solid #ce9e1b;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 500px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Background tidak di-counter-skew agar tetap miring ngikutin container */
+        }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            transform: skewY(5deg); /* Teks dibuat tegak biar kebaca */
+            padding: 20px;
+        }
+
+        .slider-nav-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12%; 
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .btn-slide {
+            background: rgba(206, 158, 27, 0.9);
+            border: none;
+            color: #000;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            font-weight: 900;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: 0.3s;
+            clip-path: polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%);
+            transform: skewY(5deg);
+        }
+
+        .btn-slide:hover {
+            background: #fff;
+            transform: skewY(5deg) scale(1.1);
+        }
+
+        /* SERVICES GRID */
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .btn-service {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            color: #fff;
+            padding: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .btn-service:hover {
+            background: #ce9e1b;
+            color: #000;
+            border-color: #ce9e1b;
+        }
+
+        footer {
+            padding: 60px; 
+            text-align: center; 
+            background: #050505; 
+            color: #444; 
+            font-size: 11px; 
+            letter-spacing: 2px;
+        }
+        footer a {
+            transition: color 0.3s;
+            color: #ce9e1b; 
+            text-decoration: none; 
+            margin-left: 15px;
+        }
+
+        /* RESPONSIVE DESIGN (MOBILE FRIENDLY) */
+        @media (max-width: 768px) {
+            .nav-buttons {
+                display: none;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .hero-box {
+                padding: 30px;
+                width: 85%;
+            }
+            .hero-box h2 {
+                font-size: 35px !important;
+            }
+            .slide {
+                height: 350px;
+            }
+            .slider-menceng-container {
+                width: 150%;
+                margin-left: -25%;
+            }
+            .btn-slide {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            .info-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="download.html" onclick="toggleMenu()">Download</a>
+        <a href="changelog.html" onclick="toggleMenu()">Changelog</a>
+        <a href="about.html" onclick="toggleMenu()">About</a>
+        <a href="Donate.html" onclick="toggleMenu()">Support/Donate</a>
+    </div>
+
+    <div class="top-banner-wrapper">
+        <div class="skew-banner">
+            <span>[ SYSTEM STATUS: ONLINE ]</span>
+        </div>
+        <marquee style="color: #000; font-weight: 900; font-size: 12px; letter-spacing: 2px;">
+            WELCOME TO EDGE JUMP // NEW PRE-ALPHA BUILD AVAILABLE // JOIN DISCORD FOR KEY ACCESS //
+        </marquee>
+    </div>
+
+    <header>
+        <h1>EDGE JUMP</h1>
+        
+        <div class="nav-buttons">
+            <button class="btn-nav" onclick="location.href='download.html'">Download</button>
+            <button class="btn-nav" onclick="location.href='changelog.html'">Changelog</button>
+            <button class="btn-nav" onclick="location.href='about.html'">About</button>
+            <button class="btn-nav" onclick="location.href='Donate.html'">Support with Donate</button>
+        </div>
+
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <main>
+        <div class="hero-box">
+            <p style="letter-spacing: 10px; color: #ce9e1b; font-weight: bold;">[ In Development ]</p>
+            <h2 style="font-size: clamp(40px, 8vw, 70px); margin: 10px 0; line-height: 1;">Download<br>EDGE JUMP</h2>
+            <button class="btn-start-full" onclick="startGame()">Download Pre-Alpha</button>
+        </div>
+    </main>
+
+    <section class="full-section">
+        <div class="content-container">
+            <div class="info-card">
+                <h3>01. SYSTEM MOMENTUM</h3>
+                <p>Each jump is influenced by your running speed. Maintain your rhythm to avoid falling into the abyss.</p>
+            </div>
+            <div class="info-card">
+                <h3>02. OPTIMAL GAME</h3>
+                <p>We are trying to maximize the game so that you enjoy playing it with smooth performance.</p>
+            </div>
+            <div class="info-card">
+                <h3>03. FIRST PRIZE OF THE GAME</h3>
+                <p>We will give redeem code for 10 days after the game release with lots of prizes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="slider-section">
+        <div class="slider-menceng-container">
+            <div class="slider-wrapper" id="slider">
+                <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), url('slide1.jpg');">
+                    <div class="slide-content">
+                        <h2 style="font-size: 45px; color: #ce9e1b; margin:0;">GAMEPLAY ALPHA</h2>
+                        <p style="letter-spacing: 3px;">REAL PHYSICS ENGINE</p>
+                    </div>
+                </div>
+                <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), url('slide2.jpg');">
+                    <div class="slide-content">
+                        <h2 style="font-size: 45px; color: #ce9e1b; margin:0;">NEW SECTOR</h2>
+                        <p style="letter-spacing: 3px;">EXPLORE THE URBAN JUNGLE</p>
+                    </div>
+                </div>
+                <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)), url('slide3.jpg');">
+                    <div class="slide-content">
+                        <h2 style="font-size: 45px; color: #ce9e1b; margin:0;">TACTICAL GEAR</h2>
+                        <p style="letter-spacing: 3px;">CUSTOMIZE YOUR RUNNER</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slider-nav-container">
+                <button class="btn-slide" onclick="prevSlide()">&#10094;</button>
+                <button class="btn-slide" onclick="nextSlide()">&#10095;</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="full-section" style="background: #121212;">
+        <div class="content-container">
+            <div class="info-card">
+                <h3>Contact</h3>
+                <p>Email: spctacularstudio@gmail.com.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="full-section" style="background: #080808;">
+        <div class="content-container">
+            <h2 style="width: 100%; text-align: center; margin-bottom: 40px; color: #ce9e1b; letter-spacing: 5px;">SERVICES</h2>
+            <div class="services-container">
+                <button class="btn-service" onclick="location.href='https://discord.gg/YZc8bhYPAR'">Report Bug</button>
+                <button class="btn-service" onclick="location.href='https://discord.gg/hPJx2RjK6H'">Request Feature</button>
+                <button class="btn-service" onclick="location.href='https://discord.gg/uVpEJSXnWB'">General Chat</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 EDGE JUMP PROJECT // Parkour Now!
+        <br><br>
+        <a href="https://discord.gg/RSRMvaBRsA">JOIN DISCORD</a>
+        <a href="privacy.html">PRIVACY POLICY</a>
+        <a href="rules.html">RULES</a>
+        <a href="tos.html">TERMS OF SERVICES</a>
+    </footer>
+
+    <script>
+        function startGame() {
+            alert("Game Still Under Development. Download will be available soon!");
+        }
+
+        // MOBILE MENU TOGGLE
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // SLIDER LOGIC
+        const slider = document.getElementById('slider');
+        let currentSlide = 0;
+        const totalSlides = 3;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        // Auto slide tiap 5 detik
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>

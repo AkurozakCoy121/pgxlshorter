@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Edge Jump</title>
+    <style>
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #ce9e1b; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0a0a;
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('background.jpeg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif; color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid #ce9e1b; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
+        }
+        header h1 { font-size: 24px; letter-spacing: 3px; color: #ce9e1b; margin: 0; font-weight: 900; cursor: pointer; }
+        
+        .nav-buttons { display: flex; gap: 15px; }
+        .btn-nav {
+            background-color: #ce9e1b; color: #000; font-weight: bold; border: none;
+            padding: 8px 20px; cursor: pointer; text-transform: uppercase;
+            font-size: 13px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+
+        /* TOS CONTENT */
+        .container {
+            max-width: 800px; margin: 60px auto; padding: 0 5%;
+        }
+        .tos-header {
+            border-left: 5px solid #ce9e1b; padding-left: 20px; margin-bottom: 40px;
+        }
+        .tos-header h2 { font-size: 40px; margin: 0; color: #fff; text-transform: uppercase; }
+        .tos-header p { color: #ce9e1b; font-weight: bold; }
+
+        .tos-content section {
+            margin-bottom: 30px; background: rgba(255,255,255,0.02);
+            padding: 25px; border: 1px solid #222;
+        }
+        .tos-content h3 { color: #ce9e1b; margin-top: 0; font-size: 20px; text-transform: uppercase; }
+        .tos-content p, .tos-content li { font-size: 15px; color: #ccc; }
+        
+        /* MOBILE TOGGLE */
+        .mobile-toggle {
+            display: none; flex-direction: column; gap: 4px; cursor: pointer;
+            background: none; border: none; z-index: 2100;
+        }
+        .mobile-toggle span { width: 6px; height: 6px; background-color: #ce9e1b; border-radius: 50%; }
+
+        /* MOBILE MENU */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: rgba(0,0,0,0.98); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 25px;
+            transition: 0.5s; z-index: 2000;
+        }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a { color: #ce9e1b; font-size: 24px; text-decoration: none; font-weight: 900; text-transform: uppercase; }
+
+        footer { padding: 40px; text-align: center; background: #050505; color: #444; font-size: 11px; margin-top: 50px; }
+
+        @media (max-width: 768px) {
+            .nav-buttons { display: none; }
+            .mobile-toggle { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" onclick="toggleMenu()">Home</a>
+        <a href="download.html" onclick="toggleMenu()">Download</a>
+        <a href="Donate.html" onclick="toggleMenu()">Donate</a>
+        <a href="tos.html" onclick="toggleMenu()">TOS</a>
+    </div>
+
+    <header>
+        <h1 onclick="location.href='index.html'">EDGE JUMP</h1>
+        <div class="nav-buttons">
+            <button class="btn-nav" onclick="location.href='index.html'">Home</button>
+            <button class="btn-nav" onclick="location.href='download.html'">Download</button>
+            <button class="btn-nav" onclick="location.href='Donate.html'">Donate</button>
+        </div>
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <div class="container">
+        <div class="tos-header">
+            <p>[ LEGAL DOCUMENTATION ]</p>
+            <h2>Terms of Service</h2>
+            <span>Last Updated: January 2026</span>
+        </div>
+
+        <div class="tos-content">
+            <section>
+                <h3>1. ACCEPTANCE OF TERMS</h3>
+                <p>By accessing Edge Jump or downloading our Pre-Alpha builds, you agree to be bound by these Terms of Service. If you do not agree, do not use our services.</p>
+            </section>
+
+            <section>
+                <h3>2. PRE-ALPHA DISCLAIMER</h3>
+                <p>Edge Jump is currently in <b>Pre-Alpha development</b>. The software is provided "AS IS" without warranty of any kind. You may encounter bugs, crashes, or loss of data. Your feedback is welcome, but we are not liable for any system issues caused by early builds.</p>
+            </section>
+
+            <section>
+                <h3>3. USER CONDUCT</h3>
+                <p>While playing or using our community platforms (Discord), you agree NOT to:</p>
+                <ul>
+                    <li>Use cheats, hacks, or automation software.</li>
+                    <li>Attempt to reverse engineer the game files.</li>
+                    <li>Harass or abuse other players or developers.</li>
+                    <li>Distribute game builds without official permission.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>4. DONATIONS & PAYMENTS</h3>
+                <p>All donations made via Saweria or Digital Wallets are <b>voluntary</b> and <b>non-refundable</b>. Donations do not grant you ownership of the game, but may provide special roles or cosmetic rewards as specified in our community guidelines.</p>
+            </section>
+
+            <section>
+                <h3>5. INTELLECTUAL PROPERTY</h3>
+                <p>All assets, including graphics, code, and music, are the property of the Edge Jump Project team. You may not use these assets for commercial purposes without written consent.</p>
+            </section>
+
+            <section>
+                <h3>6. TERMINATION</h3>
+                <p>We reserve the right to ban or terminate access to the game and community services for users who violate these terms.</p>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 EDGE JUMP PROJECT // PLAY BY THE RULES.
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | SSOG Studio</title>
+    <style>
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #ce9e1b; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0a0a;
+            background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('background.jpeg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            font-family: 'Segoe UI', Impact, sans-serif; color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid #ce9e1b; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
+        }
+        header h1 { font-size: 24px; letter-spacing: 3px; color: #ce9e1b; margin: 0; font-weight: 900; cursor: pointer; }
+        
+        .nav-buttons { display: flex; gap: 15px; }
+        .btn-nav {
+            background-color: #ce9e1b; color: #000; font-weight: bold; border: none;
+            padding: 8px 20px; cursor: pointer; text-transform: uppercase;
+            font-size: 13px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: #fff; }
+
+        /* MOBILE MENU TOGGLE */
+        .mobile-toggle {
+            display: none; flex-direction: column; gap: 4px; cursor: pointer;
+            background: none; border: none; padding: 10px; z-index: 2100;
+        }
+        .mobile-toggle span { width: 6px; height: 6px; background-color: #ce9e1b; border-radius: 50%; transition: 0.3s; }
+
+        /* MOBILE OVERLAY MENU */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: rgba(0,0,0,0.98); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 25px;
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1); z-index: 2000;
+        }
+        .mobile-menu.active { right: 0; }
+        .mobile-menu a {
+            color: #ce9e1b; font-size: 28px; text-decoration: none; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 5px;
+        }
+
+        /* ABOUT CONTENT */
+        .container { max-width: 1000px; margin: 80px auto; padding: 0 5%; text-align: center; }
+        
+        .studio-logo {
+            font-size: 80px; font-weight: 900; letter-spacing: 15px;
+            color: #fff; margin: 0; line-height: 1;
+        }
+        .studio-pronounce { color: #ce9e1b; font-family: monospace; letter-spacing: 5px; margin-bottom: 40px; }
+
+        .about-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; margin-top: 60px;
+        }
+        .about-box {
+            background: rgba(255,255,255,0.03); border: 1px solid #222; padding: 30px;
+            position: relative;
+        }
+        .about-box h3 { color: #ce9e1b; text-transform: uppercase; letter-spacing: 2px; margin-top: 0; }
+        .about-box p { font-size: 15px; color: #ccc; line-height: 1.8; }
+
+        .vision-box {
+            grid-column: span 2; border-left: 4px solid #ce9e1b; background: rgba(206, 158, 27, 0.05);
+        }
+
+        footer { padding: 60px; text-align: center; background: #050505; color: #444; font-size: 11px; margin-top: 100px; }
+
+        @media (max-width: 768px) {
+            .nav-buttons { display: none; }
+            .mobile-toggle { display: flex; }
+            .about-grid { grid-template-columns: 1fr; }
+            .vision-box { grid-column: span 1; }
+            .studio-logo { font-size: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" onclick="toggleMenu()">Home</a>
+        <a href="download.html" onclick="toggleMenu()">Download</a>
+        <a href="changelog.html" onclick="toggleMenu()">Changelog</a>
+        <a href="About.html" onclick="toggleMenu()">About</a>
+        <a href="Donate.html" onclick="toggleMenu()">Donate</a>
+    </div>
+
+    <header>
+        <h1 onclick="location.href='index.html'">EDGE JUMP</h1>
+        <div class="nav-buttons">
+            <button class="btn-nav" onclick="location.href='index.html'">Home</button>
+            <button class="btn-nav" onclick="location.href='download.html'">Download</button>
+            <button class="btn-nav" onclick="location.href='About.html'">About Studio</button>
+        </div>
+        <button class="mobile-toggle" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <div class="container">
+        <p style="letter-spacing: 10px; color: #ce9e1b;">ESTABLISHED 2025</p>
+        <h2 class="studio-logo">SSOG</h2>
+        <p class="studio-pronounce">[ Pronounced as S-S O-G ]</p>
+
+        <div class="about-grid">
+            <div class="about-box vision-box">
+                <h3>Our Vision</h3>
+                <p>SSOG is an independent game development studio born from the passion for movement and urban exploration. We don't just build games; we build adrenaline-fueled experiences that push the boundaries of virtual parkour.</p>
+            </div>
+
+            <div class="about-box">
+                <h3>Edge Jump Project</h3>
+                <p>Our flagship title, Edge Jump, is a tribute to the "flow" state. We focus on realistic physics, high-stakes rooftops, and the feeling of absolute freedom. Every jump is calculated, every fall is a lesson.</p>
+            </div>
+
+            <div class="about-box">
+                <h3>The Studio</h3>
+                <p>Operating from the shadows of digital space, SSOG thrives on community feedback. We believe in transparency and constant evolution, which is why we share our development journey every step of the way.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 80px;">
+            <p style="font-size: 12px; color: #444;">WANT TO COLLABORATE?</p>
+            <button class="btn-nav" onclick="location.href='https://discord.gg/RSRMvaBRsA'">CONTACT US VIA DISCORD</button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 SSOG STUDIO // BEYOND THE EDGE.
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+            const dots = document.querySelectorAll('.mobile-toggle span');
+            dots.forEach(dot => {
+                dot.style.backgroundColor = menu.classList.contains('active') ? '#fff' : '#ce9e1b';
+            });
+        }
+    </script>
+</body>
+</html>
